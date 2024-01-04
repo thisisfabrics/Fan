@@ -25,6 +25,8 @@ class Entity(pygame.sprite.Sprite):
         self.y_move_time = UselessClock()
         self.x_movement = int()
         self.y_movement = int()
+        self.last_delta_x = float()
+        self.last_delta_y = float()
 
     def repos(self, pos):
         self.rect.x, self.rect.y = pos
@@ -91,8 +93,22 @@ class Entity(pygame.sprite.Sprite):
             self.spawn_time = time.time_ns()
 
     def move(self):
-        self.rect.x += self.x_move_time.tick() * self.x_movement * self.speed
-        self.rect.y += self.y_move_time.tick() * self.y_movement * self.speed
+        self.last_delta_x = self.x_move_time.tick() * self.x_movement * self.speed
+        self.last_delta_y = self.y_move_time.tick() * self.y_movement * self.speed
+        self.rect.x += int(self.last_delta_x)
+        self.rect.y += int(self.last_delta_y)
+
+    def undo_move_x(self):
+        self.rect.x -= int(self.last_delta_x)
+
+    def undo_move_y(self):
+        self.rect.y -= int(self.last_delta_y)
+
+    def redo_move_x(self):
+        self.rect.x += int(self.last_delta_x)
+
+    def redo_move_y(self):
+        self.rect.y += int(self.last_delta_y)
 
     def update(self):
         self.play_animation()

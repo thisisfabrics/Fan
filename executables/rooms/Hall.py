@@ -13,4 +13,8 @@ class Hall(Room):
         quad_surface.blit(self.image, (0, h))
         quad_surface.blit(self.image, (w, h))
         self.image = quad_surface
+        self.max_count_of_obstacles *= 3
+        self.max_count_of_enemies *= 3
+        self.build()
+        self.populate()
 

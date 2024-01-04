@@ -16,6 +16,7 @@ class Continue(Screen):
             self.rooms = [[Room(self.r) if random.random() < 0 else Hall(self.r) for j in range(3)] for i in range(3)]
             self.bell = Bell(self.r, "bell_idle", 200)
             self.rooms[0][0].add_entity(self.bell)
+            self.rooms[0][0].build()
 
     def button_pressed(self, key):
         if key == pygame.K_w:
@@ -38,15 +39,15 @@ class Continue(Screen):
             self.bell.stop_moving("right")
 
     def place_room(self):
-        room = next(filter(lambda elem: self.bell in elem.entities, linerize(self.rooms)))
+        room = next(filter(lambda elem: self.bell in elem.entities_group.sprites(), linerize(self.rooms)))
+        surface_from_room = room.draw()
         bell_x, bell_y = self.bell.rect.x + self.bell.rect.width / 2, self.bell.rect.y + self.bell.rect.height / 2
         x, y = bell_x - self.r.constant("useful_width") / 2, bell_y - self.r.constant("useful_height") / 2
         x = min(room.image.get_rect().width - self.r.constant("useful_width"), max(0, x))
         y = min(room.image.get_rect().height - self.r.constant("useful_height"), max(0, y))
         self.bell.set_mouse_position_compensation(x, y)
-        self.frame.blit(room.draw(self.bell), (-x, -y))
+        self.frame.blit(surface_from_room, (-x, -y))
 
     def update(self):
         self.bell.update()
-        self.frame.fill(pygame.Color("red"))
         self.place_room()
