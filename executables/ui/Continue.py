@@ -1,7 +1,7 @@
 import random
 import pygame
 
-from executables.entities.Bell import Bell
+from executables.entities.Belle import Belle
 from executables.rooms.Hall import Hall
 from executables.rooms.Room import Room
 from executables.ui.Screen import Screen
@@ -13,41 +13,45 @@ class Continue(Screen):
         super().__init__(r, frame)
         if not mode:
             self.level = int()
-            self.rooms = [[Room(self.r) if random.random() < 0 else Hall(self.r) for j in range(3)] for i in range(3)]
-            self.bell = Bell(self.r, "bell_idle", 200)
-            self.rooms[0][0].add_entity(self.bell)
+            self.rooms = [[Room(self.r) if random.random() < 1 else Hall(self.r) for j in range(3)] for i in range(3)]
+            self.rooms[0][0].add_entity(Belle(self.r, "belle_idle", 200))
             self.rooms[0][0].build()
+
+    def find_belle(self):
+        room = next(filter(lambda elem: Belle in map(lambda el: el.__class__, elem.entities_group.sprites()), linerize(self.rooms)))
+        belle = next(filter(lambda elem: isinstance(elem, Belle), room.entities_group.sprites()))
+        return belle, room
 
     def button_pressed(self, key):
         if key == pygame.K_w:
-            self.bell.start_moving("up")
+            self.find_belle()[0].start_moving("up")
         elif key == pygame.K_s:
-            self.bell.start_moving("down")
+            self.find_belle()[0].start_moving("down")
         elif key == pygame.K_a:
-            self.bell.start_moving("left")
+            self.find_belle()[0].start_moving("left")
         elif key == pygame.K_d:
-            self.bell.start_moving("right")
+            self.find_belle()[0].start_moving("right")
 
     def button_released(self, key):
         if key == pygame.K_w:
-            self.bell.stop_moving("up")
+            self.find_belle()[0].stop_moving("up")
         elif key == pygame.K_s:
-            self.bell.stop_moving("down")
+            self.find_belle()[0].stop_moving("down")
         elif key == pygame.K_a:
-            self.bell.stop_moving("left")
+            self.find_belle()[0].stop_moving("left")
         elif key == pygame.K_d:
-            self.bell.stop_moving("right")
+            self.find_belle()[0].stop_moving("right")
 
     def place_room(self):
-        room = next(filter(lambda elem: self.bell in elem.entities_group.sprites(), linerize(self.rooms)))
-        surface_from_room = room.draw()
-        bell_x, bell_y = self.bell.rect.x + self.bell.rect.width / 2, self.bell.rect.y + self.bell.rect.height / 2
-        x, y = bell_x - self.r.constant("useful_width") / 2, bell_y - self.r.constant("useful_height") / 2
-        x = min(room.image.get_rect().width - self.r.constant("useful_width"), max(0, x))
-        y = min(room.image.get_rect().height - self.r.constant("useful_height"), max(0, y))
-        self.bell.set_mouse_position_compensation(x, y)
+        surface_from_room = self.find_belle()[1].draw()
+        belle_x, belle_y = self.find_belle()[0].rect.x + self.find_belle()[0].rect.width / 2, \
+            self.find_belle()[0].rect.y + self.find_belle()[0].rect.height / 2
+        x, y = belle_x - self.r.constant("useful_width") / 2, belle_y - self.r.constant("useful_height") / 2
+        x = min(surface_from_room.get_rect().width - self.r.constant("useful_width"), max(0, x))
+        y = min(surface_from_room.get_rect().height - self.r.constant("useful_height"), max(0, y))
+        self.find_belle()[0].set_mouse_position_compensation(x, y)
         self.frame.blit(surface_from_room, (-x, -y))
 
     def update(self):
-        self.bell.update()
+        self.find_belle()[1].update_sprites()
         self.place_room()

@@ -21,25 +21,10 @@ class Entity(pygame.sprite.Sprite):
         self.spawn_time = time.time_ns()
         self.energy = 100
         self.speed = 0.5
-        self.x_move_time = UselessClock()
-        self.y_move_time = UselessClock()
         self.x_movement = int()
         self.y_movement = int()
         self.last_delta_x = float()
         self.last_delta_y = float()
-
-    def repos(self, pos):
-        self.rect.x, self.rect.y = pos
-
-    def random_repos(self, x_stop_range, y_stop_range, *dont_collide_with_these_sprite_groups):
-        pos = (random.randrange(x_stop_range - self.rect.width),
-               random.randrange(y_stop_range - self.rect.height))
-        self.rect.x, self.rect.y = pos
-        while sum(1 for el in filter(lambda elem: pygame.sprite.spritecollideany(self, elem),
-                                     dont_collide_with_these_sprite_groups)):
-            pos = (random.randrange(x_stop_range - self.rect.width),
-                   random.randrange(y_stop_range - self.rect.height))
-            self.rect.x, self.rect.y = pos
 
     def damage(self, bullet):
         self.energy -= bullet.damage
@@ -52,38 +37,6 @@ class Entity(pygame.sprite.Sprite):
         if period:
             self.animation_period = period
 
-    def start_moving(self, direction):
-        if direction == "up":
-            self.y_movement = -1
-            self.y_move_time = pygame.time.Clock()
-        elif direction == "down":
-            self.y_movement = 1
-            self.y_move_time = pygame.time.Clock()
-        elif direction == "left":
-            self.x_movement = -1
-            self.x_move_time = pygame.time.Clock()
-        elif direction == "right":
-            self.x_movement = 1
-            self.x_move_time = pygame.time.Clock()
-        if "movement" not in self.animation_name:
-            self.set_animation(f"{self.__class__.__name__.lower()}_movement")
-
-    def stop_moving(self, direction):
-        if direction == "up":
-            if self.y_movement == -1:
-                self.y_move_time = UselessClock()
-        elif direction == "down":
-            if self.y_movement == 1:
-                self.y_move_time = UselessClock()
-        elif direction == "left":
-            if self.x_movement == -1:
-                self.x_move_time = UselessClock()
-        elif direction == "right":
-            if self.x_movement == 1:
-                self.x_move_time = UselessClock()
-        if not (self.y_move_time.tick() + self.x_move_time.tick()) and "idle" not in self.animation_name:
-            self.set_animation(f"{self.__class__.__name__.lower()}_idle")
-
     def play_animation(self):
         if time.time_ns() - self.spawn_time >= self.animation_period * 10 ** 6:
             self.image = self.animation_frames.pop(0)
@@ -91,12 +44,6 @@ class Entity(pygame.sprite.Sprite):
             if self.animation_is_flipped:
                 self.image = pygame.transform.flip(self.image, 1, 0)
             self.spawn_time = time.time_ns()
-
-    def move(self):
-        self.last_delta_x = self.x_move_time.tick() * self.x_movement * self.speed
-        self.last_delta_y = self.y_move_time.tick() * self.y_movement * self.speed
-        self.rect.x += int(self.last_delta_x)
-        self.rect.y += int(self.last_delta_y)
 
     def undo_move_x(self):
         self.rect.x -= int(self.last_delta_x)
@@ -110,11 +57,5 @@ class Entity(pygame.sprite.Sprite):
     def redo_move_y(self):
         self.rect.y += int(self.last_delta_y)
 
-    def update(self):
+    def update(self, *args):
         self.play_animation()
-        self.move()
-
-
-class UselessClock:
-    def tick(self):
-        return int()

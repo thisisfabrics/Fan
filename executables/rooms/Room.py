@@ -19,9 +19,9 @@ class Room:
 
     def populate(self):
         self.entities_group.empty()
-        for i in range(1, random.randrange(self.max_count_of_enemies)):
+        for i in range(random.randrange(1, self.max_count_of_enemies)):
             next_enemy = (choiced := random.choice((Catterfield, )))(self.r, f"{choiced.__name__.lower()}_movement",
-                                                                     400)
+                                                                     200)
             x, y = (random.randrange(self.image.get_rect().width - next_enemy.rect.width),
                     random.randrange(self.image.get_rect().height - next_enemy.rect.height))
             next_enemy.rect.x, next_enemy.rect.y = x, y
@@ -34,7 +34,7 @@ class Room:
 
     def build(self):
         self.obstacles_group.empty()
-        for i in range(1, random.randrange(self.max_count_of_obstacles)):
+        for i in range(random.randrange(1, self.max_count_of_obstacles)):
             next_obstacle = random.choice((Fridge, ))(self.r)
             x, y = (random.randrange(self.image.get_rect().width - next_obstacle.rect.width),
                     random.randrange(self.image.get_rect().height - next_obstacle.rect.height))
@@ -77,3 +77,6 @@ class Room:
         self.draw_obstacles(this_room)
         self.draw_entities(this_room)
         return this_room
+
+    def update_sprites(self):
+        self.entities_group.update(self.obstacles_group, self.entities_group, self.image.get_rect()[-2:])
