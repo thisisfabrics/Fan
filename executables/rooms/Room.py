@@ -2,6 +2,7 @@ import random
 
 import pygame.sprite
 
+from executables.entities.Belle import Belle
 from executables.rooms.obstacles.Fridge import Fridge
 from executables.entities.Catterfield import Catterfield
 
@@ -12,7 +13,7 @@ class Room:
         self.image = self.r.drawable("tiles")
         self.obstacles_group = pygame.sprite.Group()
         self.max_count_of_obstacles = 5
-        self.max_count_of_enemies = 5
+        self.max_count_of_enemies = 2
         self.entities_group = pygame.sprite.Group()
         self.build()
         self.populate()
@@ -55,14 +56,15 @@ class Room:
 
     def draw_entities(self, surface):
         for entity in self.entities_group.sprites():
-            if pygame.sprite.spritecollideany(entity, self.obstacles_group):
-                entity.undo_move_x()
+            if isinstance(entity, Belle):
                 if pygame.sprite.spritecollideany(entity, self.obstacles_group):
-                    entity.redo_move_x()
-                    entity.undo_move_y()
+                    entity.undo_move_x()
                     if pygame.sprite.spritecollideany(entity, self.obstacles_group):
-                        entity.undo_move_x()
+                        entity.redo_move_x()
                         entity.undo_move_y()
+                        if pygame.sprite.spritecollideany(entity, self.obstacles_group):
+                            entity.undo_move_x()
+                            entity.undo_move_y()
             x = min(self.image.get_rect().width - entity.rect.width, max(0, entity.rect.x))
             y = min(self.image.get_rect().height - entity.rect.height, max(0, entity.rect.y))
             if entity.rect.x != x:

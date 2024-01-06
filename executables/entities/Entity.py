@@ -21,8 +21,6 @@ class Entity(pygame.sprite.Sprite):
         self.spawn_time = time.time_ns()
         self.energy = 100
         self.speed = 0.5
-        self.x_movement = int()
-        self.y_movement = int()
         self.last_delta_x = float()
         self.last_delta_y = float()
 

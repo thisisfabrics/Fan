@@ -12,6 +12,8 @@ class Belle(Entity):
         self.mouse_position_x, self.mouse_position_y = pygame.mouse.get_pos()
         self.x_move_time = UselessClock()
         self.y_move_time = UselessClock()
+        self.x_movement = int()
+        self.y_movement = int()
 
     def aim_cursor(self):
         self.set_mouse_position()
