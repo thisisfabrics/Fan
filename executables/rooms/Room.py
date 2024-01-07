@@ -15,6 +15,7 @@ class Room:
         self.max_count_of_obstacles = 5
         self.max_count_of_enemies = 2
         self.entities_group = pygame.sprite.Group()
+        self.bullets_group = pygame.sprite.Group()
         self.build()
         self.populate()
 
@@ -50,6 +51,9 @@ class Room:
     def add_entity(self, entity):
         self.entities_group.add(entity)
 
+    def spawn_bullet(self, bullet, start_pos, end_pos):
+        bullet(self.r, start_pos, end_pos, self.bullets_group)
+
     def draw_obstacles(self, surface):
         for obstacle in self.obstacles_group.sprites():
             surface.blit(obstacle.image, (obstacle.rect.x, obstacle.rect.y))
@@ -73,12 +77,18 @@ class Room:
                 entity.undo_move_y()
             surface.blit(entity.image, (entity.rect.x, entity.rect.y))
 
+    def draw_bullets(self, surface):
+        for bullet in self.bullets_group.sprites():
+            bullet.draw(surface)
+
     def draw(self):
         this_room = pygame.Surface((self.image.get_rect().width, self.image.get_rect().height))
         this_room.blit(self.image, (0, 0))
         self.draw_obstacles(this_room)
         self.draw_entities(this_room)
+        self.draw_bullets(this_room)
         return this_room
 
     def update_sprites(self):
+        self.bullets_group.update()
         self.entities_group.update(self.obstacles_group, self.entities_group, self.image.get_rect()[-2:])

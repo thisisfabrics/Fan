@@ -8,7 +8,7 @@ from modules.runtimeresources import R
 
 class Game:
     def __init__(self):
-        self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.window = pygame.display.set_mode((0, 0))  # , pygame.FULLSCREEN
         self.aspect_ratio = 16 / 9
         self.useful_width, self.useful_height = (info := pygame.display.Info()).current_w, info.current_h
         self.left_corner_y = int()
@@ -44,6 +44,7 @@ class Game:
                     self.current_screen.mouse_moved(event.pos)
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.current_screen.mouse_pressed(event.button)
+                    self.current_screen.mouse_pressed_pos(event.pos)
             self.navigate(self.current_screen.update())
             self.window.blit(self.frame, (0, self.left_corner_y))
             pygame.display.flip()

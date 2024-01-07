@@ -42,6 +42,10 @@ class Continue(Screen):
         elif key == pygame.K_d:
             self.find_belle()[0].stop_moving("right")
 
+    def mouse_pressed_pos(self, pos):
+        belle, room = self.find_belle()
+        room.spawn_bullet(belle.weapons[0].bullet, belle.weapons[0].rect[:2], pos)
+
     def place_room(self):
         surface_from_room = self.find_belle()[1].draw()
         belle_x, belle_y = self.find_belle()[0].rect.x + self.find_belle()[0].rect.width / 2, \

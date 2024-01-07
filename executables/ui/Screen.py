@@ -25,3 +25,6 @@ class Screen:
 
     def mouse_pressed(self, button):
         pass
+
+    def mouse_pressed_pos(self, pos):
+        pass

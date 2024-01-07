@@ -1,12 +1,13 @@
 import pygame
 
 from executables.entities.Entity import Entity
+from executables.weapons.Fan import Fan
 
 
 class Belle(Entity):
     def __init__(self, r, animation_name, animation_period, *sprite_groups):
         super().__init__(r, animation_name, animation_period, *sprite_groups)
-        self.weapons = []
+        self.weapons = [Fan(self.r, self.rect[:2])]
         self.mouse_position_compensation_x = int()
         self.mouse_position_compensation_y = int()
         self.mouse_position_x, self.mouse_position_y = pygame.mouse.get_pos()
