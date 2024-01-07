@@ -32,6 +32,8 @@ class Room:
                 x, y = (random.randrange(self.image.get_rect().width - next_enemy.rect.width),
                         random.randrange(self.image.get_rect().height - next_enemy.rect.height))
                 next_enemy.rect.x, next_enemy.rect.y = x, y
+            next_enemy.x = next_enemy.rect.x
+            next_enemy.y = next_enemy.rect.y
             self.add_entity(next_enemy)
 
     def build(self):

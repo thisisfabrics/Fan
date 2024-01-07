@@ -30,7 +30,7 @@ class Button:
 
     def check_focus(self, pos):
         pos_x, pos_y = pos
-        if self.x <= pos_x <= self.xx and self.y <= pos_y <= self.yy:
+        if self.x <= pos_x <= self.xx and self.y <= pos_y + self.r.constant("real_offset") <= self.yy:
             self.focus = True
         else:
             self.focus = False

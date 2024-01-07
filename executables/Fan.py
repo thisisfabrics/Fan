@@ -11,12 +11,13 @@ class Game:
         self.window = pygame.display.set_mode((0, 0))  # , pygame.FULLSCREEN
         self.aspect_ratio = 16 / 9
         self.useful_width, self.useful_height = (info := pygame.display.Info()).current_w, info.current_h
+        self.real_width, self.real_height = self.useful_width, self.useful_height
         self.left_corner_y = int()
         if self.useful_width / self.useful_height != self.aspect_ratio:
             self.useful_height = self.useful_width / self.aspect_ratio
             self.left_corner_y = 0.5 * info.current_h - 0.5 * self.useful_height
         self.frame = pygame.Surface((self.useful_width, self.useful_height))
-        self.r = R((self.useful_width, self.useful_height))
+        self.r = R((self.useful_width, self.useful_height), (self.real_width, self.real_height))
         self.fps = 60
         self.current_screen = Start(self.r, self.frame)
         self.clock = pygame.time.Clock()

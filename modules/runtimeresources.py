@@ -4,8 +4,9 @@ import pygame
 
 
 class R:
-    def __init__(self, useful_size):
+    def __init__(self, useful_size, real_size):
         self.useful_size = useful_size
+        self.real_size = real_size
         self.coefficient = useful_size[0] / 3840
         self.language = str()
         self.observe_language()
@@ -16,7 +17,8 @@ class R:
         self.constant_dictionary = {
             "coefficient": self.coefficient,
             "useful_width": self.useful_size[0],
-            "useful_height": self.useful_size[1]
+            "useful_height": self.useful_size[1],
+            "real_offset": (self.useful_size[1] - self.real_size[1]) / 2
         }
 
     def observe_language(self):

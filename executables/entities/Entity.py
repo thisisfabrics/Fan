@@ -20,9 +20,10 @@ class Entity(pygame.sprite.Sprite):
                                     self.r.constant("useful_height") / 2 - self.rect.height / 2)
         self.spawn_time = time.time_ns()
         self.energy = 100
-        self.speed = 0.5
+        self.speed = 1 * self.r.constant("coefficient")
         self.last_delta_x = float()
         self.last_delta_y = float()
+        self.x, self.y = self.rect[:2]
 
     def damage(self, bullet):
         self.energy -= bullet.damage
@@ -45,15 +46,19 @@ class Entity(pygame.sprite.Sprite):
 
     def undo_move_x(self):
         self.rect.x -= int(self.last_delta_x)
+        self.x -= self.last_delta_x
 
     def undo_move_y(self):
         self.rect.y -= int(self.last_delta_y)
+        self.y -= self.last_delta_y
 
     def redo_move_x(self):
         self.rect.x += int(self.last_delta_x)
+        self.x += self.last_delta_x
 
     def redo_move_y(self):
         self.rect.y += int(self.last_delta_y)
+        self.y += self.last_delta_y
 
     def update(self, *args):
         self.play_animation()

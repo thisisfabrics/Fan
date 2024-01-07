@@ -34,8 +34,10 @@ class Belle(Entity):
     def move(self):
         self.last_delta_x = self.x_move_time.tick() * self.x_movement * self.speed
         self.last_delta_y = self.y_move_time.tick() * self.y_movement * self.speed
-        self.rect.x += int(self.last_delta_x)
-        self.rect.y += int(self.last_delta_y)
+        self.x += self.last_delta_x
+        self.y += self.last_delta_y
+        self.rect.x = self.x
+        self.rect.y = self.y
 
     def start_moving(self, direction):
         if direction == "up":

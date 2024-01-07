@@ -7,7 +7,6 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, r, start_pos, end_pos, *sprite_groups):
         super().__init__(*sprite_groups)
         self.r = r
-        self.lifetime = 2
         self.spawn_time = time.time()
         self.clock = pygame.time.Clock()
         self.delta_x = end_pos[0] - start_pos[0]
@@ -16,10 +15,13 @@ class Bullet(pygame.sprite.Sprite):
         self.start_pos = start_pos
         self.end_pos = end_pos
         self.speed = 0.5
-        self.rect = pygame.Rect(0, 0, 1, 1)
+        self.rect = pygame.Rect(self.start_pos[0] - self.r.constant("useful_width") / 2,
+                                self.start_pos[1] - self.r.constant("useful_height") / 2,
+                                self.r.constant("useful_width"), self.r.constant("useful_height"))
 
     def update(self):
-        if time.time() - self.spawn_time > self.lifetime:
+        if not (self.rect.x <= self.current_pos[0] <= self.rect.x + self.rect.width and
+                self.rect.y <= self.current_pos[1] <= self.rect.y + self.rect.height):
             self.kill()
             return
         length = self.clock.tick() * self.speed
