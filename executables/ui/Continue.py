@@ -19,7 +19,7 @@ class Continue(Screen):
 
     def find_belle(self):
         room = next(filter(lambda elem: Belle in map(lambda el: el.__class__, elem.entities_group.sprites()), linerize(self.rooms)))
-        belle = next(filter(lambda elem: isinstance(elem, Belle), room.entities_group.sprites()))
+        belle = room.find_belle()
         return belle, room
 
     def button_pressed(self, key):

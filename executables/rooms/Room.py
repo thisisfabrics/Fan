@@ -83,12 +83,22 @@ class Room:
         for bullet in self.bullets_group.sprites():
             bullet.draw(surface)
 
+    def find_belle(self):
+        try:
+            return next(filter(lambda elem: isinstance(elem, Belle), self.entities_group.sprites()))
+        except StopIteration:
+            pass
+
+    def draw_weapon(self, surface):
+        surface.blit((we := self.find_belle().weapons[0]).image, we.rect[:2])
+
     def draw(self):
         this_room = pygame.Surface((self.image.get_rect().width, self.image.get_rect().height))
         this_room.blit(self.image, (0, 0))
         self.draw_obstacles(this_room)
         self.draw_entities(this_room)
         self.draw_bullets(this_room)
+        self.draw_weapon(this_room)
         return this_room
 
     def update_sprites(self):

@@ -23,12 +23,10 @@ class Enemy(Entity):
         self.emergency_destination = self.destination
         self.destination = entity.rect.x + entity.rect.width // 2, entity.rect.y + entity.rect.height // 2
         self.destination = self.destination[1] // self.chunk_height, self.destination[0] // self.chunk_width
-        print("dest" + str(self.destination))
 
     def set_location(self):
         self.location = self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2
         self.location = self.location[1] // self.chunk_height, self.location[0] // self.chunk_width
-        print(self.location)
 
     def move(self, length):
         if self.location != self.destination:
@@ -38,17 +36,14 @@ class Enemy(Entity):
         destination_pos = self.chunck_to_pos(self.next_chunk())
         delta_x = destination_pos[0] - self.chunck_to_pos(self.location)[0]
         delta_y = destination_pos[1] - self.chunck_to_pos(self.location)[1]
-        print(f"deltas: {delta_x}, {delta_y}")
         x_movement = (delta_x ** 2 * length ** 2 / (delta_y ** 2 + delta_x ** 2)) ** 0.5 if delta_y else length
         y_movement = abs(x_movement * delta_y / delta_x) if delta_x else length
-        print(f"movements: {x_movement}, {y_movement}")
         x_movement *= (1 if delta_x > 0 else -1)
         y_movement *= (1 if delta_y > 0 else -1)
         self.last_delta_x = x_movement
         self.last_delta_y = y_movement
         self.x += self.last_delta_x
         self.y += self.last_delta_y
-        print(f"final movement: {self.last_delta_x}, {self.last_delta_y}")
         self.rect.x = self.x
         self.rect.y = self.y
 
@@ -70,8 +65,6 @@ class Enemy(Entity):
             y, x = self.destination
             while prevs[y][x] != self.location:
                 y, x = prevs[y][x]
-            print(y, x, end=' ')
-            print("<- next chunk")
             return y, x
         else:
             self.destination = self.emergency_destination

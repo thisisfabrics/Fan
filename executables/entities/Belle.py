@@ -7,7 +7,7 @@ from executables.weapons.Fan import Fan
 class Belle(Entity):
     def __init__(self, r, animation_name, animation_period, *sprite_groups):
         super().__init__(r, animation_name, animation_period, *sprite_groups)
-        self.weapons = [Fan(self.r, self.rect[:2])]
+        self.weapons = [Fan(self.r, self.rect[:2], "fan_idle", 200)]
         self.mouse_position_compensation_x = int()
         self.mouse_position_compensation_y = int()
         self.mouse_position_x, self.mouse_position_y = pygame.mouse.get_pos()
@@ -20,8 +20,14 @@ class Belle(Entity):
         self.set_mouse_position()
         if self.rect.x + self.rect.width / 2 <= self.mouse_position_x and not self.animation_is_flipped:
             self.animation_is_flipped = True
+            self.weapons[0].animation_is_flipped = True
+            self.weapons[0].play_animation(True)
+            self.play_animation(True)
         elif self.rect.x + self.rect.width / 2 > self.mouse_position_x and self.animation_is_flipped:
             self.animation_is_flipped = False
+            self.weapons[0].animation_is_flipped = False
+            self.weapons[0].play_animation(True)
+            self.play_animation(True)
 
     def set_mouse_position(self):
         self.mouse_position_x, self.mouse_position_y = pygame.mouse.get_pos()
@@ -38,6 +44,10 @@ class Belle(Entity):
         self.y += self.last_delta_y
         self.rect.x = self.x
         self.rect.y = self.y
+        self.weapons[0].rect.x = self.x
+        self.weapons[0].rect.y = self.y
+        self.weapons[0].apply_offset()
+        self.weapons[0].play_animation()
 
     def start_moving(self, direction):
         if direction == "up":
@@ -73,8 +83,8 @@ class Belle(Entity):
 
     def update(self, *args):
         super().update()
-        self.move()
         self.aim_cursor()
+        self.move()
 
 
 class UselessClock:
