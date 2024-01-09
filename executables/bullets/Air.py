@@ -18,22 +18,34 @@ class Air(Bullet):
         while (an := self.angles[-1] + detalization) < end_angle:
             self.angles.append(an)
         self.wavefront = list()
-        self.wevefront_history = list()
-        self.count_of_drawcalls = int()
+        self.wavefront_history = list()
+        self.killing = False
 
     def calculate_points(self):
         self.wavefront = [(self.start_pos[0] + math.cos(elem) * self.speed * self.lifetime(),
                            self.start_pos[1] - math.sin(elem) * self.speed * self.lifetime())
                           for elem in self.angles]
-        self.wevefront_history.append(self.wavefront)
-        self.end_pos = self.wavefront[len(self.wavefront) // 2]
+        self.wavefront_history.append(self.wavefront)
+        self.current_pos = self.wavefront[len(self.wavefront) // 2]
 
     def draw(self, surface):
-        self.calculate_points()
-        if self.speed * self.lifetime() > self.wavefront_threshold:
-            pygame.draw.polygon(surface, pygame.Color("green"), self.wavefront +
-                                self.wevefront_history[-self.count_of_drawcalls][::-1])
+        if not self.killing:
+            self.calculate_points()
+            if self.speed * self.lifetime() > self.wavefront_threshold:
+                del self.wavefront_history[0]
+                pygame.draw.polygon(surface, pygame.Color("green"), self.wavefront +
+                                    self.wavefront_history[0][::-1])
+            else:
+                pygame.draw.polygon(surface, pygame.Color("green"), self.wavefront + [self.start_pos])
         else:
-            self.count_of_drawcalls += 1
-            pygame.draw.polygon(surface, pygame.Color("green"), self.wavefront + [self.start_pos])
+            if len(self.wavefront_history) == 1:
+                self.kill()
+                return
+            del self.wavefront_history[0]
+            pygame.draw.polygon(surface, pygame.Color("green"), self.wavefront +
+                                self.wavefront_history[0][::-1])
 
+    def update(self):
+        if not (self.rect.x <= self.current_pos[0] <= self.rect.x + self.rect.width and
+                self.rect.y <= self.current_pos[1] <= self.rect.y + self.rect.height):
+            self.killing = True
