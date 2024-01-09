@@ -62,7 +62,7 @@ class Start(Screen):
         for button in self.state_description[self.state][-1]:
             button.check_focus(pos)
 
-    def mouse_pressed(self, button):
+    def mouse_pressed(self, button, pos):
         if button == 1:
             for elem in itertools.chain(*map(lambda elem: elem[-1], self.state_description)):
                 elem.click()

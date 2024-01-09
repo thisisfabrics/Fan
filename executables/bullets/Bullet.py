@@ -18,6 +18,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = pygame.Rect(self.start_pos[0] - self.r.constant("useful_width") / 2,
                                 self.start_pos[1] - self.r.constant("useful_height") / 2,
                                 self.r.constant("useful_width"), self.r.constant("useful_height"))
+        print(self.rect)
         self.angle = math.atan(abs(self.delta_y / self.delta_x))
         if self.delta_x < 0 < self.delta_y:
             self.angle = math.pi - self.angle
@@ -28,8 +29,8 @@ class Bullet(pygame.sprite.Sprite):
         self.angle = 2 * math.pi - self.angle
 
     def update(self):
-        if not (self.rect.x <= self.end_pos[0] <= self.rect.x + self.rect.width and
-                self.rect.y <= self.end_pos[1] <= self.rect.y + self.rect.height):
+        if not (self.rect.x <= self.start_pos[0] <= self.rect.x + self.rect.width and
+                self.rect.y <= self.start_pos[1] <= self.rect.y + self.rect.height):
             self.kill()
             return
 

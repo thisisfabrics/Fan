@@ -10,8 +10,8 @@ class Enemy(Entity):
     def __init__(self, r, animation_name, animation_period, *sprite_groups):
         super().__init__(r, animation_name, animation_period, *sprite_groups)
         self.destination = int(), int()
-        self.emergency_destination = int(), int()
         self.location = int(), int()
+        self.emergency_destination = int(), int()
         self.clock = pygame.time.Clock()
         self.map = list()
         self.field_size = (int(), int())
@@ -20,7 +20,6 @@ class Enemy(Entity):
         self.offsets = tuple((elem, el) for el in (-1, 1, 0) for elem in (-1, 1, 0) if el or elem)
 
     def set_destination(self, entity):
-        self.emergency_destination = self.destination
         self.destination = entity.rect.x + entity.rect.width // 2, entity.rect.y + entity.rect.height // 2
         self.destination = self.destination[1] // self.chunk_height, self.destination[0] // self.chunk_width
 
@@ -29,8 +28,7 @@ class Enemy(Entity):
         self.location = self.location[1] // self.chunk_height, self.location[0] // self.chunk_width
 
     def move(self, length):
-        if self.location != self.destination:
-            self.step(length)
+        self.step(length)
 
     def step(self, length):
         destination_pos = self.chunck_to_pos(self.next_chunk())
@@ -65,16 +63,17 @@ class Enemy(Entity):
             y, x = self.destination
             while prevs[y][x] != self.location:
                 y, x = prevs[y][x]
+            self.emergency_destination = y, x
             return y, x
         else:
-            self.destination = self.emergency_destination
-            return self.next_chunk()
+            return self.emergency_destination
 
-    def form_map(self, *groups):
+    def form_map(self, belle, *groups):
         group = pygame.sprite.Group()
         for elem in itertools.chain(*map(lambda el: el.sprites(), groups)):
-            if elem is not self and not isinstance(elem, Belle):
-                group.add(elem)
+            if elem is not belle and elem is not self:
+                if not pygame.sprite.collide_rect(elem, belle):
+                    group.add(elem)
         self.map = list()
         for i in range(self.field_size[1])[::self.chunk_height]:
             self.map.append(list())
@@ -89,7 +88,7 @@ class Enemy(Entity):
         self.chunk_width = int(.045 * self.field_size[0])
         self.chunk_height = int(.08 * self.field_size[1])
         belle = next(filter(lambda elem: isinstance(elem, Belle), rooms_entities.sprites()))
-        self.form_map(rooms_obstacles, rooms_entities)
+        self.form_map(belle, rooms_obstacles, rooms_entities)
         self.set_destination(belle)
         self.set_location()
         self.move(self.clock.tick() * self.speed)

@@ -13,7 +13,7 @@ class Continue(Screen):
         super().__init__(r, frame)
         if not mode:
             self.level = int()
-            self.rooms = [[Room(self.r) if random.random() < 1 else Hall(self.r) for j in range(3)] for i in range(3)]
+            self.rooms = [[Room(self.r) if random.random() < 0 else Hall(self.r) for j in range(3)] for i in range(3)]
             self.rooms[0][0].add_entity(Belle(self.r, "belle_idle", 200))
             self.rooms[0][0].build()
 
@@ -42,9 +42,14 @@ class Continue(Screen):
         elif key == pygame.K_d:
             self.find_belle()[0].stop_moving("right")
 
-    def mouse_pressed_pos(self, pos):
-        belle, room = self.find_belle()
-        room.spawn_bullet(belle.weapons[0].bullet, belle.weapons[0].rect[:2], pos)
+    def mouse_pressed(self, button, pos):
+        if button == 1:
+            self.add_time_event("release_bullets",
+                                self.find_belle()[0].use_weapon, self.find_belle()[0].weapons[0].timeout)
+
+    def mouse_released(self, button):
+        if button == 1:
+            self.remove_time_event("release_bullets")
 
     def place_room(self):
         surface_from_room = self.find_belle()[1].draw()

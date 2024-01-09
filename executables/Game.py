@@ -44,8 +44,9 @@ class Game:
                 elif event.type == pygame.MOUSEMOTION:
                     self.current_screen.mouse_moved(event.pos)
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    self.current_screen.mouse_pressed(event.button)
-                    self.current_screen.mouse_pressed_pos(event.pos)
+                    self.current_screen.mouse_pressed(event.button, event.pos)
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    self.current_screen.mouse_released(event.button)
             self.navigate(self.current_screen.update())
             self.window.blit(self.frame, (0, self.left_corner_y))
             pygame.display.flip()

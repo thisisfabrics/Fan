@@ -37,6 +37,9 @@ class Belle(Entity):
     def set_mouse_position_compensation(self, x, y):
         self.mouse_position_compensation_x, self.mouse_position_compensation_y = x, y
 
+    def use_weapon(self):
+        self.weapons[0].release_bullet((self.mouse_position_compensation_x, self.mouse_position_compensation_y))
+
     def move(self):
         self.last_delta_x = self.x_move_time.tick() * self.x_movement * self.speed
         self.last_delta_y = self.y_move_time.tick() * self.y_movement * self.speed
