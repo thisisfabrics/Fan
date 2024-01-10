@@ -16,7 +16,7 @@ class Catterfield(Enemy):
 
     def move(self, length):
         if len(self.damaging_bullets):
-            length = self.speed * max(map(lambda elem: elem.tick(), self.damaging_bullets.values()))
+            length = self.speed * max(map(lambda elem: elem[0].tick(), self.damaging_bullets.values()))
             self.x += (x_movement := length * math.cos(self.angle))
             self.y += (y_movement := length * math.sin(self.angle))
             self.rect.x = self.x

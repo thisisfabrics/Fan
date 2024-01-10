@@ -8,6 +8,7 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, r, start_pos, end_pos, *sprite_groups):
         super().__init__(*sprite_groups)
         self.r = r
+        self.damage_rate = 1
         self.spawn_time = time.time_ns() / 10 ** 6
         self.lifetime = lambda: time.time_ns() / 10 ** 6 - self.spawn_time
         self.delta_x = end_pos[0] - start_pos[0]

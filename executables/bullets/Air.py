@@ -11,6 +11,7 @@ class Air(Bullet):
         super().__init__(r, start_pos, end_pos, *sprite_groups)
         self.speed = 2 * self.r.constant("coefficient")
         self.wavefront_threshold = int(500 * self.r.constant("coefficient"))
+        self.damage_rate = 10
         detalization = math.pi / 48
         start_angle = self.angle - math.pi / 16
         end_angle = self.angle + math.pi / 16

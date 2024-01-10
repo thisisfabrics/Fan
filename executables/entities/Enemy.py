@@ -88,15 +88,22 @@ class Enemy(Entity):
 
     def add_damaging_bullet(self, bullet):
         super().add_damaging_bullet(bullet)
-        self.set_animation(f"{self.animation_name.split('_')[0]}_damage")
+        if "damage" not in self.animation_name:
+            self.set_animation(f"{self.animation_name.split('_')[0]}_damage", 100)
 
     def remove_damaging_bullet(self, bullet=None):
         super().remove_damaging_bullet(bullet)
-        self.set_animation(f"{self.animation_name.split('_')[0]}_movement")
+        if "movement" not in self.animation_name and not len(self.damaging_bullets):
+            self.set_animation(f"{self.animation_name.split('_')[0]}_movement", 200)
+
+    def damage(self):
+        for elem, (_, clock) in self.damaging_bullets.items():
+            self.energy -= elem.damage_rate * clock.tick() / 1000
 
     def update(self, rooms_obstacles, rooms_entities, field_size):
         super().update()
         self.remove_damaging_bullet()
+        self.damage()
         self.field_size = field_size
         self.chunk_width = int(.045 * self.field_size[0])
         self.chunk_height = int(.08 * self.field_size[1])
