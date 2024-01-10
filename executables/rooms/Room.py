@@ -56,17 +56,10 @@ class Room:
         for obstacle in self.obstacles_group.sprites():
             surface.blit(obstacle.image, (obstacle.rect.x, obstacle.rect.y))
 
-    def draw_entities(self, surface):
-        for entity in self.entities_group.sprites():
-            if isinstance(entity, Belle):
-                if pygame.sprite.spritecollideany(entity, self.obstacles_group):
-                    entity.undo_move_x()
-                    if pygame.sprite.spritecollideany(entity, self.obstacles_group):
-                        entity.redo_move_x()
-                        entity.undo_move_y()
-                        if pygame.sprite.spritecollideany(entity, self.obstacles_group):
-                            entity.undo_move_x()
-                            entity.undo_move_y()
+    def draw_entities(self, surface, hand_mode=False):
+        for entity in self.entities_group.sprites() if not hand_mode else (self.find_belle(),):
+            if isinstance(entity, Belle) and not hand_mode:
+                continue
             x = min(self.image.get_rect().width - entity.rect.width, max(0, entity.rect.x))
             y = min(self.image.get_rect().height - entity.rect.height, max(0, entity.rect.y))
             if entity.rect.x != x:
@@ -75,8 +68,24 @@ class Room:
                 entity.undo_move_y()
             surface.blit(entity.image, (entity.rect.x, entity.rect.y))
 
+    def draw_belle(self, surface):
+        entity = self.find_belle()
+        if pygame.sprite.spritecollideany(entity, self.obstacles_group):
+            entity.undo_move_x()
+            if pygame.sprite.spritecollideany(entity, self.obstacles_group):
+                entity.redo_move_x()
+                entity.undo_move_y()
+                if pygame.sprite.spritecollideany(entity, self.obstacles_group):
+                    entity.undo_move_x()
+                    entity.undo_move_y()
+        self.draw_entities(surface, True)
+
     def draw_bullets(self, surface):
-        for bullet in self.find_belle().weapons[0].bullets_group.sprites():
+        iteration_bin = self.find_belle().weapons[0].bullets_group.sprites()
+        for bullet in iteration_bin:
+            for enemy in filter(lambda elem: not isinstance(elem, Belle), self.entities_group.sprites()):
+                if pygame.sprite.collide_rect(bullet, enemy):
+                    enemy.add_damaging_bullet(bullet)
             bullet.draw(surface)
 
     def find_belle(self):
@@ -92,11 +101,13 @@ class Room:
         this_room = pygame.Surface((self.image.get_rect().width, self.image.get_rect().height))
         this_room.blit(self.image, (0, 0))
         self.draw_obstacles(this_room)
-        self.draw_bullets(this_room)
         self.draw_entities(this_room)
+        self.draw_bullets(this_room)
+        self.draw_belle(this_room)
         self.draw_weapon(this_room)
         return this_room
 
     def update_sprites(self):
         self.find_belle().weapons[0].bullets_group.update()
+        self.find_belle().weapons[0].update()
         self.entities_group.update(self.obstacles_group, self.entities_group, self.image.get_rect()[-2:])

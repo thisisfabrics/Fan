@@ -20,6 +20,10 @@ class R:
             "useful_height": self.useful_size[1],
             "real_offset": (self.useful_size[1] - self.real_size[1]) / 2
         }
+        self.color_dictionary = {
+            "autumn_yellow": pygame.Color(194, 102, 41),
+            "air_bullet_filling": pygame.Color(160, 144, 137)
+        }
 
     def observe_language(self):
         database = sqlite3.connect("../data/script.sqlite")
@@ -53,3 +57,6 @@ class R:
 
     def string(self, name):
         return self.string_dictionary[name]
+
+    def color(self, name):
+        return self.color_dictionary[name]

@@ -22,6 +22,8 @@ class Enemy(Entity):
     def set_destination(self, entity):
         self.destination = entity.rect.x + entity.rect.width // 2, entity.rect.y + entity.rect.height // 2
         self.destination = self.destination[1] // self.chunk_height, self.destination[0] // self.chunk_width
+        if not self.map[self.destination[0]][self.destination[1]]:
+            self.emergency_destination = self.destination
 
     def set_location(self):
         self.location = self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2
@@ -49,7 +51,7 @@ class Enemy(Entity):
         return (chunk[1] * self.chunk_width + self.chunk_width // 2,
                 chunk[0] * self.chunk_height + self.chunk_height // 2)
 
-    def next_chunk(self):
+    def next_chunk(self, emergency=False):
         prevs = [[None] * len(self.map[0]) for i in range(len(self.map))]
         queue = [self.location]
         while queue:
@@ -63,10 +65,12 @@ class Enemy(Entity):
             y, x = self.destination
             while prevs[y][x] != self.location:
                 y, x = prevs[y][x]
-            self.emergency_destination = y, x
             return y, x
         else:
-            return self.emergency_destination
+            if emergency:
+                self.map = [[False] * len(self.map[0]) for i in range(len(self.map))]
+            self.destination = self.emergency_destination
+            return self.next_chunk(True)
 
     def form_map(self, belle, *groups):
         group = pygame.sprite.Group()
@@ -82,8 +86,17 @@ class Enemy(Entity):
                 minisprite.rect = pygame.Rect(j, i, self.chunk_width, self.chunk_height)
                 self.map[-1].append(bool(pygame.sprite.spritecollideany(minisprite, group)))
 
+    def add_damaging_bullet(self, bullet):
+        super().add_damaging_bullet(bullet)
+        self.set_animation(f"{self.animation_name.split('_')[0]}_damage")
+
+    def remove_damaging_bullet(self, bullet=None):
+        super().remove_damaging_bullet(bullet)
+        self.set_animation(f"{self.animation_name.split('_')[0]}_movement")
+
     def update(self, rooms_obstacles, rooms_entities, field_size):
         super().update()
+        self.remove_damaging_bullet()
         self.field_size = field_size
         self.chunk_width = int(.045 * self.field_size[0])
         self.chunk_height = int(.08 * self.field_size[1])

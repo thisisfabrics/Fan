@@ -14,7 +14,7 @@ class Start(Screen):
         self.signal_to_change = None
         self.yellowing = int()
         self.yellowing_surface = pygame.Surface((self.frame.get_width(), self.frame.get_height()))
-        self.yellowing_surface.fill(pygame.Color(194, 102, 41))
+        self.yellowing_surface.fill(self.r.color("autumn_yellow"))
         self.yellowing_surface.set_alpha(self.yellowing)
         self.threshold = 120
         self.threshold_step = 10

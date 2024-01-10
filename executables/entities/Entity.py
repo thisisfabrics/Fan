@@ -1,4 +1,5 @@
 import pygame
+import time
 
 
 from modules.animation import Animated
@@ -16,14 +17,22 @@ class Entity(pygame.sprite.Sprite, Animated):
                                     self.r.constant("useful_height") / 2 - self.rect.height / 2)
         self.energy = 100
         self.speed = 1 * self.r.constant("coefficient")
+        self.damaging_bullets = dict()
         self.last_delta_x = float()
         self.last_delta_y = float()
         self.x, self.y = self.rect[:2]
 
-    def damage(self, bullet):
-        self.energy -= bullet.damage
-        if self.energy <= 0:
-            self.kill()
+    def add_damaging_bullet(self, bullet):
+        if bullet not in self.damaging_bullets:
+            self.damaging_bullets[bullet] = pygame.time.Clock()
+
+    def remove_damaging_bullet(self, bullet=None):
+        if bullet:
+            del self.damaging_bullets[bullet]
+        else:
+            for key in list(self.damaging_bullets.keys()):
+                if not key.alive():
+                    del self.damaging_bullets[key]
 
     def undo_move_x(self):
         self.rect.x -= int(self.last_delta_x)
@@ -43,3 +52,4 @@ class Entity(pygame.sprite.Sprite, Animated):
 
     def update(self, *args):
         self.play_animation()
+

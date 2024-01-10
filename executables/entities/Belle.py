@@ -40,6 +40,7 @@ class Belle(Entity):
     def use_weapon(self):
         self.weapons[0].release_bullet((self.mouse_position_compensation_x,
                                         self.mouse_position_compensation_y + self.r.constant("real_offset")))
+        self.weapons[0].set_animation("fan_attack", 100)
 
     def move(self):
         self.last_delta_x = self.x_move_time.tick() * self.x_movement * self.speed
