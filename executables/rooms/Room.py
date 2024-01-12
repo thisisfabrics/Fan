@@ -57,9 +57,12 @@ class Room:
             surface.blit(obstacle.image, (obstacle.rect.x, obstacle.rect.y))
 
     def draw_entities(self, surface, hand_mode=False):
-        for entity in self.entities_group.sprites() if not hand_mode else (self.find_belle(),):
+        belle = self.find_belle()
+        for entity in self.entities_group.sprites() if not hand_mode else (belle,):
             if isinstance(entity, Belle) and not hand_mode:
                 continue
+            if not hand_mode and pygame.sprite.collide_rect(entity, belle) and belle.became_ghost_at is None:
+                belle.damage_collision(entity)
             x = min(self.image.get_rect().width - entity.rect.width, max(0, entity.rect.x))
             y = min(self.image.get_rect().height - entity.rect.height, max(0, entity.rect.y))
             if entity.rect.x != x:
@@ -83,9 +86,9 @@ class Room:
     def draw_bullets(self, surface):
         iteration_bin = self.find_belle().weapons[0].bullets_group.sprites()
         for bullet in iteration_bin:
-            for enemy in filter(lambda elem: not isinstance(elem, Belle), self.entities_group.sprites()):
-                if pygame.sprite.collide_rect(bullet, enemy):
-                    enemy.add_damaging_bullet(bullet)
+            for entity in self.entities_group.sprites():
+                if pygame.sprite.collide_rect(bullet, entity) and entity.__class__ in bullet.hitable_entities:
+                    entity.add_damaging_bullet(bullet)
             bullet.draw(surface)
 
     def find_belle(self):

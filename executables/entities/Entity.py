@@ -27,7 +27,8 @@ class Entity(pygame.sprite.Sprite, Animated):
             self.damaging_bullets[bullet] = pygame.time.Clock(), pygame.time.Clock()
 
     def damage(self):
-        pass
+        for elem, last_clock in self.damaging_bullets.items():
+            self.energy -= elem.damage_rate * last_clock[-1].tick() / 1000
 
     def remove_damaging_bullet(self, bullet=None):
         if bullet:
@@ -57,5 +58,6 @@ class Entity(pygame.sprite.Sprite, Animated):
         if self.energy <= 0:
             self.kill()
             return
+        self.damage()
         self.play_animation()
 

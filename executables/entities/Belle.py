@@ -1,3 +1,6 @@
+import math
+import time
+
 import pygame
 
 from executables.entities.Entity import Entity
@@ -15,6 +18,8 @@ class Belle(Entity):
         self.y_move_time = UselessClock()
         self.x_movement = int()
         self.y_movement = int()
+        self.ghost_time = 2000000000
+        self.became_ghost_at = None
 
     def aim_cursor(self):
         self.set_mouse_position()
@@ -86,8 +91,32 @@ class Belle(Entity):
         if not (self.y_move_time.tick() + self.x_move_time.tick()) and "idle" not in self.animation_name:
             self.set_animation(f"{self.__class__.__name__.lower()}_idle")
 
+    def damage(self):
+        if len(self.damaging_bullets) and not self.became_ghost_at:
+            self.make_ghost()
+        if not self.became_ghost_at:
+            super().damage()
+
+    def damage_collision(self, entity):
+        self.energy -= entity.collision_damage_rate
+        self.make_ghost()
+
+    def make_ghost(self):
+        self.became_ghost_at = time.time_ns()
+
+    def update_ghost_state(self):
+        if self.became_ghost_at:
+            if self.ghost_time < time.time_ns() - self.became_ghost_at:
+                self.became_ghost_at = None
+                return
+            self.image = self.image.copy()
+            self.image.set_alpha(arg := int(math.sin(time.time_ns() / 10 ** 7.8) * 255))
+            self.weapons[0].image = self.weapons[0].image.copy()
+            self.weapons[0].image.set_alpha(arg)
+
     def update(self, *args):
         super().update()
+        self.update_ghost_state()
         self.aim_cursor()
         self.move()
 

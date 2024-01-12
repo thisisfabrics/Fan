@@ -13,6 +13,7 @@ class Enemy(Entity):
         self.location = int(), int()
         self.emergency_destination = int(), int()
         self.clock = pygame.time.Clock()
+        self.collision_damage_rate = 1
         self.map = list()
         self.field_size = (int(), int())
         self.chunk_width = int()
@@ -46,6 +47,12 @@ class Enemy(Entity):
         self.y += self.last_delta_y
         self.rect.x = self.x
         self.rect.y = self.y
+
+    def aim_movement(self):
+        if self.last_delta_x < 0 and not self.animation_is_flipped:
+            self.animation_is_flipped = False if "damage" in self.animation_name else True
+        elif self.last_delta_x >= 0 and self.animation_is_flipped:
+            self.animation_is_flipped = True if "damage" in self.animation_name else False
 
     def chunck_to_pos(self, chunk):
         return (chunk[1] * self.chunk_width + self.chunk_width // 2,
@@ -96,14 +103,9 @@ class Enemy(Entity):
         if "movement" not in self.animation_name and not len(self.damaging_bullets):
             self.set_animation(f"{self.animation_name.split('_')[0]}_movement", 200)
 
-    def damage(self):
-        for elem, (_, clock) in self.damaging_bullets.items():
-            self.energy -= elem.damage_rate * clock.tick() / 1000
-
     def update(self, rooms_obstacles, rooms_entities, field_size):
         super().update()
         self.remove_damaging_bullet()
-        self.damage()
         self.field_size = field_size
         self.chunk_width = int(.045 * self.field_size[0])
         self.chunk_height = int(.08 * self.field_size[1])
@@ -112,3 +114,4 @@ class Enemy(Entity):
         self.set_destination(belle)
         self.set_location()
         self.move(self.clock.tick() * self.speed)
+        self.aim_movement()

@@ -14,6 +14,7 @@ class Bullet(pygame.sprite.Sprite):
         self.delta_x = end_pos[0] - start_pos[0]
         self.delta_y = end_pos[1] - start_pos[1]
         self.start_pos = start_pos
+        self.hitable_entities = tuple()
         self.end_pos = end_pos
         self.current_pos = self.start_pos
         self.speed = 0.5 * self.r.constant("coefficient")
@@ -21,7 +22,8 @@ class Bullet(pygame.sprite.Sprite):
                                        self.start_pos[1] - self.r.constant("useful_height") / 2,
                                        self.r.constant("useful_width"), self.r.constant("useful_height"))
         self.rect = pygame.Rect(0, 0, 0, 0)
-        self.angle = math.atan(abs(self.delta_y / self.delta_x))
+        self.angle = math.atan(abs(self.delta_y / self.delta_x)) if self.delta_x else \
+            math.pi / 2 * (1 if self.delta_y <= 0 else -1)
         if self.delta_x < 0 < self.delta_y:
             self.angle = math.pi - self.angle
         if self.delta_y < 0 < self.delta_x:
