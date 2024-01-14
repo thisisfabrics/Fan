@@ -3,18 +3,24 @@ import random
 import pygame.sprite
 
 from executables.entities.Belle import Belle
+from executables.rooms.obstacles.Bottom import Bottom
 from executables.rooms.obstacles.Fridge import Fridge
 from executables.entities.Catterfield import Catterfield
+from executables.rooms.obstacles.Right import Right
+from executables.rooms.obstacles.Top import Top
+from executables.rooms.obstacles.Portal import Portal
 
 
 class Room:
-    def __init__(self, r):
+    def __init__(self, r, collection_coords):
         self.r = r
+        self.collection_coords = collection_coords
         self.image = self.r.drawable("tiles")
         self.obstacles_group = pygame.sprite.Group()
-        self.max_count_of_obstacles = 5
+        self.max_count_of_obstacles = 3
         self.max_count_of_enemies = 4
         self.entities_group = pygame.sprite.Group()
+        self.portals_group = pygame.sprite.Group()
         self.build()
         self.populate()
 
@@ -37,6 +43,7 @@ class Room:
 
     def build(self):
         self.obstacles_group.empty()
+        self.portals_group.empty()
         for i in range(random.randrange(1, self.max_count_of_obstacles)):
             next_obstacle = random.choice((Fridge, ))(self.r)
             x, y = (random.randrange(self.image.get_rect().width - next_obstacle.rect.width),
@@ -48,13 +55,27 @@ class Room:
                         random.randrange(self.image.get_rect().height - next_obstacle.rect.height))
                 next_obstacle.rect.x, next_obstacle.rect.y = x, y
             self.obstacles_group.add(next_obstacle)
+        y, x = self.collection_coords
+        if x != 2:
+            self.portals_group.add(Right(self.r, self.image.get_rect()[-2:]))
+        if y != 2:
+            self.portals_group.add(Bottom(self.r, self.image.get_rect()[-2:]))
+        if x:
+            self.portals_group.add(Portal(self.r, self.image.get_rect()[-2:]))
+        if y:
+            self.portals_group.add(Top(self.r, self.image.get_rect()[-2:]))
 
     def add_entity(self, entity):
         self.entities_group.add(entity)
 
+    def remove_entity(self, entity):
+        self.entities_group.remove(entity)
+
     def draw_obstacles(self, surface):
-        for obstacle in self.obstacles_group.sprites():
-            surface.blit(obstacle.image, (obstacle.rect.x, obstacle.rect.y))
+        self.obstacles_group.draw(surface)
+
+    def draw_portals(self, surface):
+        self.portals_group.draw(surface)
 
     def draw_entities(self, surface, hand_mode=False):
         belle = self.find_belle()
@@ -74,14 +95,25 @@ class Room:
     def draw_belle(self, surface):
         entity = self.find_belle()
         if pygame.sprite.spritecollideany(entity, self.obstacles_group):
-            entity.undo_move_x()
-            if pygame.sprite.spritecollideany(entity, self.obstacles_group):
-                entity.redo_move_x()
+            if entity.last_delta_x:
+                entity.undo_move_x()
+            if entity.last_delta_y:
                 entity.undo_move_y()
-                if pygame.sprite.spritecollideany(entity, self.obstacles_group):
+        is_entered_portal = False
+        if portal := pygame.sprite.spritecollideany(entity, self.portals_group):
+            sequence_x = [portal.rect.x, entity.rect.x, entity.rect.x + entity.rect.width,
+                          portal.rect.x + portal.rect.width]
+            sequence_y = [portal.rect.y, entity.rect.y, entity.rect.y + entity.rect.height,
+                          portal.rect.y + portal.rect.height]
+            if sequence_x != sorted(sequence_x) and sequence_y != sorted(sequence_y):
+                if entity.last_delta_x:
                     entity.undo_move_x()
+                if entity.last_delta_y:
                     entity.undo_move_y()
+            else:
+                is_entered_portal = portal
         self.draw_entities(surface, True)
+        return is_entered_portal
 
     def draw_bullets(self, surface):
         iteration_bin = self.find_belle().weapons[0].bullets_group.sprites()
@@ -104,11 +136,12 @@ class Room:
         this_room = pygame.Surface((self.image.get_rect().width, self.image.get_rect().height))
         this_room.blit(self.image, (0, 0))
         self.draw_obstacles(this_room)
+        self.draw_portals(this_room)
         self.draw_entities(this_room)
         self.draw_bullets(this_room)
-        self.draw_belle(this_room)
+        is_entered_portal = self.draw_belle(this_room)
         self.draw_weapon(this_room)
-        return this_room
+        return this_room, is_entered_portal
 
     def update_sprites(self):
         self.find_belle().weapons[0].bullets_group.update()

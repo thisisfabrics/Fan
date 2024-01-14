@@ -1,9 +1,13 @@
+import itertools
 import random
 import pygame
 
 from executables.entities.Belle import Belle
 from executables.rooms.Hall import Hall
 from executables.rooms.Room import Room
+from executables.rooms.obstacles.Bottom import Bottom
+from executables.rooms.obstacles.Right import Right
+from executables.rooms.obstacles.Top import Top
 from executables.ui.Screen import Screen
 from modules.collectiontools import linerize
 
@@ -13,12 +17,16 @@ class Continue(Screen):
         super().__init__(r, frame)
         if not mode:
             self.level = int()
-            self.rooms = [[Room(self.r) if random.random() < 0 else Hall(self.r) for j in range(3)] for i in range(3)]
+            self.rooms = [[Room(self.r, (i, j)) if random.random() < 1 else Hall(self.r) for j in range(3)]
+                          for i in range(3)]
             self.rooms[0][0].add_entity(Belle(self.r, "belle_idle", 200))
             self.rooms[0][0].build()
 
+        self.test = list()
+
     def find_belle(self):
-        room = next(filter(lambda elem: Belle in map(lambda el: el.__class__, elem.entities_group.sprites()), linerize(self.rooms)))
+        room = next(filter(lambda elem: Belle in map(lambda el: el.__class__, elem.entities_group.sprites()),
+                           linerize(self.rooms)))
         belle = room.find_belle()
         return belle, room
 
@@ -51,8 +59,27 @@ class Continue(Screen):
         if button == 1:
             self.remove_time_event("release_bullets")
 
+    def push_belle_in_direction(self, portal):
+        belle, room = self.find_belle()
+        belle_row, belle_column = room.collection_coords
+        room.remove_entity(belle)
+        if isinstance(portal, Right):
+            belle_column = belle_column + 1
+            belle.x -= room.image.get_rect().width - self.r.drawable("portal").get_rect().width * 2 - belle.rect.width
+        elif isinstance(portal, Top):
+            belle_row = belle_row - 1
+            belle.y += room.image.get_rect().height - self.r.drawable("portal").get_rect().width * 2 - belle.rect.height
+        elif isinstance(portal, Bottom):
+            belle_row = belle_row + 1
+            belle.y -= room.image.get_rect().height - self.r.drawable("portal").get_rect().width * 2 - belle.rect.height
+        else:
+            belle_column = belle_column - 1
+            belle.x += room.image.get_rect().width - self.r.drawable("portal").get_rect().width * 2 - belle.rect.width
+        belle.rect.x, belle.rect.y = belle.x, belle.y
+        self.rooms[belle_row][belle_column].add_entity(belle)
+
     def place_room(self):
-        surface_from_room = self.find_belle()[1].draw()
+        surface_from_room, is_entered_portal = self.find_belle()[1].draw()
         belle_x, belle_y = self.find_belle()[0].rect.x + self.find_belle()[0].rect.width / 2, \
             self.find_belle()[0].rect.y + self.find_belle()[0].rect.height / 2
         x, y = belle_x - self.r.constant("useful_width") / 2, belle_y - self.r.constant("useful_height") / 2
@@ -60,7 +87,9 @@ class Continue(Screen):
         y = min(surface_from_room.get_rect().height - self.r.constant("useful_height"), max(0, y))
         self.find_belle()[0].set_mouse_position_compensation(x, y)
         self.frame.blit(surface_from_room, (-x, -y))
+        return is_entered_portal
 
     def update(self):
         self.find_belle()[1].update_sprites()
-        self.place_room()
+        if entered_portal := self.place_room():
+            self.push_belle_in_direction(entered_portal)
