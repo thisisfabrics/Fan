@@ -17,7 +17,7 @@ class Continue(Screen):
         super().__init__(r, frame)
         if not mode:
             self.level = int()
-            self.rooms = [[Room(self.r, (i, j)) if random.random() < 1 else Hall(self.r) for j in range(3)]
+            self.rooms = [[Room(self.r, (i, j)) if random.random() < .5 else Hall(self.r, (i, j)) for j in range(3)]
                           for i in range(3)]
             self.rooms[0][0].add_entity(Belle(self.r, "belle_idle", 200))
             self.rooms[0][0].build()
@@ -77,6 +77,27 @@ class Continue(Screen):
             belle.x += room.image.get_rect().width - self.r.drawable("portal").get_rect().width * 2 - belle.rect.width
         belle.rect.x, belle.rect.y = belle.x, belle.y
         self.rooms[belle_row][belle_column].add_entity(belle)
+        if room.__class__ != self.rooms[belle_row][belle_column].__class__:
+            if isinstance(portal, Top) or isinstance(portal, Bottom):
+                belle.x = self.rooms[belle_row][belle_column].image.get_rect().width / 2 - belle.rect.width / 2
+                belle.y = portal.rect.height if not isinstance(portal, Top) else \
+                    self.rooms[belle_row][belle_column].image.get_rect().height - \
+                    portal.rect.height - belle.rect.height
+            else:
+                belle.y = self.rooms[belle_row][belle_column].image.get_rect().height / 2 - belle.rect.height / 2
+                belle.x = portal.rect.width if isinstance(portal, Right) else \
+                    self.rooms[belle_row][belle_column].image.get_rect().width - \
+                    portal.rect.width - belle.rect.width
+            belle.rect.x = belle.x
+            belle.rect.y = belle.y
+        self.clear_clocks_and_bullets()
+
+    def clear_clocks_and_bullets(self):
+        belle, room = self.find_belle()
+        for elem in filter(lambda el: not isinstance(el, Belle), room.entities_group.sprites()):
+            elem.clock.tick()
+            elem.damaging_bullets = dict()
+        belle.weapons[0].bullets_group.empty()
 
     def place_room(self):
         surface_from_room, is_entered_portal = self.find_belle()[1].draw()

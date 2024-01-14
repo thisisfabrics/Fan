@@ -42,18 +42,33 @@ class Room:
             self.add_entity(next_enemy)
 
     def build(self):
+        belle_width, belle_height = self.r.drawable("belle_idle_0").get_rect()[-2:]
+        portal_width, portal_height = self.r.drawable("portal").get_rect()[-2:]
+        belle_addition_size = int(50 * self.r.constant("coefficient"))
+        approved_spawn_x_range_start = belle_width + portal_width + belle_addition_size
+        approved_spawn_x_range_end = self.image.get_rect().width - belle_width - portal_width - belle_addition_size
+        approved_spawn_y_range_start = belle_height + portal_width + belle_addition_size
+        approved_spawn_y_range_end = self.image.get_rect().height - belle_height - portal_width - belle_addition_size
         self.obstacles_group.empty()
         self.portals_group.empty()
         for i in range(random.randrange(1, self.max_count_of_obstacles)):
             next_obstacle = random.choice((Fridge, ))(self.r)
-            x, y = (random.randrange(self.image.get_rect().width - next_obstacle.rect.width),
-                    random.randrange(self.image.get_rect().height - next_obstacle.rect.height))
+            x, y = (random.randrange(approved_spawn_x_range_start,
+                                     approved_spawn_x_range_end - next_obstacle.rect.width),
+                    random.randrange(approved_spawn_y_range_start,
+                                     approved_spawn_y_range_end - next_obstacle.rect.height))
             next_obstacle.rect.x, next_obstacle.rect.y = x, y
-            while pygame.sprite.spritecollideany(next_obstacle, self.obstacles_group) or \
-                    pygame.sprite.spritecollideany(next_obstacle, self.entities_group):
-                x, y = (random.randrange(self.image.get_rect().width - next_obstacle.rect.width),
-                        random.randrange(self.image.get_rect().height - next_obstacle.rect.height))
+            iteration = 1000
+            while (pygame.sprite.spritecollideany(next_obstacle, self.obstacles_group) or
+                    pygame.sprite.spritecollideany(next_obstacle, self.entities_group)) and iteration:
+                iteration -= 1
+                x, y = (random.randrange(approved_spawn_x_range_start,
+                                         approved_spawn_x_range_end - next_obstacle.rect.width),
+                        random.randrange(approved_spawn_y_range_start,
+                                         approved_spawn_y_range_end - next_obstacle.rect.height))
                 next_obstacle.rect.x, next_obstacle.rect.y = x, y
+            if not iteration:
+                continue
             self.obstacles_group.add(next_obstacle)
         y, x = self.collection_coords
         if x != 2:
@@ -95,10 +110,12 @@ class Room:
     def draw_belle(self, surface):
         entity = self.find_belle()
         if pygame.sprite.spritecollideany(entity, self.obstacles_group):
-            if entity.last_delta_x:
-                entity.undo_move_x()
-            if entity.last_delta_y:
+            entity.undo_move_x()
+            if pygame.sprite.spritecollideany(entity, self.obstacles_group):
+                entity.redo_move_x()
                 entity.undo_move_y()
+                if pygame.sprite.spritecollideany(entity, self.obstacles_group):
+                    entity.undo_move_x()
         is_entered_portal = False
         if portal := pygame.sprite.spritecollideany(entity, self.portals_group):
             sequence_x = [portal.rect.x, entity.rect.x, entity.rect.x + entity.rect.width,
@@ -116,8 +133,7 @@ class Room:
         return is_entered_portal
 
     def draw_bullets(self, surface):
-        iteration_bin = self.find_belle().weapons[0].bullets_group.sprites()
-        for bullet in iteration_bin:
+        for bullet in self.find_belle().weapons[0].bullets_group.sprites():
             for entity in self.entities_group.sprites():
                 if pygame.sprite.collide_rect(bullet, entity) and entity.__class__ in bullet.hitable_entities:
                     entity.add_damaging_bullet(bullet)
