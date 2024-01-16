@@ -104,7 +104,8 @@ class Enemy(Entity):
             self.set_animation(f"{self.animation_name.split('_')[0]}_movement", 200)
 
     def update(self, rooms_obstacles, rooms_entities, field_size):
-        super().update()
+        if coords := super().update():
+            return coords
         self.remove_damaging_bullet()
         self.field_size = field_size
         self.chunk_width = int(.045 * self.field_size[0])

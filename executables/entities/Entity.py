@@ -16,6 +16,7 @@ class Entity(pygame.sprite.Sprite, Animated):
         self.rect.x, self.rect.y = (self.r.constant("useful_width") / 2 - self.rect.width / 2,
                                     self.r.constant("useful_height") / 2 - self.rect.height / 2)
         self.energy = 100
+        self.energy_threshold = 100
         self.speed = 1 * self.r.constant("coefficient")
         self.damaging_bullets = dict()
         self.last_delta_x = float()
@@ -56,8 +57,9 @@ class Entity(pygame.sprite.Sprite, Animated):
 
     def update(self, *args):
         if self.energy <= 0:
+            destruction_coords = self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2
             self.kill()
-            return
+            return destruction_coords
         self.damage()
         self.play_animation()
 

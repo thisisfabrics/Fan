@@ -21,8 +21,9 @@ class Continue(Screen):
                           for i in range(3)]
             self.rooms[0][0].add_entity(Belle(self.r, "belle_idle", 200))
             self.rooms[0][0].build()
-
-        self.test = list()
+            self.battery_equivalent = 10
+            self.interface_offset = 40 * self.r.constant("coefficient"), 40 * self.r.constant("coefficient")
+            self.money = int()
 
     def find_belle(self):
         room = next(filter(lambda elem: Belle in map(lambda el: el.__class__, elem.entities_group.sprites()),
@@ -110,7 +111,15 @@ class Continue(Screen):
         self.frame.blit(surface_from_room, (-x, -y))
         return is_entered_portal
 
+    def place_interface(self):
+        belle = self.find_belle()[0]
+        for i in range(belle.energy_threshold // self.battery_equivalent):
+            self.frame.blit(self.r.drawable("active_battery") if belle.energy - self.battery_equivalent * i > 0 else
+                            self.r.drawable("passive_battery"),
+                            (self.interface_offset[0] + 50 * i, self.interface_offset[1]))
+
     def update(self):
         self.find_belle()[1].update_sprites()
         if entered_portal := self.place_room():
             self.push_belle_in_direction(entered_portal)
+        self.place_interface()
