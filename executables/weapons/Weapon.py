@@ -14,6 +14,7 @@ class Weapon(pygame.sprite.Sprite, Animated):
         self.offset_flipped = int(), int()
         self.bullet = None
         self.bullets_group = pygame.sprite.Group()
+        self.power = int()
 
     def release_bullet(self, mouse_position_compenstation):
         self.bullet(self.r, (self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2),

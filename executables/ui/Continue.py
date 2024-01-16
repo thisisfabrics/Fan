@@ -23,7 +23,6 @@ class Continue(Screen):
             self.rooms[0][0].build()
             self.battery_equivalent = 10
             self.interface_offset = 40 * self.r.constant("coefficient"), 40 * self.r.constant("coefficient")
-            self.money = int()
 
     def find_belle(self):
         room = next(filter(lambda elem: Belle in map(lambda el: el.__class__, elem.entities_group.sprites()),

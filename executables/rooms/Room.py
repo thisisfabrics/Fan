@@ -2,8 +2,9 @@ import random
 
 import pygame.sprite
 
+from executables.collectables.Battery import Battery
 from executables.collectables.Coin import Coin
-from executables.collectables.WeaponEnergy import WeaponEnergy
+from executables.collectables.Powerup import Powerup
 from executables.entities.Belle import Belle
 from executables.rooms.obstacles.Bottom import Bottom
 from executables.rooms.obstacles.Fridge import Fridge
@@ -152,6 +153,14 @@ class Room:
         surface.blit((we := self.find_belle().weapons[0]).image, we.rect[:2])
 
     def draw_collectables(self, surface):
+        belle = self.find_belle()
+        for elem in pygame.sprite.spritecollide(belle, self.collectables_group, 0):
+            if isinstance(elem, Coin):
+                belle.money += elem.collect()
+            elif isinstance(elem, Powerup):
+                belle.weapons[0].power += elem.collect()
+            elif isinstance(elem, Battery):
+                belle.energy = (belle.energy + elem.collect()) % (belle.energy_threshold + 1)
         self.collectables_group.draw(surface)
 
     def draw(self):
@@ -171,8 +180,12 @@ class Room:
         self.find_belle().weapons[0].update()
         for elem in self.entities_group.sprites():
             if coords := elem.update(self.obstacles_group, self.entities_group, self.image.get_rect()[-2:]):
-                WeaponEnergy(self.r, coords, self.collectables_group)
+                Powerup(self.r, coords, self.collectables_group)
                 if random.random() > 0.4:
                     Coin(self.r, (coords[0] + random.randrange(50, 100) * self.r.constant("coefficient"),
                          coords[1] + random.randrange(50, 100) * self.r.constant("coefficient")),
                          self.collectables_group)
+                if random.random() > 0.7:
+                    Battery(self.r, (coords[0] + random.randrange(50, 100) * self.r.constant("coefficient"),
+                            coords[1] + random.randrange(50, 100) * self.r.constant("coefficient")),
+                            self.collectables_group)

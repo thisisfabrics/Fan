@@ -20,6 +20,7 @@ class Belle(Entity):
         self.y_movement = int()
         self.ghost_time = 2000000000
         self.became_ghost_at = None
+        self.money = int()
 
     def aim_cursor(self):
         self.set_mouse_position()
