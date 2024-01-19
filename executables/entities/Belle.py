@@ -3,7 +3,7 @@ import time
 
 import pygame
 
-from executables.entities.Entity import Entity
+from executables.entities.enemies.Entity import Entity
 from executables.weapons.Fan import Fan
 
 

@@ -11,7 +11,6 @@ class Start(Screen):
         super().__init__(r, frame)
         self.state = int()
         self.state_multiplier = 1
-        self.signal_to_change = None
         self.yellowing = int()
         self.yellowing_surface = pygame.Surface((self.frame.get_width(), self.frame.get_height()))
         self.yellowing_surface.fill(self.r.color("autumn_yellow"))

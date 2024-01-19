@@ -8,7 +8,7 @@ from executables.collectables.Powerup import Powerup
 from executables.entities.Belle import Belle
 from executables.rooms.obstacles.Bottom import Bottom
 from executables.rooms.obstacles.Fridge import Fridge
-from executables.entities.Catterfield import Catterfield
+from executables.entities.enemies.Catterfield import Catterfield
 from executables.rooms.obstacles.Right import Right
 from executables.rooms.obstacles.Top import Top
 from executables.rooms.obstacles.Portal import Portal

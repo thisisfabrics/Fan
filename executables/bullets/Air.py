@@ -1,5 +1,4 @@
 import math
-import time
 
 import pygame.draw
 import executables.bullets.Bullet
@@ -12,7 +11,7 @@ class Air(executables.bullets.Bullet.Bullet):
         self.speed = 2 * self.r.constant("coefficient")
         self.wavefront_threshold = int(500 * self.r.constant("coefficient"))
         self.damage_rate = 10
-        self.hitable_entities = (executables.entities.Catterfield.Catterfield,)
+        self.hitable_entities = (executables.entities.enemies.Catterfield.Catterfield,)
         detalization = math.pi / 48
         start_angle = self.angle - math.pi / 16
         end_angle = self.angle + math.pi / 16

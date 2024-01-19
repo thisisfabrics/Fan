@@ -2,6 +2,7 @@ import sys
 import pygame
 
 from executables.ui.Continue import Continue
+from executables.ui.Finish import Finish
 from executables.ui.Start import Start
 from modules.runtimeresources import R
 
@@ -28,6 +29,8 @@ class Game:
         if destination:
             if destination == "continue":
                 self.current_screen = Continue(self.r, self.frame)
+            elif destination == "finish":
+                self.current_screen = Finish(self.r, self.frame)
 
     def loop(self):
         while self.playtime:

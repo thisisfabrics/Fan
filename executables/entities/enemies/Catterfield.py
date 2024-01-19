@@ -1,6 +1,6 @@
 import math
 
-from executables.entities.Enemy import Enemy
+from executables.entities.enemies.Enemy import Enemy
 
 
 class Catterfield(Enemy):

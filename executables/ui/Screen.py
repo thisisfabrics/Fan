@@ -6,6 +6,7 @@ class Screen:
         self.r = r
         self.frame = frame
         self.time_events = dict()
+        self.signal_to_change = None
 
     def add_time_event(self, name, action, period):
         self.time_events[pygame.USEREVENT + len(self.time_events)] = name, period, action
@@ -35,4 +36,7 @@ class Screen:
         pass
 
     def mouse_released(self, button):
+        pass
+
+    def update(self):
         pass

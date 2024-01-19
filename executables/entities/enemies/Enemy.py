@@ -3,7 +3,7 @@ import itertools
 import pygame
 
 from executables.entities.Belle import Belle
-from executables.entities.Entity import Entity
+from executables.entities.enemies.Entity import Entity
 
 
 class Enemy(Entity):
@@ -103,7 +103,7 @@ class Enemy(Entity):
         if "movement" not in self.animation_name and not len(self.damaging_bullets):
             self.set_animation(f"{self.animation_name.split('_')[0]}_movement", 200)
 
-    def update(self, rooms_obstacles, rooms_entities, field_size):
+    def update(self, rooms_obstacles, rooms_entities, field_size, has_uncommon_navigation=False):
         if coords := super().update():
             return coords
         self.remove_damaging_bullet()
@@ -112,7 +112,9 @@ class Enemy(Entity):
         self.chunk_height = int(.08 * self.field_size[1])
         belle = next(filter(lambda elem: isinstance(elem, Belle), rooms_entities.sprites()))
         self.form_map(belle, rooms_obstacles, rooms_entities)
-        self.set_destination(belle)
         self.set_location()
+        if has_uncommon_navigation:
+            return
+        self.set_destination(belle)
         self.move(self.clock.tick() * self.speed)
         self.aim_movement()

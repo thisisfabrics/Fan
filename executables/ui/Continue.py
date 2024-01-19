@@ -117,8 +117,19 @@ class Continue(Screen):
                             self.r.drawable("passive_battery"),
                             (self.interface_offset[0] + 50 * i, self.interface_offset[1]))
 
+    def push_to_database(self):
+        pass
+
+    def finish_game(self):
+        self.signal_to_change = "finish"
+
     def update(self):
         self.find_belle()[1].update_sprites()
-        if entered_portal := self.place_room():
-            self.push_belle_in_direction(entered_portal)
-        self.place_interface()
+        try:
+            if entered_portal := self.place_room():
+                self.push_belle_in_direction(entered_portal)
+            self.place_interface()
+        except StopIteration:
+            self.push_to_database()
+            self.finish_game()
+        return self.signal_to_change
