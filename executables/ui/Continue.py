@@ -6,6 +6,7 @@ from executables.collectables.CyclotronDecoy import CyclotronDecoy
 from executables.collectables.FanDecoy import FanDecoy
 from executables.collectables.VacuumCleanerDecoy import VacuumCleanerDecoy
 from executables.entities.Belle import Belle
+from executables.entities.enemies.Dispenser import Dispenser
 from executables.entities.enemies.Dust import Dust
 from executables.rooms.Hall import Hall
 from executables.rooms.Room import Room
@@ -105,9 +106,13 @@ class Continue(Screen):
 
     def clear_clocks_and_bullets(self):
         belle, room = self.find_belle()
-        for elem in filter(lambda el: not isinstance(el, Belle), room.entities_group.sprites()):
-            elem.clock.tick()
+        for elem in room.entities_group.sprites():
             elem.damaging_bullets = dict()
+            try:
+                elem.clock.tick()
+                elem.released_bullets_group.empty()
+            except AttributeError:
+                pass
         if belle.weapons:
             belle.weapons[0].bullets_group.empty()
 

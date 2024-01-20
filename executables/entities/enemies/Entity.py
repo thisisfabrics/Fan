@@ -61,5 +61,6 @@ class Entity(pygame.sprite.Sprite, Animated):
             self.kill()
             return destruction_coords
         self.damage()
+        self.remove_damaging_bullet()
         self.play_animation()
 

@@ -1,3 +1,4 @@
+import itertools
 import random
 
 import pygame.sprite
@@ -163,6 +164,14 @@ class Room:
                     entity.add_damaging_bullet(bullet)
             bullet.draw(surface)
 
+    def draw_npc_bullets(self, surface):
+        bullets = [elem.released_bullets_group.sprites() for elem in self.entities_group if isinstance(elem, Dispenser)]
+        for bullet in itertools.chain(*bullets):
+            for entity in self.entities_group.sprites():
+                if pygame.sprite.collide_rect(bullet, entity) and entity.__class__ in bullet.hitable_entities:
+                    entity.add_damaging_bullet(bullet)
+            bullet.draw(surface)
+
     def find_belle(self):
         try:
             return next(filter(lambda elem: isinstance(elem, Belle), self.entities_group.sprites()))
@@ -195,6 +204,7 @@ class Room:
         self.draw_collectables(this_room)
         self.draw_entities(this_room)
         self.draw_bullets(this_room)
+        self.draw_npc_bullets(this_room)
         is_entered_portal = self.draw_belle(this_room)
         self.draw_weapon(this_room)
         return this_room, is_entered_portal

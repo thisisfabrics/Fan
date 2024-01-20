@@ -23,6 +23,7 @@ class Bullet(pygame.sprite.Sprite):
                                        self.r.constant("useful_width"), self.r.constant("useful_height"))
         self.rect = pygame.Rect(0, 0, 0, 0)
         self.angle = convenient_atan(end_pos[1] - start_pos[1], end_pos[0] - start_pos[0])
+        self.x, self.y = self.rect[:2]
 
     def update(self):
         if not (self.barier_rect.x <= self.current_pos[0] <= self.barier_rect.x + self.barier_rect.width and

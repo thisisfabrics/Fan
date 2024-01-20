@@ -107,7 +107,6 @@ class Enemy(Entity):
     def update(self, rooms_obstacles, rooms_entities, field_size, has_uncommon_navigation=False):
         if coords := super().update():
             return coords
-        self.remove_damaging_bullet()
         self.field_size = field_size
         self.chunk_width = int(.045 * self.field_size[0])
         self.chunk_height = int(.08 * self.field_size[1])
