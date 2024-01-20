@@ -2,6 +2,9 @@ import itertools
 import random
 import pygame
 
+from executables.collectables.CyclotronDecoy import CyclotronDecoy
+from executables.collectables.FanDecoy import FanDecoy
+from executables.collectables.VacuumCleanerDecoy import VacuumCleanerDecoy
 from executables.entities.Belle import Belle
 from executables.rooms.Hall import Hall
 from executables.rooms.Room import Room
@@ -21,8 +24,14 @@ class Continue(Screen):
                           for i in range(3)]
             self.rooms[0][0].add_entity(Belle(self.r, "belle_idle", 200))
             self.rooms[0][0].build()
+            self.add_weapons()
             self.battery_equivalent = 10
             self.interface_offset = 40 * self.r.constant("coefficient"), 40 * self.r.constant("coefficient")
+
+    def add_weapons(self):
+        for decoy in (FanDecoy, VacuumCleanerDecoy, CyclotronDecoy):
+            randroom = self.rooms[random.randrange(len(self.rooms))][random.randrange(len(self.rooms[0]))]
+            decoy(self.r, randroom.free_pos(), randroom.collectables_group)
 
     def find_belle(self):
         room = next(filter(lambda elem: Belle in map(lambda el: el.__class__, elem.entities_group.sprites()),
@@ -52,8 +61,9 @@ class Continue(Screen):
 
     def mouse_pressed(self, button, pos):
         if button == 1:
-            self.add_time_event("release_bullets",
-                                self.find_belle()[0].use_weapon, self.find_belle()[0].weapons[0].timeout)
+            if self.find_belle()[0].weapons:
+                self.add_time_event("release_bullets",
+                                    self.find_belle()[0].use_weapon, self.find_belle()[0].weapons[0].timeout)
 
     def mouse_released(self, button):
         if button == 1:
@@ -97,7 +107,8 @@ class Continue(Screen):
         for elem in filter(lambda el: not isinstance(el, Belle), room.entities_group.sprites()):
             elem.clock.tick()
             elem.damaging_bullets = dict()
-        belle.weapons[0].bullets_group.empty()
+        if belle.weapons:
+            belle.weapons[0].bullets_group.empty()
 
     def place_room(self):
         surface_from_room, is_entered_portal = self.find_belle()[1].draw()

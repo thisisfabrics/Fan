@@ -10,7 +10,7 @@ from executables.weapons.Fan import Fan
 class Belle(Entity):
     def __init__(self, r, animation_name, animation_period, *sprite_groups):
         super().__init__(r, animation_name, animation_period, *sprite_groups)
-        self.weapons = [Fan(self.r, self.rect[:2], "fan_idle", 200)]
+        self.weapons = []
         self.mouse_position_compensation_x = int()
         self.mouse_position_compensation_y = int()
         self.mouse_position_x, self.mouse_position_y = pygame.mouse.get_pos()
@@ -26,13 +26,15 @@ class Belle(Entity):
         self.set_mouse_position()
         if self.rect.x + self.rect.width / 2 <= self.mouse_position_x and not self.animation_is_flipped:
             self.animation_is_flipped = True
-            self.weapons[0].animation_is_flipped = True
-            self.weapons[0].play_animation(True)
+            if self.weapons:
+                self.weapons[0].animation_is_flipped = True
+                self.weapons[0].play_animation(True)
             self.play_animation(True)
         elif self.rect.x + self.rect.width / 2 > self.mouse_position_x and self.animation_is_flipped:
             self.animation_is_flipped = False
-            self.weapons[0].animation_is_flipped = False
-            self.weapons[0].play_animation(True)
+            if self.weapons:
+                self.weapons[0].animation_is_flipped = False
+                self.weapons[0].play_animation(True)
             self.play_animation(True)
 
     def set_mouse_position(self):
@@ -44,6 +46,8 @@ class Belle(Entity):
         self.mouse_position_compensation_x, self.mouse_position_compensation_y = x, y
 
     def use_weapon(self):
+        if not self.weapons:
+            return
         self.weapons[0].release_bullet((self.mouse_position_compensation_x,
                                         self.mouse_position_compensation_y + self.r.constant("real_offset")))
         self.weapons[0].set_animation("fan_attack", 100)
@@ -55,10 +59,11 @@ class Belle(Entity):
         self.y += self.last_delta_y
         self.rect.x = self.x
         self.rect.y = self.y
-        self.weapons[0].rect.x = self.x
-        self.weapons[0].rect.y = self.y
-        self.weapons[0].apply_offset()
-        self.weapons[0].play_animation()
+        if self.weapons:
+            self.weapons[0].rect.x = self.x
+            self.weapons[0].rect.y = self.y
+            self.weapons[0].apply_offset()
+            self.weapons[0].play_animation()
 
     def start_moving(self, direction):
         if direction == "up":
@@ -112,8 +117,9 @@ class Belle(Entity):
                 return
             self.image = self.image.copy()
             self.image.set_alpha(arg := int(math.sin(time.time_ns() / 10 ** 7.8) * 255))
-            self.weapons[0].image = self.weapons[0].image.copy()
-            self.weapons[0].image.set_alpha(arg)
+            if self.weapons:
+                self.weapons[0].image = self.weapons[0].image.copy()
+                self.weapons[0].image.set_alpha(arg)
 
     def update(self, *args):
         super().update()

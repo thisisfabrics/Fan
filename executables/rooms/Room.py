@@ -4,6 +4,7 @@ import pygame.sprite
 
 from executables.collectables.Battery import Battery
 from executables.collectables.Coin import Coin
+from executables.collectables.FanDecoy import FanDecoy
 from executables.collectables.Powerup import Powerup
 from executables.entities.Belle import Belle
 from executables.entities.enemies.Dust import Dust
@@ -88,6 +89,21 @@ class Room:
     def add_entity(self, entity):
         self.entities_group.add(entity)
 
+    def free_pos(self):
+        temporary_sprite = pygame.sprite.Sprite()
+        temporary_sprite.rect = self.r.drawable("fan").get_rect()
+        x, y = random.randrange(self.image.get_rect().width), random.randrange(self.image.get_rect().height
+                                                                               - temporary_sprite.rect.width)
+        temporary_sprite.rect.x, temporary_sprite.rect.y = x, y
+        iterations = 1000
+        while (pygame.sprite.spritecollideany(temporary_sprite, self.obstacles_group) or
+               pygame.sprite.spritecollideany(temporary_sprite, self.portals_group)) and iterations:
+            iterations -= 1
+            x, y = random.randrange(self.image.get_rect().width), random.randrange(self.image.get_rect().height -
+                                                                                   temporary_sprite.rect.width)
+            temporary_sprite.rect.x, temporary_sprite.rect.y = x, y
+        return x, y
+
     def remove_entity(self, entity):
         self.entities_group.remove(entity)
 
@@ -138,7 +154,9 @@ class Room:
         return is_entered_portal
 
     def draw_bullets(self, surface):
-        for bullet in self.find_belle().weapons[0].bullets_group.sprites():
+        if not (weapons := self.find_belle().weapons):
+            return
+        for bullet in weapons[0].bullets_group.sprites():
             for entity in self.entities_group.sprites():
                 if pygame.sprite.collide_rect(bullet, entity) and entity.__class__ in bullet.hitable_entities:
                     entity.add_damaging_bullet(bullet)
@@ -151,7 +169,9 @@ class Room:
             pass
 
     def draw_weapon(self, surface):
-        surface.blit((we := self.find_belle().weapons[0]).image, we.rect[:2])
+        if not (weapons := self.find_belle().weapons):
+            return
+        surface.blit(weapons[0].image, weapons[0].rect[:2])
 
     def draw_collectables(self, surface):
         belle = self.find_belle()
@@ -162,6 +182,8 @@ class Room:
                 belle.weapons[0].power += elem.collect()
             elif isinstance(elem, Battery):
                 belle.energy = (belle.energy + elem.collect()) % (belle.energy_threshold + 1)
+            elif isinstance(elem, FanDecoy):
+                belle.weapons += elem.collect()
         self.collectables_group.draw(surface)
 
     def draw(self):
@@ -177,8 +199,9 @@ class Room:
         return this_room, is_entered_portal
 
     def update_sprites(self):
-        self.find_belle().weapons[0].bullets_group.update()
-        self.find_belle().weapons[0].update()
+        if weapons := self.find_belle().weapons:
+            weapons[0].bullets_group.update()
+            weapons[0].update()
         for elem in self.entities_group.sprites():
             if coords := elem.update(self.obstacles_group, self.entities_group, self.image.get_rect()[-2:]):
                 Powerup(self.r, coords, self.collectables_group)

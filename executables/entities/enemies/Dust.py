@@ -1,6 +1,5 @@
 import math
 import random
-import time
 
 import pygame.time
 
@@ -12,7 +11,7 @@ class Dust(Enemy):
     def __init__(self, r, animation_name, animation_period, *sprite_groups):
         self.do_once = True
         super().__init__(r, animation_name, animation_period, *sprite_groups)
-        self.speed = 1 * self.r.constant("coefficient")
+        self.speed = 5 * self.r.constant("coefficient")
         self.collision_damage_rate = 40
         self.energy_threshold = self.energy // 2
         self.move_time_x = None
@@ -27,7 +26,8 @@ class Dust(Enemy):
             self.do_once = False
 
     def update(self, rooms_obstacles, rooms_entities, field_size, has_uncommon_navigation=False):
-        super().update(rooms_obstacles, rooms_entities, field_size, True)
+        if coords := super().update(rooms_obstacles, rooms_entities, field_size, True):
+            return coords
         if self.move_time_x is None:
             if self.energy < self.energy_threshold:
                 self.move_time_x = pygame.time.Clock()
@@ -41,7 +41,7 @@ class Dust(Enemy):
                 return
         if self.location != self.destination:
             angle = convenient_atan(self.destination[0] - self.location[0], self.destination[1] - self.location[1])
-            self.x += abs(math.cos(angle) * self.move_time_x.tick() * self.speed) * (1 if self.location[1] < self.destination[1] else -1)
+            self.x += math.cos(angle) * self.move_time_x.tick() * self.speed
             self.rect.x = self.x
             self.y -= math.sin(angle) * self.move_time_y.tick() * self.speed
             self.rect.y = self.y
