@@ -98,10 +98,13 @@ class Belle(Entity):
             self.set_animation(f"{self.__class__.__name__.lower()}_idle")
 
     def damage(self):
-        if len(self.damaging_bullets) and not self.became_ghost_at:
+        if self.damaging_bullets and not self.became_ghost_at:
             self.make_ghost()
+        super().damage()
+        
+    def add_damaging_bullet(self, bullet):
         if not self.became_ghost_at:
-            super().damage()
+            super().add_damaging_bullet(bullet)
 
     def damage_collision(self, entity):
         self.energy -= entity.collision_damage_rate
