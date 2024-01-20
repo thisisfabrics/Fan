@@ -25,9 +25,17 @@ class Dust(Enemy):
             super().set_animation(animation_name, period)
             self.do_once = False
 
+    def damage_resize(self):
+        width, height = self.animation_frames[-1].get_rect()[-2:]
+        if self.image.get_rect()[-2:] == (width, height):
+            return
+        self.image = pygame.transform.smoothscale(self.image, (abs(width * self.energy // 100),
+                                                  abs(height * self.energy // 100)))
+
     def update(self, rooms_obstacles, rooms_entities, field_size, has_uncommon_navigation=False):
         if coords := super().update(rooms_obstacles, rooms_entities, field_size, True):
             return coords
+        self.damage_resize()
         if self.move_time_x is None:
             if self.energy < self.energy_threshold:
                 self.move_time_x = pygame.time.Clock()
@@ -48,4 +56,3 @@ class Dust(Enemy):
         else:
             self.move_time_x = None
             self.energy_threshold = int()
-        print(self.location, self.destination, convenient_atan(self.destination[0] - self.location[0], self.destination[1] - self.location[1]))

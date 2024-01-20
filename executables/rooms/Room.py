@@ -7,6 +7,7 @@ from executables.collectables.Coin import Coin
 from executables.collectables.FanDecoy import FanDecoy
 from executables.collectables.Powerup import Powerup
 from executables.entities.Belle import Belle
+from executables.entities.enemies.Dispenser import Dispenser
 from executables.entities.enemies.Dust import Dust
 from executables.rooms.obstacles.Bottom import Bottom
 from executables.rooms.obstacles.Fridge import Fridge
@@ -33,8 +34,8 @@ class Room:
     def populate(self):
         self.entities_group.empty()
         for i in range(random.randrange(1, self.max_count_of_enemies)):
-            next_enemy = (choiced := random.choice((Catterfield, Dust)))(self.r, f"{choiced.__name__.lower()}_movement",
-                                                                         200)
+            next_enemy = (choiced := random.choice(
+                (Catterfield, Dust, Dispenser)))(self.r, f"{choiced.__name__.lower()}_movement", 200)
             x, y = (random.randrange(self.image.get_rect().width - next_enemy.rect.width),
                     random.randrange(self.image.get_rect().height - next_enemy.rect.height))
             next_enemy.rect.x, next_enemy.rect.y = x, y

@@ -19,6 +19,7 @@ class Enemy(Entity):
         self.chunk_width = int()
         self.chunk_height = int()
         self.offsets = tuple((elem, el) for el in (-1, 1, 0) for elem in (-1, 1, 0) if el or elem)
+        self.belle = None
 
     def set_destination(self, entity):
         self.destination = entity.rect.x + entity.rect.width // 2, entity.rect.y + entity.rect.height // 2
@@ -111,6 +112,7 @@ class Enemy(Entity):
         self.chunk_width = int(.045 * self.field_size[0])
         self.chunk_height = int(.08 * self.field_size[1])
         belle = next(filter(lambda elem: isinstance(elem, Belle), rooms_entities.sprites()))
+        self.belle = belle
         self.form_map(belle, rooms_obstacles, rooms_entities)
         self.set_location()
         if has_uncommon_navigation:
