@@ -10,13 +10,19 @@ from modules.runtimeresources import R
 class Game:
     def __init__(self):
         self.window = pygame.display.set_mode((0, 0))  # , pygame.FULLSCREEN
+        self.window.fill("red")
         self.aspect_ratio = 16 / 9
         self.useful_width, self.useful_height = (info := pygame.display.Info()).current_w, info.current_h
         self.real_width, self.real_height = self.useful_width, self.useful_height
-        self.left_corner_y = int()
-        if self.useful_width / self.useful_height != self.aspect_ratio:
-            self.useful_height = self.useful_width / self.aspect_ratio
-            self.left_corner_y = 0.5 * info.current_h - 0.5 * self.useful_height
+        self.left_corner_y, self.left_corner_x = int(), int()
+        if self.useful_width < self.useful_height:
+            if self.useful_width / self.useful_height != self.aspect_ratio:
+                self.useful_height = self.useful_width / self.aspect_ratio
+        else:
+            if self.useful_width / self.useful_height != self.aspect_ratio:
+                self.useful_width = self.useful_height / self.aspect_ratio
+        self.left_corner_x = 0.5 * info.current_w - 0.5 * self.useful_width
+        self.left_corner_y = 0.5 * info.current_h - 0.5 * self.useful_height
         self.frame = pygame.Surface((self.useful_width, self.useful_height))
         self.r = R((self.useful_width, self.useful_height), (self.real_width, self.real_height))
         self.fps = 60
@@ -51,7 +57,7 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.current_screen.mouse_released(event.button)
             self.navigate(self.current_screen.update())
-            self.window.blit(self.frame, (0, self.left_corner_y))
+            self.window.blit(self.frame, (self.left_corner_x, self.left_corner_y))
             pygame.display.flip()
             self.clock.tick(self.fps)
         pygame.quit()

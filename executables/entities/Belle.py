@@ -46,8 +46,8 @@ class Belle(Entity):
     def use_weapon(self):
         if not self.weapons:
             return
-        self.weapons[0].release_bullet((self.mouse_position_compensation_x,
-                                        self.mouse_position_compensation_y + self.r.constant("real_offset")))
+        self.weapons[0].release_bullet((self.mouse_position_compensation_x - self.r.constant("real_offset_x"),
+                                        self.mouse_position_compensation_y - self.r.constant("real_offset_y")))
         self.weapons[0].set_animation(f"{self.weapons[0].__class__.__name__.lower()}_attack", 100)
 
     def move(self):

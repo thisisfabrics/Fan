@@ -18,7 +18,8 @@ class R:
             "coefficient": self.coefficient,
             "useful_width": self.useful_size[0],
             "useful_height": self.useful_size[1],
-            "real_offset": (self.useful_size[1] - self.real_size[1]) / 2
+            "real_offset_y": abs(self.useful_size[1] - self.real_size[1]) / 2,
+            "real_offset_x": abs(self.useful_size[0] - self.real_size[0]) / 2,
         }
         self.color_dictionary = {
             "autumn_yellow": pygame.Color(194, 102, 41),
