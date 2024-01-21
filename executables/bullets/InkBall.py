@@ -24,6 +24,4 @@ class InkBall(Bullet):
         self.rect.x, self.rect.y = self.x, self.y
         self.current_pos = self.x, self.y
 
-    def draw(self, surface):
-        surface.blit(self.image, self.rect[:2])
 

@@ -4,13 +4,13 @@ import time
 import pygame
 
 from executables.entities.enemies.Entity import Entity
-from executables.weapons.Fan import Fan
+import executables.weapons.VacuumCleaner
 
 
 class Belle(Entity):
     def __init__(self, r, animation_name, animation_period, *sprite_groups):
         super().__init__(r, animation_name, animation_period, *sprite_groups)
-        self.weapons = [Fan(self.r, (0, 0), "fan_idle", 200)]
+        self.weapons = [executables.weapons.VacuumCleaner.VacuumCleaner(self.r, self.rect[:2], "vacuumcleaner_idle", 200)]
         self.mouse_position_compensation_x = int()
         self.mouse_position_compensation_y = int()
         self.mouse_position_x, self.mouse_position_y = pygame.mouse.get_pos()
@@ -50,7 +50,7 @@ class Belle(Entity):
             return
         self.weapons[0].release_bullet((self.mouse_position_compensation_x,
                                         self.mouse_position_compensation_y + self.r.constant("real_offset")))
-        self.weapons[0].set_animation("fan_attack", 100)
+        self.weapons[0].set_animation(f"{self.weapons[0].__class__.__name__.lower()}_attack", 100)
 
     def move(self):
         self.last_delta_x = self.x_move_time.tick() * self.x_movement * self.speed
@@ -125,6 +125,7 @@ class Belle(Entity):
                 self.weapons[0].image.set_alpha(arg)
 
     def update(self, *args):
+        print(self.weapons)
         super().update()
         self.update_ghost_state()
         self.aim_cursor()

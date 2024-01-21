@@ -30,3 +30,6 @@ class Bullet(pygame.sprite.Sprite):
                 self.barier_rect.y <= self.current_pos[1] <= self.barier_rect.y + self.barier_rect.height):
             self.kill()
 
+    def draw(self, surface):
+        surface.blit(self.image, self.rect[:2])
+

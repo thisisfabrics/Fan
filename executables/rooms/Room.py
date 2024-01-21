@@ -7,6 +7,7 @@ from executables.collectables.Battery import Battery
 from executables.collectables.Coin import Coin
 from executables.collectables.FanDecoy import FanDecoy
 from executables.collectables.Powerup import Powerup
+from executables.collectables.VacuumCleanerDecoy import VacuumCleanerDecoy
 from executables.entities.Belle import Belle
 from executables.entities.enemies.Dispenser import Dispenser
 from executables.entities.enemies.Dust import Dust
@@ -193,6 +194,8 @@ class Room:
             elif isinstance(elem, Battery):
                 belle.energy = (belle.energy + elem.collect()) % (belle.energy_threshold + 1)
             elif isinstance(elem, FanDecoy):
+                belle.weapons += elem.collect()
+            elif isinstance(elem, VacuumCleanerDecoy):
                 belle.weapons += elem.collect()
         self.collectables_group.draw(surface)
 

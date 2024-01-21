@@ -26,5 +26,5 @@ class Weapon(pygame.sprite.Sprite, Animated):
         self.rect.y += self.offset_flipped[1] if self.animation_is_flipped else self.offset_not_flipped[1]
 
     def update(self):
-        if not len(self.bullets_group) and "attack" in self.animation_name:
+        if not self.bullets_group and "attack" in self.animation_name:
             self.set_animation(f"{self.animation_name.split('_')[0]}_idle", 200)
