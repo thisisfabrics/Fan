@@ -1,16 +1,14 @@
 import math
 import time
-
 import pygame
 
-from executables.entities.enemies.Entity import Entity
-import executables.weapons.VacuumCleaner
+from executables.entities.Entity import Entity
 
 
 class Belle(Entity):
     def __init__(self, r, animation_name, animation_period, *sprite_groups):
         super().__init__(r, animation_name, animation_period, *sprite_groups)
-        self.weapons = [executables.weapons.VacuumCleaner.VacuumCleaner(self.r, self.rect[:2], "vacuumcleaner_idle", 200)]
+        self.weapons = list()
         self.mouse_position_compensation_x = int()
         self.mouse_position_compensation_y = int()
         self.mouse_position_x, self.mouse_position_y = pygame.mouse.get_pos()
@@ -125,7 +123,6 @@ class Belle(Entity):
                 self.weapons[0].image.set_alpha(arg)
 
     def update(self, *args):
-        print(self.weapons)
         super().update()
         self.update_ghost_state()
         self.aim_cursor()

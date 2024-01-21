@@ -1,6 +1,4 @@
 import pygame
-import time
-
 
 from modules.animation import Animated
 

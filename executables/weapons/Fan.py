@@ -1,5 +1,3 @@
-import pygame.draw
-
 from executables.bullets.Air import Air
 from executables.weapons.Weapon import Weapon
 

@@ -1,14 +1,14 @@
 import pygame.transform
 
 from executables.bullets.Bullet import Bullet
-from executables.entities.enemies.Catterfield import Catterfield
+from executables.entities.enemies.Dust import Dust
 
 
 class Stream(Bullet):
     def __init__(self, r, start_pos, end_pos, source, *sprite_groups):
         super().__init__(r, start_pos, end_pos, *sprite_groups)
         self.source = source
-        self.hitable_entities = (Catterfield,)
+        self.hitable_entities = (Dust,)
         if self.source.animation_is_flipped:
             self.image = pygame.transform.flip(self.r.drawable("arrows"), 1, 0)
             self.sign_multiplier = -1
@@ -18,7 +18,7 @@ class Stream(Bullet):
         self.damage_rate = 10
         self.speed = 0.5 * self.r.constant("coefficient")
         self.rect = self.image.get_rect()
-        self.max_lifetime = 200
+        self.max_lifetime = 400
 
     def update(self):
         if self.lifetime() > self.max_lifetime:

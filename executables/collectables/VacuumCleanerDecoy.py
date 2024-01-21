@@ -1,5 +1,4 @@
 from executables.collectables.Collectable import Collectable
-from executables.weapons.Fan import Fan
 from executables.weapons.VacuumCleaner import VacuumCleaner
 
 

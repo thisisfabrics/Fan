@@ -1,10 +1,10 @@
 import itertools
 import random
-
 import pygame.sprite
 
 from executables.collectables.Battery import Battery
 from executables.collectables.Coin import Coin
+from executables.collectables.CyclotronDecoy import CyclotronDecoy
 from executables.collectables.FanDecoy import FanDecoy
 from executables.collectables.Powerup import Powerup
 from executables.collectables.VacuumCleanerDecoy import VacuumCleanerDecoy
@@ -196,6 +196,8 @@ class Room:
             elif isinstance(elem, FanDecoy):
                 belle.weapons += elem.collect()
             elif isinstance(elem, VacuumCleanerDecoy):
+                belle.weapons += elem.collect()
+            elif isinstance(elem, CyclotronDecoy):
                 belle.weapons += elem.collect()
         self.collectables_group.draw(surface)
 

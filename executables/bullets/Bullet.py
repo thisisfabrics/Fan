@@ -1,6 +1,4 @@
-import math
 import time
-
 import pygame.time
 
 from modules.trigonometry import convenient_atan

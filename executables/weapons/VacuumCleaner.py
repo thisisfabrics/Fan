@@ -12,7 +12,7 @@ class VacuumCleaner(Weapon):
         self.offset_flipped = 20 * self.r.constant("coefficient"), self.offset_not_flipped[1]
         self.bullet_offset_x = int()
         self.apply_offset()
-        self.timeout = 500
+        self.timeout = 200
 
     def release_bullet(self, mouse_position_compenstation):
         self.bullet(self.r,

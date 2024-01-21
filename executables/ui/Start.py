@@ -1,7 +1,6 @@
 import itertools
 import pygame
 
-from executables.ui.Continue import Continue
 from executables.ui.Screen import Screen
 from executables.ui.widgets.Button import Button
 

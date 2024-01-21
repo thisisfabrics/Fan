@@ -1,4 +1,3 @@
-import itertools
 import random
 import pygame
 
@@ -6,8 +5,6 @@ from executables.collectables.CyclotronDecoy import CyclotronDecoy
 from executables.collectables.FanDecoy import FanDecoy
 from executables.collectables.VacuumCleanerDecoy import VacuumCleanerDecoy
 from executables.entities.Belle import Belle
-from executables.entities.enemies.Dispenser import Dispenser
-from executables.entities.enemies.Dust import Dust
 from executables.rooms.Hall import Hall
 from executables.rooms.Room import Room
 from executables.rooms.obstacles.Bottom import Bottom

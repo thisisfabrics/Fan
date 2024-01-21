@@ -3,7 +3,7 @@ import itertools
 import pygame
 
 from executables.entities.Belle import Belle
-from executables.entities.enemies.Entity import Entity
+from executables.entities.Entity import Entity
 
 
 class Enemy(Entity):

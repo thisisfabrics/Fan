@@ -1,6 +1,4 @@
-import math
 import time
-
 import pygame.transform
 
 from executables.bullets.InkBall import InkBall
@@ -22,16 +20,14 @@ class Dispenser(Enemy):
 
     def release_bullet(self):
         try:
-            InkBall(self.r, (self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2),
+            InkBall(self.r,
+                    (self.rect.x + self.image.get_rect().width // 2, self.rect.y + self.image.get_rect().height // 2),
                     (self.belle.rect.x + self.belle.rect.width // 2, self.belle.rect.y + self.belle.rect.height // 2),
                     self.released_bullets_group)
         except AttributeError:
             pass
         
     def update(self, rooms_obstacles, rooms_entities, field_size, has_uncommon_navigation=False):
-        if time.time_ns() - self.bullet_spawn_time >= self.bullet_period * 10 ** 6:
-            self.bullet_spawn_time = time.time_ns()
-            self.release_bullet()
         if coords := super().update(rooms_obstacles, rooms_entities, field_size, True):
             return coords
         self.released_bullets_group.update()
@@ -51,6 +47,9 @@ class Dispenser(Enemy):
         after_rotation_heigth = self.image.get_rect().height
         self.rect.x -= (after_rotation_width - before_rotation_width) // 2
         self.rect.y -= (after_rotation_heigth - before_rotation_heigth) // 2
+        if time.time_ns() - self.bullet_spawn_time >= self.bullet_period * 10 ** 6:
+            self.bullet_spawn_time = time.time_ns()
+            self.release_bullet()
 
     def set_animation(self, animation_name, period=None):
         if self.do_once:

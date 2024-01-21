@@ -1,17 +1,18 @@
 import math
 
 import pygame.draw
-import executables.bullets.Bullet
-import executables.entities
+
+from executables.bullets.Bullet import Bullet
+from executables.entities.enemies.Catterfield import Catterfield
 
 
-class Air(executables.bullets.Bullet.Bullet):
+class Air(Bullet):
     def __init__(self, r, start_pos, end_pos, *sprite_groups):
         super().__init__(r, start_pos, end_pos, *sprite_groups)
         self.speed = 2 * self.r.constant("coefficient")
         self.wavefront_threshold = int(500 * self.r.constant("coefficient"))
         self.damage_rate = 10
-        self.hitable_entities = (executables.entities.enemies.Catterfield.Catterfield, executables.entities.enemies.Dust.Dust)
+        self.hitable_entities = (Catterfield,)
         detalization = math.pi / 48
         start_angle = self.angle - math.pi / 16
         end_angle = self.angle + math.pi / 16
