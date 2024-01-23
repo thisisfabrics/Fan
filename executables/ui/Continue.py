@@ -28,9 +28,10 @@ class Continue(Screen):
             self.interface_offset = 40 * self.r.constant("coefficient"), 40 * self.r.constant("coefficient")
 
     def add_weapons(self):
-        for decoy in (FanDecoy, VacuumCleanerDecoy, CyclotronDecoy):
+        for decoy in (FanDecoy, VacuumCleanerDecoy):
             randroom = self.rooms[random.randrange(len(self.rooms))][random.randrange(len(self.rooms[0]))]
             decoy(self.r, randroom.free_pos(), randroom.collectables_group)
+        CyclotronDecoy(self.r, self.rooms[0][0].free_pos(), self.rooms[0][0].collectables_group)
 
     def find_belle(self):
         room = next(filter(lambda elem: Belle in map(lambda el: el.__class__, elem.entities_group.sprites()),
@@ -129,7 +130,8 @@ class Continue(Screen):
         for i in range(belle.energy_threshold // self.battery_equivalent):
             self.frame.blit(self.r.drawable("active_battery") if belle.energy - self.battery_equivalent * i > 0 else
                             self.r.drawable("passive_battery"),
-                            (self.interface_offset[0] + 50 * i, self.interface_offset[1]))
+                            (self.interface_offset[0] + 120 * i * self.r.constant("coefficient"),
+                             self.interface_offset[1]))
 
     def push_to_database(self):
         pass
