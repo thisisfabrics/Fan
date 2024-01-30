@@ -6,10 +6,7 @@ class Catalyst(InteractiveWidget):
         super().__init__(r, pos, lambda: True)
         self.compos_x, self.compos_y = map(lambda elem: elem * self.r.constant("coefficient"), compos)
         self.description = str()
-
-    def calculate_size(self):
-        self.xx, self.yy = (self.x + self.image.get_width(),
-                            self.y + self.image.get_height())
+        self.calculate_size()
 
     def check_focus(self, pos):
         self.x += self.compos_x

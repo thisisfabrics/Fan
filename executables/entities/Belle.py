@@ -19,9 +19,15 @@ class Belle(Entity):
         self.x_movement = int()
         self.y_movement = int()
         self.ghost_time = 2000000000
+        self.mouse_updated = True
         self.became_ghost_at = None
         self.money = int()
         self.catalysts = Scrollbar(self.r, (1322, 1038), lambda: None, 1200, 890)
+
+    def sort_weapon_by(self, criteria_class):
+        if self.mouse_updated:
+            self.mouse_updated = False
+            self.weapons.sort(key=lambda elem: elem.__class__ == criteria_class, reverse=True)
 
     def aim_cursor(self):
         self.set_mouse_position()

@@ -6,4 +6,3 @@ class HealthIncrease(Catalyst):
         self.image = r.drawable("catalyst_health_increase")
         super().__init__(r, pos, compos)
         self.description = self.r.string("catalyst_health_increase")
-        self.calculate_size()

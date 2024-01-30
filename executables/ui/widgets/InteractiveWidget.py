@@ -9,7 +9,8 @@ class InteractiveWidget(Widget):
         self.xx, self.yy = int(), int()
 
     def calculate_size(self):
-        pass
+        self.xx, self.yy = (self.x + self.image.get_width(),
+                            self.y + self.image.get_height())
 
     def check_focus(self, pos):
         pos_x, pos_y = pos

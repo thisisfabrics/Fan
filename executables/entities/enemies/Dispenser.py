@@ -64,6 +64,8 @@ class Dispenser(Enemy):
             convenient_atan(belle.rect.y + belle.rect.height // 2 - self.rect.y - self.rect.height // 2,
                             belle.rect.x + belle.rect.width // 2 - self.rect.x - self.rect.width // 2,
                             "deg") - 90)
+        self.rect.width = self.image.get_width()
+        self.rect.height = self.image.get_height()
         after_rotation_width = self.image.get_rect().width
         after_rotation_heigth = self.image.get_rect().height
         self.rect.x -= (after_rotation_width - before_rotation_width) // 2

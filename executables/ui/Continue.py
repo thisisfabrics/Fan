@@ -12,6 +12,7 @@ from executables.rooms.obstacles.Right import Right
 from executables.rooms.obstacles.Top import Top
 from executables.ui.Screen import Screen
 from executables.ui.widgets.Label import Label
+from executables.ui.widgets.tablets.WeaponIcon import WeaponIcon
 from modules.collectiontools import linerize
 
 
@@ -30,9 +31,10 @@ class Continue(Screen):
             self.inventory_window_is_showing = False
 
     def add_weapons(self):
-        for decoy in (VacuumCleanerDecoy, FanDecoy):
+        for decoy in (VacuumCleanerDecoy,):
             randroom = self.rooms[random.randrange(len(self.rooms))][random.randrange(len(self.rooms[0]))]
             decoy(self.r, randroom.free_pos(), randroom.collectables_group)
+        FanDecoy(self.r, self.rooms[0][0].free_pos(), self.rooms[0][0].collectables_group)
         CyclotronDecoy(self.r, self.rooms[0][0].free_pos(), self.rooms[0][0].collectables_group)
 
     def find_belle(self):
@@ -72,6 +74,7 @@ class Continue(Screen):
     def mouse_released(self, button):
         if button == 1:
             self.remove_time_event("release_bullets")
+            self.find_belle()[0].mouse_updated = True
 
     def mouse_moved(self, pos):
         if self.inventory_window_is_showing:
@@ -151,7 +154,10 @@ class Continue(Screen):
             return
         self.frame.blit(self.r.drawable("inventory_window"), (0, 0))
         if self.find_belle()[0].weapons:
-            pass
+            for i, elem in enumerate(self.find_belle()[0].weapons):
+                (WeaponIcon(self.r, (550, i * 300 + 1000), elem.__class__.__name__,
+                            pygame.mouse.get_pos(), lambda: self.find_belle()[0].sort_weapon_by(elem.__class__))
+                 .draw(self.frame))
         else:
             (Label(self.r, self.r.string("if_not_weapons"), (450, 1200), 90, 400 * self.r.constant("coefficient"),
                    pygame.Color(127, 108, 84))

@@ -95,15 +95,15 @@ class Room:
     def free_pos(self):
         temporary_sprite = pygame.sprite.Sprite()
         temporary_sprite.rect = self.r.drawable("fan").get_rect()
-        x, y = random.randrange(self.image.get_rect().width), random.randrange(self.image.get_rect().height
-                                                                               - temporary_sprite.rect.width)
+        x, y = (random.randrange(self.image.get_rect().width - temporary_sprite.rect.width),
+                random.randrange(self.image.get_rect().height - temporary_sprite.rect.height))
         temporary_sprite.rect.x, temporary_sprite.rect.y = x, y
         iterations = 1000
         while (pygame.sprite.spritecollideany(temporary_sprite, self.obstacles_group) or
                pygame.sprite.spritecollideany(temporary_sprite, self.portals_group)) and iterations:
             iterations -= 1
-            x, y = random.randrange(self.image.get_rect().width), random.randrange(self.image.get_rect().height -
-                                                                                   temporary_sprite.rect.width)
+            x, y = (random.randrange(self.image.get_rect().width - temporary_sprite.rect.width),
+                    random.randrange(self.image.get_rect().height - temporary_sprite.rect.height))
             temporary_sprite.rect.x, temporary_sprite.rect.y = x, y
         return x, y
 
@@ -192,7 +192,7 @@ class Room:
             elif isinstance(elem, Powerup):
                 belle.weapons[0].power += elem.collect()
             elif isinstance(elem, Battery):
-                belle.energy = (belle.energy + elem.collect()) % (belle.energy_threshold + 1)
+                belle.energy = min(0, max(belle.energy + elem.collect(), belle.energy_threshold))
             elif isinstance(elem, FanDecoy):
                 belle.weapons += elem.collect()
             elif isinstance(elem, VacuumCleanerDecoy):

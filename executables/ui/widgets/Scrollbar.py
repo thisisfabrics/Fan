@@ -38,7 +38,7 @@ class Scrollbar(InteractiveWidget):
 
     def current_height(self):
         return len(self.items) // 4 * (self.items[0].image.get_height() + self.padding) + \
-            self.items[0].image.get_height()
+            self.items[0].image.get_height() if self.items else int()
 
     def build_surface(self):
         surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA, 32)
