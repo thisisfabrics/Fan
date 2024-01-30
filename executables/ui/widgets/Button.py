@@ -1,19 +1,17 @@
 import pygame
 
+from executables.ui.widgets.InteractiveWidget import InteractiveWidget
 
-class Button:
+
+class Button(InteractiveWidget):
     def __init__(self, r, label, pos, action, is_icon=False):
-        self.r = r
+        super().__init__(r, pos, action)
         self.is_icon = is_icon
         self.padding = 20 * self.r.constant("coefficient")
-        self.x, self.y = map(lambda elem: elem * self.r.constant("coefficient"), pos)
-        self.action = action
-        self.focus = False
         self.label = pygame.font.Font("../data/media/fonts/AmaticSC-Regular.ttf",
                                       int(125 * self.r.constant("coefficient"))) \
             .render(label, 1, pygame.Color("black"))
         self.chuncks = int()
-        self.xx, self.yy = int(), int()
         self.calculate_size()
 
     def calculate_size(self):
@@ -27,19 +25,6 @@ class Button:
                                                                      addition - int(self.padding * 2))
         self.xx = self.x + addition + self.chuncks * wi
         self.yy = self.y + self.r.drawable(string_start).get_height()
-
-    def check_focus(self, pos):
-        pos_x, pos_y = pos
-        if self.x <= pos_x - self.r.constant("real_offset_x") <= self.xx and \
-                self.y <= pos_y - self.r.constant("real_offset_y") <= self.yy:
-            self.focus = True
-        else:
-            self.focus = False
-        self.calculate_size()
-
-    def click(self):
-        if self.focus:
-            self.action()
 
     def build_surface(self):
         surface = pygame.Surface((self.xx - self.x, self.yy - self.y), pygame.SRCALPHA, 32)
@@ -56,4 +41,9 @@ class Button:
                      (left_cap.get_width() + self.r.drawable(string_start).get_width() * self.chuncks, 0))
         surface.blit(self.label, (surface.get_width() * 0.5 - self.label.get_width() * 0.5,
                                   surface.get_height() * 0.5 - self.label.get_height() * 0.5))
-        return surface
+        self.image = surface
+        
+    def draw(self, surface):
+        self.build_surface()
+        super().draw(surface)
+        

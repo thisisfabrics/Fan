@@ -72,7 +72,7 @@ class Start(Screen):
         if self.state * self.state_multiplier:
             self.frame.blit(self.yellowing_surface, (0, 0))
             for button in self.state_description[self.state][-1]:
-                self.frame.blit(button.build_surface(), (button.x, button.y))
+                button.draw(self.frame)
         else:
             self.frame.blit(self.yellowing_surface, (0, 0))
         return self.signal_to_change

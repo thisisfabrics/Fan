@@ -3,6 +3,8 @@ import time
 import pygame
 
 from executables.entities.Entity import Entity
+from executables.ui.widgets.Scrollbar import Scrollbar
+from executables.ui.widgets.tablets.HealthIncrease import HealthIncrease
 
 
 class Belle(Entity):
@@ -19,6 +21,7 @@ class Belle(Entity):
         self.ghost_time = 2000000000
         self.became_ghost_at = None
         self.money = int()
+        self.catalysts = Scrollbar(self.r, (1322, 1038), lambda: None, 1200, 890)
 
     def aim_cursor(self):
         self.set_mouse_position()
@@ -96,6 +99,7 @@ class Belle(Entity):
             self.set_animation(f"{self.__class__.__name__.lower()}_idle")
 
     def damage(self):
+        return
         if self.damaging_bullets and not self.became_ghost_at:
             self.make_ghost()
         super().damage()
@@ -105,6 +109,7 @@ class Belle(Entity):
             super().add_damaging_bullet(bullet)
 
     def damage_collision(self, entity):
+        return
         self.energy -= entity.collision_damage_rate
         self.make_ghost()
 

@@ -11,6 +11,7 @@ from executables.rooms.obstacles.Bottom import Bottom
 from executables.rooms.obstacles.Right import Right
 from executables.rooms.obstacles.Top import Top
 from executables.ui.Screen import Screen
+from executables.ui.widgets.Label import Label
 from modules.collectiontools import linerize
 
 
@@ -26,9 +27,10 @@ class Continue(Screen):
             self.add_weapons()
             self.battery_equivalent = 10
             self.interface_offset = 40 * self.r.constant("coefficient"), 40 * self.r.constant("coefficient")
+            self.inventory_window_is_showing = False
 
     def add_weapons(self):
-        for decoy in (FanDecoy, VacuumCleanerDecoy):
+        for decoy in (VacuumCleanerDecoy, FanDecoy):
             randroom = self.rooms[random.randrange(len(self.rooms))][random.randrange(len(self.rooms[0]))]
             decoy(self.r, randroom.free_pos(), randroom.collectables_group)
         CyclotronDecoy(self.r, self.rooms[0][0].free_pos(), self.rooms[0][0].collectables_group)
@@ -48,6 +50,8 @@ class Continue(Screen):
             self.find_belle()[0].start_moving("left")
         elif key == pygame.K_d:
             self.find_belle()[0].start_moving("right")
+        elif key == pygame.K_TAB:
+            self.inventory_window_is_showing = not self.inventory_window_is_showing
 
     def button_released(self, key):
         if key == pygame.K_w:
@@ -68,6 +72,16 @@ class Continue(Screen):
     def mouse_released(self, button):
         if button == 1:
             self.remove_time_event("release_bullets")
+
+    def mouse_moved(self, pos):
+        if self.inventory_window_is_showing:
+            for elem in self.find_belle()[0].catalysts.items:
+                elem.check_focus(pos)
+            self.find_belle()[0].catalysts.check_focus(pos)
+
+    def mouse_wheel(self, direction):
+        if self.inventory_window_is_showing:
+            self.find_belle()[0].catalysts.scroll(direction)
 
     def push_belle_in_direction(self, portal):
         belle, room = self.find_belle()
@@ -125,13 +139,43 @@ class Continue(Screen):
         self.frame.blit(surface_from_room, (-x, -y))
         return is_entered_portal
 
-    def place_interface(self):
-        belle = self.find_belle()[0]
-        for i in range(belle.energy_threshold // self.battery_equivalent):
-            self.frame.blit(self.r.drawable("active_battery") if belle.energy - self.battery_equivalent * i > 0 else
+    def place_health_bar(self, entity):
+        for i in range(entity.energy_threshold // self.battery_equivalent):
+            self.frame.blit(self.r.drawable("active_battery") if entity.energy - self.battery_equivalent * i > 0 else
                             self.r.drawable("passive_battery"),
                             (self.interface_offset[0] + 120 * i * self.r.constant("coefficient"),
                              self.interface_offset[1]))
+
+    def place_inventory_window(self):
+        if not self.inventory_window_is_showing:
+            return
+        self.frame.blit(self.r.drawable("inventory_window"), (0, 0))
+        if self.find_belle()[0].weapons:
+            pass
+        else:
+            (Label(self.r, self.r.string("if_not_weapons"), (450, 1200), 90, 400 * self.r.constant("coefficient"),
+                   pygame.Color(127, 108, 84))
+             .draw(self.frame))
+        focused = None
+        if self.find_belle()[0].catalysts.items:
+            self.find_belle()[0].catalysts.draw(self.frame)
+            for elem in self.find_belle()[0].catalysts.items:
+                if elem.focus:
+                    focused = elem
+        else:
+            Label(self.r, self.r.string("catalysts_will_appear"), (1600, 1200), 90,
+                  800 * self.r.constant("coefficient"), pygame.Color(127, 108, 84)).draw(self.frame)
+        if focused:
+            Label(self.r, focused.description, (2800, 1200), 90, 400 * self.r.constant("coefficient"),
+                  pygame.Color(127, 108, 84)).draw(self.frame)
+        else:
+            Label(self.r, self.r.string("no_focus"), (2800, 1200), 90, 400 * self.r.constant("coefficient"),
+                  pygame.Color(127, 108, 84)).draw(self.frame)
+
+    def place_interface(self):
+        belle = self.find_belle()[0]
+        self.place_health_bar(belle)
+        self.place_inventory_window()
 
     def push_to_database(self):
         pass

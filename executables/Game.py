@@ -10,7 +10,6 @@ from modules.runtimeresources import R
 class Game:
     def __init__(self):
         self.window = pygame.display.set_mode((0, 0))  # , pygame.FULLSCREEN
-        self.window.fill("red")
         self.aspect_ratio = 16 / 9
         self.useful_width, self.useful_height = (info := pygame.display.Info()).current_w, info.current_h
         self.real_width, self.real_height = self.useful_width, self.useful_height
@@ -41,7 +40,9 @@ class Game:
     def loop(self):
         while self.playtime:
             for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
+                if event.type == pygame.MOUSEWHEEL:
+                    self.current_screen.mouse_wheel(event.y)
+                elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.playtime = False
                     else:

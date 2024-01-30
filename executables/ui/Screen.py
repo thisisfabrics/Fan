@@ -38,5 +38,8 @@ class Screen:
     def mouse_released(self, button):
         pass
 
+    def mouse_wheel(self, direction):
+        pass
+
     def update(self):
         pass
