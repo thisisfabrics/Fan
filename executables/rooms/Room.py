@@ -159,7 +159,7 @@ class Room:
     def draw_bullets(self, surface):
         if not (weapons := self.find_belle().weapons):
             return
-        for bullet in weapons[0].bullets_group.sprites():
+        for bullet in itertools.chain(*map(lambda el: el.bullets_group.sprites(), weapons)):
             for entity in self.entities_group.sprites():
                 if pygame.sprite.collide_rect(bullet, entity) and entity.__class__ in bullet.hitable_entities:
                     entity.add_damaging_bullet(bullet)
@@ -216,8 +216,9 @@ class Room:
 
     def update_sprites(self):
         if weapons := self.find_belle().weapons:
-            weapons[0].bullets_group.update()
-            weapons[0].update()
+            for elem in weapons:
+                elem.bullets_group.update()
+                elem.update()
         for elem in self.entities_group.sprites():
             if coords := elem.update(self.obstacles_group, self.entities_group, self.image.get_rect()[-2:]):
                 Powerup(self.r, coords, self.collectables_group)

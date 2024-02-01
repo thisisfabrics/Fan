@@ -155,7 +155,7 @@ class Continue(Screen):
         self.frame.blit(self.r.drawable("inventory_window"), (0, 0))
         if self.find_belle()[0].weapons:
             for i, elem in enumerate(self.find_belle()[0].weapons):
-                (WeaponIcon(self.r, (550, i * 300 + 1000), elem.__class__.__name__,
+                (WeaponIcon(self.r, (550, i * 300 + 1090), elem.__class__.__name__,
                             pygame.mouse.get_pos(), lambda: self.find_belle()[0].sort_weapon_by(elem.__class__))
                  .draw(self.frame))
         else:

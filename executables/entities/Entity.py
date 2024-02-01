@@ -23,7 +23,7 @@ class Entity(pygame.sprite.Sprite, Animated):
 
     def add_damaging_bullet(self, bullet):
         if bullet not in self.damaging_bullets:
-            self.damaging_bullets[bullet] = pygame.time.Clock(), pygame.time.Clock()
+            self.damaging_bullets[bullet] = pygame.time.Clock(), pygame.time.Clock()  # one for movmnt, another for damg
 
     def damage(self):
         for elem, last_clock in self.damaging_bullets.items():
