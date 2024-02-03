@@ -8,6 +8,7 @@ from executables.entities.Belle import Belle
 from executables.rooms.Hall import Hall
 from executables.rooms.Room import Room
 from executables.rooms.obstacles.Bottom import Bottom
+from executables.rooms.obstacles.Lift import Lift
 from executables.rooms.obstacles.Right import Right
 from executables.rooms.obstacles.Top import Top
 from executables.ui.Screen import Screen
@@ -20,7 +21,7 @@ class Continue(Screen):
     def __init__(self, r, frame, mode=False):
         super().__init__(r, frame)
         if not mode:
-            self.level = int()
+            self.level = 10
             self.rooms = [[Room(self.r, (i, j)) if random.random() < .5 else Hall(self.r, (i, j)) for j in range(3)]
                           for i in range(3)]
             self.rooms[0][0].add_entity(Belle(self.r, "belle_idle", 200))
@@ -29,6 +30,7 @@ class Continue(Screen):
             self.battery_equivalent = 10
             self.interface_offset = 40 * self.r.constant("coefficient"), 40 * self.r.constant("coefficient")
             self.inventory_window_is_showing = False
+            self.lift = Lift(self.r, self.rooms[0][0].image.get_rect()[-2:], self.level, self.rooms[0][0].portals_group)
 
     def add_weapons(self):
         for decoy in (VacuumCleanerDecoy,):
@@ -99,6 +101,9 @@ class Continue(Screen):
         elif isinstance(portal, Bottom):
             belle_row = belle_row + 1
             belle.y -= room.image.get_rect().height - self.r.drawable("portal").get_rect().width * 2 - belle.rect.height
+        elif isinstance(portal, Lift):
+            if not self.lift.count_of_enemies:
+                self.signal_to_change = "stage_passed"
         else:
             belle_column = belle_column - 1
             belle.x += room.image.get_rect().width - self.r.drawable("portal").get_rect().width * 2 - belle.rect.width
@@ -198,4 +203,5 @@ class Continue(Screen):
         except StopIteration:
             self.push_to_database()
             self.finish_game()
+        self.lift.set_count_of_enemies(len(linerize([elem.entities_group.sprites() for elem in linerize(self.rooms)])) - 1)
         return self.signal_to_change

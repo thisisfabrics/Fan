@@ -114,7 +114,8 @@ class Room:
         self.obstacles_group.draw(surface)
 
     def draw_portals(self, surface):
-        self.portals_group.draw(surface)
+        for elem in self.portals_group.sprites():
+            elem.draw(surface)
 
     def draw_entities(self, surface, hand_mode=False):
         belle = self.find_belle()
@@ -192,7 +193,7 @@ class Room:
             elif isinstance(elem, Powerup):
                 belle.weapons[0].power += elem.collect()
             elif isinstance(elem, Battery):
-                belle.energy = min(0, max(belle.energy + elem.collect(), belle.energy_threshold))
+                belle.energy = max(0, min(belle.energy + elem.collect(), belle.energy_threshold))
             elif isinstance(elem, FanDecoy):
                 belle.weapons += elem.collect()
             elif isinstance(elem, VacuumCleanerDecoy):
