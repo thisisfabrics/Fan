@@ -15,11 +15,12 @@ class VacuumCleaner(Weapon):
         self.timeout = 200
 
     def release_bullet(self, mouse_position_compenstation):
-        self.bullet(self.r,
-                    (self.rect.x + self.rect.width // 2 + self.bullet_offset_x * (1 if self.animation_is_flipped else -1),
-                     self.rect.y + self.rect.height // 2),
-                    ((mp := pygame.mouse.get_pos())[0] + mouse_position_compenstation[0],
-                     mp[1] + mouse_position_compenstation[1]), self, self.bullets_group)
+        for i in range(self.power):
+            self.bullet(self.r,
+                        (self.rect.x + self.rect.width // 2 + self.bullet_offset_x * (1 if self.animation_is_flipped else -1),
+                         self.rect.y + self.rect.height // 2),
+                        ((mp := pygame.mouse.get_pos())[0] + mouse_position_compenstation[0],
+                         mp[1] + mouse_position_compenstation[1]), self, self.bullets_group)
 
     def apply_offset(self):
         super().apply_offset()

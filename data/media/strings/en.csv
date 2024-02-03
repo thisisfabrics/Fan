@@ -5,3 +5,6 @@ if_not_weapons,You can find dischargers only on the tenth floor!
 catalysts_will_appear,The catalysts you bought in the shop will appear here
 no_focus,Focus on any discharger or catalyst to view information about
 catalyst_health_increase,Adds two additional buttons
+level,Level
+max,(MAX)
+min,(MIN)

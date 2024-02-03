@@ -160,11 +160,11 @@ class Continue(Screen):
         self.frame.blit(self.r.drawable("inventory_window"), (0, 0))
         if self.find_belle()[0].weapons:
             for i, elem in enumerate(self.find_belle()[0].weapons):
-                (WeaponIcon(self.r, (550, i * 300 + 1090), elem.__class__.__name__,
+                (WeaponIcon(self.r, (420, i * 300 + 1090), elem.__class__.__name__, (elem.power, elem.power_threshold),
                             pygame.mouse.get_pos(), lambda: self.find_belle()[0].sort_weapon_by(elem.__class__))
                  .draw(self.frame))
         else:
-            (Label(self.r, self.r.string("if_not_weapons"), (450, 1200), 90, 400 * self.r.constant("coefficient"),
+            (Label(self.r, self.r.string("if_not_weapons"), (450, 1500), 90, 400 * self.r.constant("coefficient"),
                    pygame.Color(127, 108, 84))
              .draw(self.frame))
         focused = None

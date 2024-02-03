@@ -191,7 +191,7 @@ class Room:
             if isinstance(elem, Coin):
                 belle.money += elem.collect()
             elif isinstance(elem, Powerup):
-                belle.weapons[0].power += elem.collect()
+                belle.weapons[0].increase_power(elem.collect())
             elif isinstance(elem, Battery):
                 belle.energy = max(0, min(belle.energy + elem.collect(), belle.energy_threshold))
             elif isinstance(elem, FanDecoy):
