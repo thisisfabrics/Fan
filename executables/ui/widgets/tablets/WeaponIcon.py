@@ -11,7 +11,7 @@ class WeaponIcon(InteractiveWidget):
         label = (pygame.font.Font("../data/media/fonts/AmaticSC-Bold.ttf", int(80 * self.r.constant("coefficient")))
                  .render(f"{self.r.string("level")}"
                          f"{self.r.string("max") if powers[0] == powers[1] else ""}"
-                         f"{self.r.string("min") if powers[0] == 1 else ""}: {powers[0]}", 1, pygame.Color("black")))
+                         f"{self.r.string("min") if powers[0] == 1 else ""}: {int(powers[0])}", 1, pygame.Color("black")))
         surf = pygame.Surface((self.xx - self.x + label.get_width() + 120 * self.r.constant("coefficient"),
                                self.yy - self.y), pygame.SRCALPHA)
         surf.blit(self.image, (0, 0))
