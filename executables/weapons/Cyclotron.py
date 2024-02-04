@@ -3,8 +3,8 @@ from executables.weapons.Weapon import Weapon
 
 
 class Cyclotron(Weapon):
-    def __init__(self, r, pos, animation_name, animation_period):
-        super().__init__(r, pos, animation_name, animation_period)
+    def __init__(self, r, pos, animation_name, animation_period, power):
+        super().__init__(r, pos, animation_name, animation_period, power)
         self.bullet = AlphaParticle
         self.offset_not_flipped = -70 * self.r.constant("coefficient"), 270 * self.r.constant("coefficient")
         self.offset_flipped = 70 * self.r.constant("coefficient"), self.offset_not_flipped[1]

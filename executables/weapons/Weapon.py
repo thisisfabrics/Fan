@@ -4,7 +4,7 @@ from modules.animation import Animated
 
 
 class Weapon(pygame.sprite.Sprite, Animated):
-    def __init__(self, r, pos, animation_name, animation_period):
+    def __init__(self, r, pos, animation_name, animation_period, power):
         pygame.sprite.Sprite.__init__(self)
         Animated.__init__(self, r, animation_name, animation_period)
         self.r = r
@@ -14,7 +14,7 @@ class Weapon(pygame.sprite.Sprite, Animated):
         self.offset_flipped = int(), int()
         self.bullet = None
         self.bullets_group = pygame.sprite.Group()
-        self.power = 1
+        self.power = power
         self.power_threshold = 5
 
     def increase_power(self, value):

@@ -7,6 +7,7 @@ from executables.collectables.VacuumCleanerDecoy import VacuumCleanerDecoy
 from executables.entities.Belle import Belle
 from executables.rooms.Hall import Hall
 from executables.rooms.Room import Room
+from executables.rooms.obstacles.Obstacle import Obstacle
 from executables.rooms.obstacles.portals.Bottom import Bottom
 from executables.rooms.obstacles.portals.Lift import Lift
 from executables.rooms.obstacles.portals.Right import Right
@@ -38,16 +39,16 @@ class Continue(Screen):
             self.rooms[0][0].add_entity(Belle(self.r, "belle_idle", 200))
             self.rooms[0][0].build()
             self.add_weapons()
-            self.lift = Lift(self.r, self.rooms[0][0].image.get_rect()[-2:], self.floor, self.rooms[0][0].portals_group)
-            self.shop = Shop(self.r, self.rooms[0][0].image.get_rect()[-2:], self.rooms[0][0].portals_group)
+        self.lift = Lift(self.r, self.rooms[0][0].image.get_rect()[-2:], self.floor, self.rooms[0][0].portals_group)
+        self.shop = Shop(self.r, self.rooms[0][0].image.get_rect()[-2:], self.rooms[0][0].portals_group)
         self.empty_database()
 
     def add_weapons(self, assortment=(VacuumCleanerDecoy, FanDecoy, CyclotronDecoy)):
         for decoy in assortment:
             randroom = self.rooms[random.randrange(len(self.rooms))][random.randrange(len(self.rooms[0]))]
-            decoy(self.r, randroom.free_pos(), randroom.collectables_group)
-        # FanDecoy(self.r, self.rooms[0][0].free_pos(), self.rooms[0][0].collectables_group)
-        # CyclotronDecoy(self.r, self.rooms[0][0].free_pos(), self.rooms[0][0].collectables_group)
+            decoy(self.r, randroom.free_pos(), 1, randroom.collectables_group)
+        # FanDecoy(self.r, self.rooms[0][0].free_pos(), 1, self.rooms[0][0].collectables_group)
+        # CyclotronDecoy(self.r, self.rooms[0][0].free_pos(), 1, self.rooms[0][0].collectables_group)
 
     def find_belle(self):
         room = next(filter(lambda elem: Belle in map(lambda el: el.__class__, elem.entities_group.sprites()),
@@ -225,8 +226,9 @@ class Continue(Screen):
                              f"{self.r.constant("obstacle_collectable_object_to_id")[el.__class__]}, "
                              f"{el.rect.x}, {el.rect.y}, {i + 1})")
             for el in elem.entities_group.sprites():
-                self.r.query("INSERT INTO entity(animation_name, animation_period, x, y, "
+                self.r.query("INSERT INTO entity(type, animation_name, animation_period, x, y, "
                              "energy, last_delta_x, last_delta_y, room_id) VALUES("
+                             f"{self.r.constant("entity_object_to_id")[el.__class__]}, "
                              f"'{el.animation_name}', {el.animation_period}, {el.x}, {el.y}, {el.energy}, "
                              f"{el.last_delta_x}, {el.last_delta_y}, {i + 1})")
         for elem in self.find_belle()[0].catalysts.items:
@@ -260,13 +262,42 @@ class Continue(Screen):
         self.rooms = list()
         current_row = list()
         for type, row, column in self.r.query("SELECT type, row, column FROM room ORDER BY row, column"):
-            if len(current_row) != 3:
-                current_row.append(self.r.constant("id_to_room_object")[type](self.r, (row, column)))
-            else:
+            if len(current_row) == 3:
                 self.rooms.append(current_row)
                 current_row = list()
-        for type, x, y, room_row, room_column in self.r.query("SELECT o"):
-            pass
+            current_row.append(self.r.constant("id_to_room_object")[type](self.r, (row, column), True))
+        self.rooms.append(current_row)
+        for type, x, y, room_row, room_column in self.r.query("SELECT obstacle_collectable.type, "
+                                                              "obstacle_collectable.x, obstacle_collectable.y, "
+                                                              "room.row, room.column FROM obstacle_collectable "
+                                                              "RIGHT JOIN room "
+                                                              "ON obstacle_collectable.room_id = room.id"):
+            obstacle_collectable = self.r.constant("id_to_obstacle_collectable_object")[type](self.r, (x, y))
+            if isinstance(obstacle_collectable, Obstacle):
+                self.rooms[room_row][room_column].obstacles_group.add(obstacle_collectable)
+            else:
+                self.rooms[room_row][room_column].collectables_group.add(obstacle_collectable)
+        for type, animation_name, animation_period, x, y, energy, last_delta_x, last_delta_y, room_row, room_column in \
+                self.r.query("SELECT entity.type, entity.animation_name, entity.animation_period, entity.x, entity.y, "
+                             "entity.energy, entity.last_delta_x, entity.last_delta_y, room.row, room.column "
+                             "FROM entity RIGHT JOIN room ON entity.room_id = room.id"):
+            entity = self.r.constant("id_to_entity_object")[type](self.r, animation_name, animation_period)
+            entity.x, entity.y = x, y
+            entity.rect.x, entity.rect.y = x, y
+            entity.energy = energy
+            entity.last_delta_x, entity.last_delta_y = last_delta_x, last_delta_y
+            self.rooms[room_row][room_column].entities_group.add(entity)
+        _, money, vacuumcleaner_power, cyclotron_power, fan_power = next(self.r.query("SELECT * FROM belle"))
+        self.find_belle()[0].money = money
+        if vacuumcleaner_power:
+            VacuumCleanerDecoy(self.r, self.find_belle()[0].rect[:2], vacuumcleaner_power,
+                               self.find_belle()[1].collectables_group)
+        if cyclotron_power:
+            CyclotronDecoy(self.r, self.find_belle()[0].rect[:2], cyclotron_power,
+                           self.find_belle()[1].collectables_group)
+        if fan_power:
+            FanDecoy(self.r, self.find_belle()[0].rect[:2], fan_power,
+                     self.find_belle()[1].collectables_group)
 
     def finish_game(self):
         self.empty_database()

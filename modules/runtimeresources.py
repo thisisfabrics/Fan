@@ -8,6 +8,10 @@ from executables.collectables.CyclotronDecoy import CyclotronDecoy
 from executables.collectables.FanDecoy import FanDecoy
 from executables.collectables.Powerup import Powerup
 from executables.collectables.VacuumCleanerDecoy import VacuumCleanerDecoy
+from executables.entities.Belle import Belle
+from executables.entities.enemies.Catterfield import Catterfield
+from executables.entities.enemies.Dispenser import Dispenser
+from executables.entities.enemies.Dust import Dust
 from executables.rooms.Hall import Hall
 from executables.rooms.Room import Room
 from executables.rooms.obstacles.Fridge import Fridge
@@ -49,9 +53,16 @@ class R:
                 CyclotronDecoy: 6,
                 Battery: 7
             },
-            "id_to_obstacle_collectable_object": dict()
+            "id_to_obstacle_collectable_object": dict(),
+            "entity_object_to_id": {
+                Belle: 1,
+                Catterfield: 2,
+                Dispenser: 3,
+                Dust: 4
+            },
+            "id_to_entity_object": dict()
         }
-        for variable in ("room", "obstacle_collectable"):
+        for variable in ("room", "obstacle_collectable", "entity"):
             for key, value in map(lambda el: el[::-1], self.constant_dictionary[f"{variable}_object_to_id"].items()):
                 self.constant_dictionary[f"id_to_{variable}_object"][key] = value
         self.color_dictionary = {

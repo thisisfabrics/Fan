@@ -5,8 +5,8 @@ from executables.weapons.Weapon import Weapon
 
 
 class VacuumCleaner(Weapon):
-    def __init__(self, r, pos, animation_name, animation_period):
-        super().__init__(r, pos, animation_name, animation_period)
+    def __init__(self, r, pos, animation_name, animation_period, power):
+        super().__init__(r, pos, animation_name, animation_period, power)
         self.bullet = Stream
         self.offset_not_flipped = -180 * self.r.constant("coefficient"), 296.788 * self.r.constant("coefficient")
         self.offset_flipped = 20 * self.r.constant("coefficient"), self.offset_not_flipped[1]

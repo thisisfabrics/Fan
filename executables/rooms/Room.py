@@ -20,7 +20,7 @@ from executables.rooms.obstacles.portals.Portal import Portal
 
 
 class Room:
-    def __init__(self, r, collection_coords):
+    def __init__(self, r, collection_coords, is_recreated=False):
         self.r = r
         self.collection_coords = collection_coords
         self.image = self.r.drawable("tiles")
@@ -30,8 +30,9 @@ class Room:
         self.entities_group = pygame.sprite.Group()
         self.portals_group = pygame.sprite.Group()
         self.collectables_group = pygame.sprite.Group()
-        self.build()
-        self.populate()
+        if not is_recreated:
+            self.build()
+            self.populate()
 
     def populate(self):
         self.entities_group.empty()
