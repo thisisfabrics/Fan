@@ -5,6 +5,8 @@ import pygame
 
 class R:
     def __init__(self, useful_size, real_size):
+        self.database = sqlite3.connect("../data/script.sqlite")
+        self.query = self.database.cursor().execute
         self.useful_size = useful_size
         self.real_size = real_size
         self.coefficient = useful_size[0] / 3840
@@ -27,13 +29,11 @@ class R:
         }
 
     def observe_language(self):
-        database = sqlite3.connect("../data/script.sqlite")
-        self.language = database.cursor().execute("SELECT language FROM settings").fetchall()[0][0]
-        database.close()
+        self.language = self.query("SELECT language FROM settings").fetchall()[0][0]
 
     def reload_strings(self):
         self.observe_language()
-        for key, value in map(lambda elem: elem.strip().split(','),
+        for key, value in map(lambda elem: elem.strip().split(',', 1),
                               open(f"../data/media/strings/{self.language}.csv", 'r', encoding="utf-8")):
             self.string_dictionary[key] = value
 
