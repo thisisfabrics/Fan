@@ -1,6 +1,6 @@
 import pygame.transform
 
-from executables.rooms.obstacles.Portal import Portal
+from executables.rooms.obstacles.portals.Portal import Portal
 
 
 class Right(Portal):

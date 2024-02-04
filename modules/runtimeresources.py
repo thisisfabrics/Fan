@@ -22,6 +22,8 @@ class R:
             "useful_height": self.useful_size[1],
             "real_offset_y": abs(self.useful_size[1] - self.real_size[1]) / 2,
             "real_offset_x": abs(self.useful_size[0] - self.real_size[0]) / 2,
+            "health_bar_offset": 40 * self.coefficient,
+            "health_bar_padding": 120 * self.coefficient
         }
         self.color_dictionary = {
             "autumn_yellow": pygame.Color(194, 102, 41),

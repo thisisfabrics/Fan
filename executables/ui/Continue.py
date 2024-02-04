@@ -7,11 +7,11 @@ from executables.collectables.VacuumCleanerDecoy import VacuumCleanerDecoy
 from executables.entities.Belle import Belle
 from executables.rooms.Hall import Hall
 from executables.rooms.Room import Room
-from executables.rooms.obstacles.Bottom import Bottom
-from executables.rooms.obstacles.Lift import Lift
-from executables.rooms.obstacles.Right import Right
-from executables.rooms.obstacles.Shop import Shop
-from executables.rooms.obstacles.Top import Top
+from executables.rooms.obstacles.portals.Bottom import Bottom
+from executables.rooms.obstacles.portals.Lift import Lift
+from executables.rooms.obstacles.portals.Right import Right
+from executables.rooms.obstacles.portals.Shop import Shop
+from executables.rooms.obstacles.portals.Top import Top
 from executables.ui.Screen import Screen
 from executables.ui.widgets.Label import Label
 from executables.ui.widgets.tablets.WeaponIcon import WeaponIcon
@@ -21,6 +21,8 @@ from modules.collectiontools import linerize
 class Continue(Screen):
     def __init__(self, r, frame, mode=False):
         super().__init__(r, frame)
+        self.battery_equivalent = 10
+        self.inventory_window_is_showing = False
         if not mode:
             self.level = 10
             self.rooms = [[Room(self.r, (i, j)) if random.random() < .5 else Hall(self.r, (i, j)) for j in range(3)]
@@ -28,9 +30,6 @@ class Continue(Screen):
             self.rooms[0][0].add_entity(Belle(self.r, "belle_idle", 200))
             self.rooms[0][0].build()
             self.add_weapons()
-            self.battery_equivalent = 10
-            self.interface_offset = 40 * self.r.constant("coefficient"), 40 * self.r.constant("coefficient")
-            self.inventory_window_is_showing = False
             self.lift = Lift(self.r, self.rooms[0][0].image.get_rect()[-2:], self.level, self.rooms[0][0].portals_group)
             self.shop = Shop(self.r, self.rooms[0][0].image.get_rect()[-2:], self.rooms[0][0].portals_group)
 
@@ -155,8 +154,8 @@ class Continue(Screen):
         for i in range(entity.energy_threshold // self.battery_equivalent):
             self.frame.blit(self.r.drawable("active_battery") if entity.energy - self.battery_equivalent * i > 0 else
                             self.r.drawable("passive_battery"),
-                            (self.interface_offset[0] + 120 * i * self.r.constant("coefficient"),
-                             self.interface_offset[1]))
+                            (self.r.constant("health_bar_offset") + i * self.r.constant("health_bar_padding"),
+                             self.r.constant("health_bar_offset")))
 
     def place_inventory_window(self):
         if not self.inventory_window_is_showing:

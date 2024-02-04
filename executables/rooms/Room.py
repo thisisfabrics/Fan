@@ -11,12 +11,12 @@ from executables.collectables.VacuumCleanerDecoy import VacuumCleanerDecoy
 from executables.entities.Belle import Belle
 from executables.entities.enemies.Dispenser import Dispenser
 from executables.entities.enemies.Dust import Dust
-from executables.rooms.obstacles.Bottom import Bottom
+from executables.rooms.obstacles.portals.Bottom import Bottom
 from executables.rooms.obstacles.Fridge import Fridge
 from executables.entities.enemies.Catterfield import Catterfield
-from executables.rooms.obstacles.Right import Right
-from executables.rooms.obstacles.Top import Top
-from executables.rooms.obstacles.Portal import Portal
+from executables.rooms.obstacles.portals.Right import Right
+from executables.rooms.obstacles.portals.Top import Top
+from executables.rooms.obstacles.portals.Portal import Portal
 
 
 class Room:

@@ -1,4 +1,4 @@
-from executables.rooms.obstacles.Portal import Portal
+from executables.rooms.obstacles.portals.Portal import Portal
 
 
 class Shop(Portal):
