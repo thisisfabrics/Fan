@@ -10,5 +10,5 @@ class Fan(Weapon):
         self.offset_flipped = 71.428 * self.r.constant("coefficient"), self.offset_not_flipped[1]
         self.apply_offset()
         self.timeout = 500
-
+        self.description = self.r.string("fan")
 

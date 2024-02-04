@@ -10,4 +10,5 @@ class Cyclotron(Weapon):
         self.offset_flipped = 70 * self.r.constant("coefficient"), self.offset_not_flipped[1]
         self.apply_offset()
         self.timeout = 200
+        self.description = self.r.string("cyclotron")
 

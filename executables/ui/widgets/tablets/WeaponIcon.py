@@ -4,8 +4,9 @@ from executables.ui.widgets.InteractiveWidget import InteractiveWidget
 
 
 class WeaponIcon(InteractiveWidget):
-    def __init__(self, r, pos, name, powers, mouse_pos, action):
+    def __init__(self, r, pos, name, powers, description, mouse_pos, action):
         super().__init__(r, pos, action)
+        self.description = description
         self.image = self.r.drawable(name.lower())
         self.calculate_size()
         label = (pygame.font.Font("../data/media/fonts/AmaticSC-Bold.ttf", int(80 * self.r.constant("coefficient")))

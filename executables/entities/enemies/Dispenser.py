@@ -42,7 +42,7 @@ class Dispenser(Enemy):
     def apply_temperature(self):
         surface = pygame.Surface(self.image.get_rect()[-2:], pygame.SRCALPHA, 32)
         surface.blit(self.image, (0, 0))
-        surface.fill(pygame.Color(int(self.temperature), 0, 0), special_flags=pygame.BLEND_RGB_ADD)
+        surface.fill(pygame.Color(0, 0, int(self.temperature)), special_flags=pygame.BLEND_RGB_ADD)
         self.image = surface
         
     def update(self, rooms_obstacles, rooms_entities, field_size, has_uncommon_navigation=False):

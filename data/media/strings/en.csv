@@ -8,3 +8,6 @@ catalyst_health_increase,Adds two additional buttons
 level,Level
 max,(MAX)
 min,(MIN)
+cyclotron,Freezes dispensers
+fan,Blows the catterfields away
+vacuumcleaner,Vacuums blue dust

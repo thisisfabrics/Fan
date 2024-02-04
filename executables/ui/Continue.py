@@ -10,6 +10,7 @@ from executables.rooms.Room import Room
 from executables.rooms.obstacles.Bottom import Bottom
 from executables.rooms.obstacles.Lift import Lift
 from executables.rooms.obstacles.Right import Right
+from executables.rooms.obstacles.Shop import Shop
 from executables.rooms.obstacles.Top import Top
 from executables.ui.Screen import Screen
 from executables.ui.widgets.Label import Label
@@ -31,6 +32,7 @@ class Continue(Screen):
             self.interface_offset = 40 * self.r.constant("coefficient"), 40 * self.r.constant("coefficient")
             self.inventory_window_is_showing = False
             self.lift = Lift(self.r, self.rooms[0][0].image.get_rect()[-2:], self.level, self.rooms[0][0].portals_group)
+            self.shop = Shop(self.r, self.rooms[0][0].image.get_rect()[-2:], self.rooms[0][0].portals_group)
 
     def add_weapons(self):
         for decoy in (VacuumCleanerDecoy,):
@@ -104,6 +106,8 @@ class Continue(Screen):
         elif isinstance(portal, Lift):
             if not self.lift.count_of_enemies:
                 self.signal_to_change = "stage_passed"
+        elif isinstance(portal, Shop):
+            pass
         else:
             belle_column = belle_column - 1
             belle.x += room.image.get_rect().width - self.r.drawable("portal").get_rect().width * 2 - belle.rect.width
@@ -157,17 +161,20 @@ class Continue(Screen):
     def place_inventory_window(self):
         if not self.inventory_window_is_showing:
             return
+        focused = None
         self.frame.blit(self.r.drawable("inventory_window"), (0, 0))
         if self.find_belle()[0].weapons:
             for i, elem in enumerate(self.find_belle()[0].weapons):
-                (WeaponIcon(self.r, (420, i * 300 + 1090), elem.__class__.__name__, (elem.power, elem.power_threshold),
-                            pygame.mouse.get_pos(), lambda: self.find_belle()[0].sort_weapon_by(elem.__class__))
-                 .draw(self.frame))
+                icon = WeaponIcon(self.r, (420, i * 300 + 1090), elem.__class__.__name__,
+                                  (elem.power, elem.power_threshold),
+                                  elem.description, pygame.mouse.get_pos(), lambda: self.find_belle()[0].sort_weapon_by(elem.__class__))
+                if icon.focus:
+                    focused = icon
+                icon.draw(self.frame)
         else:
             (Label(self.r, self.r.string("if_not_weapons"), (450, 1500), 90, 400 * self.r.constant("coefficient"),
                    pygame.Color(127, 108, 84))
              .draw(self.frame))
-        focused = None
         if self.find_belle()[0].catalysts.items:
             self.find_belle()[0].catalysts.draw(self.frame)
             for elem in self.find_belle()[0].catalysts.items:

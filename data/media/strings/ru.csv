@@ -8,3 +8,6 @@ catalyst_health_increase,Добавляет две дополнительные 
 level,Уровень
 max,(МАКС)
 min,(МИН)
+cyclotron,Замораживает раздатчики
+fan,Сдувает полепрядов
+vacuumcleaner,Пылесосит синюю пыль

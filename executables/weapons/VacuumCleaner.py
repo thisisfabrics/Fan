@@ -13,6 +13,7 @@ class VacuumCleaner(Weapon):
         self.bullet_offset_x = int()
         self.apply_offset()
         self.timeout = 200
+        self.description = self.r.string("vacuumcleaner")
 
     def release_bullet(self, mouse_position_compenstation):
         for i in range(self.power):
