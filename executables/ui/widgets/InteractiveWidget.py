@@ -2,8 +2,9 @@ from executables.ui.widgets.Widget import Widget
 
 
 class InteractiveWidget(Widget):
-    def __init__(self, r, pos, action):
+    def __init__(self, r, pos, action, is_enabled=True):
         super().__init__(r, pos)
+        self.is_enabled = is_enabled
         self.action = action
         self.focus = False
         self.xx, self.yy = int(), int()
@@ -22,5 +23,5 @@ class InteractiveWidget(Widget):
         self.calculate_size()
 
     def click(self):
-        if self.focus:
+        if self.focus and self.is_enabled:
             self.action()

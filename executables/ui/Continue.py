@@ -13,8 +13,12 @@ from executables.rooms.obstacles.portals.Right import Right
 from executables.rooms.obstacles.portals.Shop import Shop
 from executables.rooms.obstacles.portals.Top import Top
 from executables.ui.Screen import Screen
+from executables.ui.widgets.Button import Button
 from executables.ui.widgets.Label import Label
 from executables.ui.widgets.tablets.WeaponIcon import WeaponIcon
+from executables.weapons.Cyclotron import Cyclotron
+from executables.weapons.Fan import Fan
+from executables.weapons.VacuumCleaner import VacuumCleaner
 from modules.collectiontools import linerize
 
 
@@ -23,6 +27,8 @@ class Continue(Screen):
         super().__init__(r, frame)
         self.battery_equivalent = 10
         self.inventory_window_is_showing = False
+        self.buttons = (Button(self.r, self.r.string("pause"),
+                               (3400, 20), self.pause_game, True),)
         if not mode:
             self.floor = 10
             self.rooms = [[Room(self.r, (i, j)) if random.random() < .5 else Hall(self.r, (i, j)) for j in range(3)]
@@ -73,6 +79,8 @@ class Continue(Screen):
             if self.find_belle()[0].weapons:
                 self.add_time_event("release_bullets",
                                     self.find_belle()[0].use_weapon, self.find_belle()[0].weapons[0].timeout)
+            for elem in self.buttons:
+                elem.click()
 
     def mouse_released(self, button):
         if button == 1:
@@ -84,6 +92,8 @@ class Continue(Screen):
             for elem in self.find_belle()[0].catalysts.items:
                 elem.check_focus(pos)
             self.find_belle()[0].catalysts.check_focus(pos)
+        for elem in self.buttons:
+            elem.check_focus(pos)
 
     def mouse_wheel(self, direction):
         if self.inventory_window_is_showing:
@@ -190,10 +200,15 @@ class Continue(Screen):
             Label(self.r, self.r.string("no_focus"), (2800, 1200), 90, 400 * self.r.constant("coefficient"),
                   pygame.Color(127, 108, 84)).draw(self.frame)
 
+    def place_buttons(self):
+        for elem in self.buttons:
+            elem.draw(self.frame)
+
     def place_interface(self):
         belle = self.find_belle()[0]
         self.place_health_bar(belle)
         self.place_inventory_window()
+        self.place_buttons()
 
     def push_to_database(self):
         self.r.query(f"INSERT INTO floor(number) VALUES({self.floor})")
@@ -203,16 +218,46 @@ class Continue(Screen):
                          f"{elem.collection_coords[0]}, {elem.collection_coords[1]})")
             for el in elem.obstacles_group.sprites() + elem.collectables_group.sprites():
                 self.r.query("INSERT INTO obstacle_collectable(type, x, y, room_id) VALUES("
-                             f"{self.r.constant("obstacle_collectable_to_object_id")[el.__class__]}, "
-                             f"{el.x}, {el.y}, {i + 1})")
+                             f"{self.r.constant("obstacle_collectable_object_to_id")[el.__class__]}, "
+                             f"{el.rect.x}, {el.rect.y}, {i + 1})")
             for el in elem.entities_group.sprites():
                 self.r.query("INSERT INTO entity(animation_name, animation_period, x, y, "
                              "energy, last_delta_x, last_delta_y, room_id) VALUES("
-                             ")")
+                             f"'{el.animation_name}', {el.animation_period}, {el.x}, {el.y}, {el.energy}, "
+                             f"{el.last_delta_x}, {el.last_delta_y}, {i + 1})")
+        for elem in self.find_belle()[0].catalysts.items:
+            self.r.query(f"INSERT INTO catalyst(name) VALUES({elem})")
+        try:
+            vacuumcleaner_power = (next(filter(lambda e: isinstance(elem, VacuumCleaner), self.find_belle()[0].weapons))
+                                   .power)
+        except StopIteration:
+            vacuumcleaner_power = int()
+        try:
+            fan_power = (next(filter(lambda e: isinstance(elem, Fan), self.find_belle()[0].weapons))
+                         .power)
+        except StopIteration:
+            fan_power = int()
+        try:
+            cyclotron_power = (next(filter(lambda e: isinstance(elem, Cyclotron), self.find_belle()[0].weapons))
+                               .power)
+        except StopIteration:
+            cyclotron_power = int()
+        self.r.query(f"INSERT INTO belle(money, vacuumcleaner_power, cyclotron_power, fan_power) VALUES("
+                     f"{self.find_belle()[0].money}, {vacuumcleaner_power}, {cyclotron_power}, {fan_power})")
+        self.r.database.commit()
 
+    def empty_database(self):
+        for elem in ("floor", "belle", "entity", "obstacle_collectable", "room"):
+            self.r.query(f"DELETE FROM {elem}")
+        self.r.database.commit()
 
     def finish_game(self):
+        self.empty_database()
         self.signal_to_change = "finish"
+
+    def pause_game(self):
+        self.push_to_database()
+        self.signal_to_change = "start"
 
     def update(self):
         self.find_belle()[1].update_sprites()
@@ -221,7 +266,6 @@ class Continue(Screen):
                 self.push_belle_in_direction(entered_portal)
             self.place_interface()
         except StopIteration:
-            self.push_to_database()
             self.finish_game()
         self.lift.set_count_of_enemies(len(
             linerize([elem.entities_group.sprites() for elem in linerize(self.rooms)])) - 1)

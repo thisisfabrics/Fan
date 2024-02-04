@@ -32,6 +32,8 @@ class Game:
 
     def navigate(self, destination):
         if destination:
+            if destination == "start":
+                self.current_screen = Start(self.r, self.frame)
             if destination == "continue":
                 self.current_screen = Continue(self.r, self.frame)
             elif destination == "finish":

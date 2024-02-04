@@ -22,8 +22,8 @@ class Start(Screen):
         self.state_description = [
             (self.r.drawable("start_background"), tuple()),
             (self.r.drawable("start_background_play"), (
-                Button(self.r, r.string("new_game"), (1124, 640), self.new_game),
-                Button(self.r, r.string("continue"), (1124, 1050), self.new_game),
+                Button(self.r, r.string("new_game"), (1124, 640), self.start_game),
+                Button(self.r, r.string("continue"), (1124, 1050), self.start_game, is_enabled=self.r.are_there_data()),
                 Button(self.r, r.string("reset"), (20, 20), self.hide_menu, True)
             )),
             (self.r.drawable("start_background_settings"), (
@@ -37,7 +37,7 @@ class Start(Screen):
     def hide_menu(self):
         self.state_multiplier = 0
 
-    def new_game(self):
+    def start_game(self):
         self.signal_to_change = "continue"
 
     def change_yellowing(self):

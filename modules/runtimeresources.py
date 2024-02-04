@@ -59,6 +59,9 @@ class R:
             "air_bullet_filling": pygame.Color(160, 144, 137)
         }
 
+    def are_there_data(self):
+        return bool(self.query("SELECT * FROM floor").fetchall())
+
     def observe_language(self):
         self.language = self.query("SELECT language FROM settings").fetchall()[0][0]
 
