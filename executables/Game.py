@@ -34,8 +34,10 @@ class Game:
         if destination:
             if destination == "start":
                 self.current_screen = Start(self.r, self.frame)
-            if destination == "continue":
+            elif destination == "continue":
                 self.current_screen = Continue(self.r, self.frame)
+            elif destination == "continued":
+                self.current_screen = Continue(self.r, self.frame, True)
             elif destination == "finish":
                 self.current_screen = Finish(self.r, self.frame)
 

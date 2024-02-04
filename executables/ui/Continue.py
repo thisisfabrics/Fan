@@ -23,13 +23,15 @@ from modules.collectiontools import linerize
 
 
 class Continue(Screen):
-    def __init__(self, r, frame, mode=False):
+    def __init__(self, r, frame, use_the_database=False):
         super().__init__(r, frame)
         self.battery_equivalent = 10
         self.inventory_window_is_showing = False
         self.buttons = (Button(self.r, self.r.string("pause"),
                                (3400, 20), self.pause_game, True),)
-        if not mode:
+        if use_the_database:
+            self.fetch_from_database()
+        else:
             self.floor = 10
             self.rooms = [[Room(self.r, (i, j)) if random.random() < .5 else Hall(self.r, (i, j)) for j in range(3)]
                           for i in range(3)]
@@ -38,13 +40,14 @@ class Continue(Screen):
             self.add_weapons()
             self.lift = Lift(self.r, self.rooms[0][0].image.get_rect()[-2:], self.floor, self.rooms[0][0].portals_group)
             self.shop = Shop(self.r, self.rooms[0][0].image.get_rect()[-2:], self.rooms[0][0].portals_group)
+        self.empty_database()
 
-    def add_weapons(self):
-        for decoy in (VacuumCleanerDecoy,):
+    def add_weapons(self, assortment=(VacuumCleanerDecoy, FanDecoy, CyclotronDecoy)):
+        for decoy in assortment:
             randroom = self.rooms[random.randrange(len(self.rooms))][random.randrange(len(self.rooms[0]))]
             decoy(self.r, randroom.free_pos(), randroom.collectables_group)
-        FanDecoy(self.r, self.rooms[0][0].free_pos(), self.rooms[0][0].collectables_group)
-        CyclotronDecoy(self.r, self.rooms[0][0].free_pos(), self.rooms[0][0].collectables_group)
+        # FanDecoy(self.r, self.rooms[0][0].free_pos(), self.rooms[0][0].collectables_group)
+        # CyclotronDecoy(self.r, self.rooms[0][0].free_pos(), self.rooms[0][0].collectables_group)
 
     def find_belle(self):
         room = next(filter(lambda elem: Belle in map(lambda el: el.__class__, elem.entities_group.sprites()),
@@ -211,10 +214,11 @@ class Continue(Screen):
         self.place_buttons()
 
     def push_to_database(self):
+        self.empty_database()
         self.r.query(f"INSERT INTO floor(number) VALUES({self.floor})")
         for i, elem in enumerate(linerize(self.rooms)):
-            self.r.query("INSERT INTO room(type, row, column) VALUES("
-                         f"{self.r.constant("room_object_to_id")[elem.__class__]}, "
+            self.r.query("INSERT INTO room(id, type, row, column) VALUES("
+                         f"{i + 1}, {self.r.constant("room_object_to_id")[elem.__class__]}, "
                          f"{elem.collection_coords[0]}, {elem.collection_coords[1]})")
             for el in elem.obstacles_group.sprites() + elem.collectables_group.sprites():
                 self.r.query("INSERT INTO obstacle_collectable(type, x, y, room_id) VALUES("
@@ -250,6 +254,19 @@ class Continue(Screen):
         for elem in ("floor", "belle", "entity", "obstacle_collectable", "room"):
             self.r.query(f"DELETE FROM {elem}")
         self.r.database.commit()
+
+    def fetch_from_database(self):
+        self.floor = self.r.query("SELECT number FROM floor").fetchall()[0][0]
+        self.rooms = list()
+        current_row = list()
+        for type, row, column in self.r.query("SELECT type, row, column FROM room ORDER BY row, column"):
+            if len(current_row) != 3:
+                current_row.append(self.r.constant("id_to_room_object")[type](self.r, (row, column)))
+            else:
+                self.rooms.append(current_row)
+                current_row = list()
+        for type, x, y, room_row, room_column in self.r.query("SELECT o"):
+            pass
 
     def finish_game(self):
         self.empty_database()
