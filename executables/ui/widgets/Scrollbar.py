@@ -12,7 +12,6 @@ class Scrollbar(InteractiveWidget):
         self.items = list()
         self.scrollstate = int()
         self.image = pygame.Surface((0, 0))
-        self.padding = 106 * self.r.constant("coefficient")
 
     def calculate_size(self):
         self.xx, self.yy = self.x + self.width, self.y + self.height
@@ -20,7 +19,7 @@ class Scrollbar(InteractiveWidget):
     def append(self, widget):
         # 106 between items
         if self.items:
-            widget.x = len(self.items) % 4 * (self.items[0].image.get_width() + self.padding)
+            widget.x = len(self.items) % 4 * (self.items[0].image.get_width() + self.r.constant("scroll_bar_padding"))
             widget.y = self.current_height() - self.items[0].image.get_height()
         widget.y += self.scrollstate
         self.items.append(widget)
@@ -29,7 +28,8 @@ class Scrollbar(InteractiveWidget):
         if self.focus and self.current_height() > self.height:
             delta = -direction * 50 * self.r.constant("coefficient")
             self.scrollstate -= delta
-            if -self.current_height() + 2 * self.items[0].image.get_height() + self.padding <= self.scrollstate <= 0:
+            if -self.current_height() + 2 * self.items[0].image.get_height() + self.r.constant("scroll_bar_padding") \
+                    <= self.scrollstate <= 0:
                 for elem in self.items:
                     elem.y -= delta
                     elem.calculate_size()
@@ -37,7 +37,7 @@ class Scrollbar(InteractiveWidget):
                 self.scrollstate += delta
 
     def current_height(self):
-        return len(self.items) // 4 * (self.items[0].image.get_height() + self.padding) + \
+        return len(self.items) // 4 * (self.items[0].image.get_height() + self.r.constant("scroll_bar_padding")) + \
             self.items[0].image.get_height() if self.items else int()
 
     def build_surface(self):

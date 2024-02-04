@@ -24,13 +24,13 @@ class Continue(Screen):
         self.battery_equivalent = 10
         self.inventory_window_is_showing = False
         if not mode:
-            self.level = 10
+            self.floor = 10
             self.rooms = [[Room(self.r, (i, j)) if random.random() < .5 else Hall(self.r, (i, j)) for j in range(3)]
                           for i in range(3)]
             self.rooms[0][0].add_entity(Belle(self.r, "belle_idle", 200))
             self.rooms[0][0].build()
             self.add_weapons()
-            self.lift = Lift(self.r, self.rooms[0][0].image.get_rect()[-2:], self.level, self.rooms[0][0].portals_group)
+            self.lift = Lift(self.r, self.rooms[0][0].image.get_rect()[-2:], self.floor, self.rooms[0][0].portals_group)
             self.shop = Shop(self.r, self.rooms[0][0].image.get_rect()[-2:], self.rooms[0][0].portals_group)
 
     def add_weapons(self):
@@ -166,7 +166,8 @@ class Continue(Screen):
             for i, elem in enumerate(self.find_belle()[0].weapons):
                 icon = WeaponIcon(self.r, (420, i * 300 + 1090), elem.__class__.__name__,
                                   (elem.power, elem.power_threshold),
-                                  elem.description, pygame.mouse.get_pos(), lambda: self.find_belle()[0].sort_weapon_by(elem.__class__))
+                                  elem.description, pygame.mouse.get_pos(),
+                                  lambda: self.find_belle()[0].sort_weapon_by(elem.__class__))
                 if icon.focus:
                     focused = icon
                 icon.draw(self.frame)
@@ -195,7 +196,20 @@ class Continue(Screen):
         self.place_inventory_window()
 
     def push_to_database(self):
-        pass
+        self.r.query(f"INSERT INTO floor(number) VALUES({self.floor})")
+        for i, elem in enumerate(linerize(self.rooms)):
+            self.r.query("INSERT INTO room(type, row, column) VALUES("
+                         f"{self.r.constant("room_object_to_id")[elem.__class__]}, "
+                         f"{elem.collection_coords[0]}, {elem.collection_coords[1]})")
+            for el in elem.obstacles_group.sprites() + elem.collectables_group.sprites():
+                self.r.query("INSERT INTO obstacle_collectable(type, x, y, room_id) VALUES("
+                             f"{self.r.constant("obstacle_collectable_to_object_id")[el.__class__]}, "
+                             f"{el.x}, {el.y}, {i + 1})")
+            for el in elem.entities_group.sprites():
+                self.r.query("INSERT INTO entity(animation_name, animation_period, x, y, "
+                             "energy, last_delta_x, last_delta_y, room_id) VALUES("
+                             ")")
+
 
     def finish_game(self):
         self.signal_to_change = "finish"
@@ -209,5 +223,6 @@ class Continue(Screen):
         except StopIteration:
             self.push_to_database()
             self.finish_game()
-        self.lift.set_count_of_enemies(len(linerize([elem.entities_group.sprites() for elem in linerize(self.rooms)])) - 1)
+        self.lift.set_count_of_enemies(len(
+            linerize([elem.entities_group.sprites() for elem in linerize(self.rooms)])) - 1)
         return self.signal_to_change

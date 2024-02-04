@@ -2,6 +2,16 @@ import os
 import sqlite3
 import pygame
 
+from executables.collectables.Battery import Battery
+from executables.collectables.Coin import Coin
+from executables.collectables.CyclotronDecoy import CyclotronDecoy
+from executables.collectables.FanDecoy import FanDecoy
+from executables.collectables.Powerup import Powerup
+from executables.collectables.VacuumCleanerDecoy import VacuumCleanerDecoy
+from executables.rooms.Hall import Hall
+from executables.rooms.Room import Room
+from executables.rooms.obstacles.Fridge import Fridge
+
 
 class R:
     def __init__(self, useful_size, real_size):
@@ -23,8 +33,27 @@ class R:
             "real_offset_y": abs(self.useful_size[1] - self.real_size[1]) / 2,
             "real_offset_x": abs(self.useful_size[0] - self.real_size[0]) / 2,
             "health_bar_offset": 40 * self.coefficient,
-            "health_bar_padding": 120 * self.coefficient
+            "health_bar_padding": 120 * self.coefficient,
+            "scroll_bar_padding": 106 * self.coefficient,
+            "room_object_to_id": {
+                Room: 1,
+                Hall: 2
+            },
+            "id_to_room_object": dict(),
+            "obstacle_collectable_object_to_id": {
+                Fridge: 1,
+                Coin: 2,
+                Powerup: 3,
+                VacuumCleanerDecoy: 4,
+                FanDecoy: 5,
+                CyclotronDecoy: 6,
+                Battery: 7
+            },
+            "id_to_obstacle_collectable_object": dict()
         }
+        for variable in ("room", "obstacle_collectable"):
+            for key, value in map(lambda el: el[::-1], self.constant_dictionary[f"{variable}_object_to_id"].items()):
+                self.constant_dictionary[f"id_to_{variable}_object"][key] = value
         self.color_dictionary = {
             "autumn_yellow": pygame.Color(194, 102, 41),
             "air_bullet_filling": pygame.Color(160, 144, 137)
