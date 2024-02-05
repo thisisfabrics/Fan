@@ -30,6 +30,7 @@ class Room:
         self.entities_group = pygame.sprite.Group()
         self.portals_group = pygame.sprite.Group()
         self.collectables_group = pygame.sprite.Group()
+        self.build_portals()
         if not is_recreated:
             self.build()
             self.populate()
@@ -60,7 +61,6 @@ class Room:
         approved_spawn_y_range_start = belle_height + portal_width + belle_addition_size
         approved_spawn_y_range_end = self.image.get_rect().height - belle_height - portal_width - belle_addition_size
         self.obstacles_group.empty()
-        self.portals_group.empty()
         for i in range(random.randrange(1, self.max_count_of_obstacles)):
             next_obstacle = random.choice((Fridge, ))(self.r)
             x, y = (random.randrange(approved_spawn_x_range_start,
@@ -80,6 +80,9 @@ class Room:
             if not iteration:
                 continue
             self.obstacles_group.add(next_obstacle)
+
+    def build_portals(self):
+        self.portals_group.empty()
         y, x = self.collection_coords
         if x != 2:
             self.portals_group.add(Right(self.r, self.image.get_rect()[-2:]))

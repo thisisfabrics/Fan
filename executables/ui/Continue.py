@@ -234,17 +234,17 @@ class Continue(Screen):
         for elem in self.find_belle()[0].catalysts.items:
             self.r.query(f"INSERT INTO catalyst(name) VALUES({elem})")
         try:
-            vacuumcleaner_power = (next(filter(lambda e: isinstance(elem, VacuumCleaner), self.find_belle()[0].weapons))
+            vacuumcleaner_power = (next(filter(lambda e: isinstance(e, VacuumCleaner), self.find_belle()[0].weapons))
                                    .power)
         except StopIteration:
             vacuumcleaner_power = int()
         try:
-            fan_power = (next(filter(lambda e: isinstance(elem, Fan), self.find_belle()[0].weapons))
+            fan_power = (next(filter(lambda e: isinstance(e, Fan), self.find_belle()[0].weapons))
                          .power)
         except StopIteration:
             fan_power = int()
         try:
-            cyclotron_power = (next(filter(lambda e: isinstance(elem, Cyclotron), self.find_belle()[0].weapons))
+            cyclotron_power = (next(filter(lambda e: isinstance(e, Cyclotron), self.find_belle()[0].weapons))
                                .power)
         except StopIteration:
             cyclotron_power = int()

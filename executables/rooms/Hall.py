@@ -15,6 +15,7 @@ class Hall(Room):
         self.image = quad_surface
         self.max_count_of_obstacles *= 3
         self.max_count_of_enemies *= 3
+        self.build_portals()
         if not is_recreated:
             self.build()
             self.populate()
