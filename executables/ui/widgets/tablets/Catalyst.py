@@ -2,9 +2,9 @@ from executables.ui.widgets.InteractiveWidget import InteractiveWidget
 
 
 class Catalyst(InteractiveWidget):
-    def __init__(self, r, pos, compos):
-        super().__init__(r, pos, lambda: True)
-        self.compos_x, self.compos_y = map(lambda elem: elem * self.r.constant("coefficient"), compos)
+    def __init__(self, r):
+        super().__init__(r, (0, 0), lambda: True)
+        self.compos_x, self.compos_y = int(), int()
         self.description = str()
         self.calculate_size()
 

@@ -31,6 +31,7 @@ class R:
         self.string_dictionary = dict()
         self.reload_strings()
         self.constant_dictionary = {
+            "battery_equivalent": 10,
             "coefficient": self.coefficient,
             "useful_width": self.useful_size[0],
             "useful_height": self.useful_size[1],

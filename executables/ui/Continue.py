@@ -26,7 +26,6 @@ from modules.collectiontools import linerize
 class Continue(Screen):
     def __init__(self, r, frame, use_the_database=False):
         super().__init__(r, frame)
-        self.battery_equivalent = 10
         self.inventory_window_is_showing = False
         self.buttons = (Button(self.r, self.r.string("pause"),
                                (3400, 20), self.pause_game, True),)
@@ -120,7 +119,8 @@ class Continue(Screen):
             if not self.lift.count_of_enemies:
                 self.signal_to_change = "stage_passed"
         elif isinstance(portal, Shop):
-            pass
+            self.push_to_database()
+            self.signal_to_change = "shop"
         else:
             belle_column = belle_column - 1
             belle.x += room.image.get_rect().width - self.r.drawable("portal").get_rect().width * 2 - belle.rect.width
@@ -165,8 +165,9 @@ class Continue(Screen):
         return is_entered_portal
 
     def place_health_bar(self, entity):
-        for i in range(entity.energy_threshold // self.battery_equivalent):
-            self.frame.blit(self.r.drawable("active_battery") if entity.energy - self.battery_equivalent * i > 0 else
+        for i in range(entity.energy_threshold // self.r.constant("battery_equivalent")):
+            self.frame.blit(self.r.drawable("active_battery")
+                            if entity.energy - self.r.constant("battery_equivalent") * i > 0 else
                             self.r.drawable("passive_battery"),
                             (self.r.constant("health_bar_offset") + i * self.r.constant("health_bar_padding"),
                              self.r.constant("health_bar_offset")))
@@ -186,7 +187,7 @@ class Continue(Screen):
                     focused = icon
                 icon.draw(self.frame)
         else:
-            (Label(self.r, self.r.string("if_not_weapons"), (450, 1500), 90, 400 * self.r.constant("coefficient"),
+            (Label(self.r, self.r.string("if_not_weapons"), (450, 1500), 90, 400,
                    pygame.Color(127, 108, 84))
              .draw(self.frame))
         if self.find_belle()[0].catalysts.items:
@@ -196,12 +197,12 @@ class Continue(Screen):
                     focused = elem
         else:
             Label(self.r, self.r.string("catalysts_will_appear"), (1600, 1200), 90,
-                  800 * self.r.constant("coefficient"), pygame.Color(127, 108, 84)).draw(self.frame)
+                  800, pygame.Color(127, 108, 84)).draw(self.frame)
         if focused:
-            Label(self.r, focused.description, (2800, 1200), 90, 400 * self.r.constant("coefficient"),
+            Label(self.r, focused.description, (2800, 1200), 90, 370,
                   pygame.Color(127, 108, 84)).draw(self.frame)
         else:
-            Label(self.r, self.r.string("no_focus"), (2800, 1200), 90, 400 * self.r.constant("coefficient"),
+            Label(self.r, self.r.string("no_focus"), (2800, 1200), 90, 400,
                   pygame.Color(127, 108, 84)).draw(self.frame)
 
     def place_buttons(self):

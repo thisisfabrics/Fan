@@ -10,7 +10,7 @@ class Label(Widget):
         super().__init__(r, pos)
         self.label = label
         self.color = color if color else pygame.Color("black")
-        self.width = width if width else self.r.constant("useful_width")
+        self.width = width * self.r.constant("coefficient") if width else self.r.constant("useful_width")
         self.size = int(size * self.r.constant("coefficient"))
         self.font = pygame.font.Font("../data/media/fonts/AmaticSC-Regular.ttf",
                                      self.size)

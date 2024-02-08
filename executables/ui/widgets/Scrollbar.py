@@ -13,6 +13,9 @@ class Scrollbar(InteractiveWidget):
         self.scrollstate = int()
         self.image = pygame.Surface((0, 0))
 
+    def enumerate_classes(self):
+        return [elem.__class__ for elem in self.items]
+
     def calculate_size(self):
         self.xx, self.yy = self.x + self.width, self.y + self.height
 
@@ -43,6 +46,7 @@ class Scrollbar(InteractiveWidget):
     def build_surface(self):
         surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA, 32)
         for elem in self.items:
+            elem.compos_x, elem.compos_y = self.x, self.y
             elem.draw(surface)
         self.image = surface
 
