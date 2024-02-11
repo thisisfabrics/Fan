@@ -12,3 +12,6 @@ cyclotron,Замораживает раздатчики
 fan,Сдувает полепрядов
 vacuumcleaner,Пылесосит синюю пыль
 pause,||
+buy,Купить
+not_enough_money,Нет денег
+costs,Стоит

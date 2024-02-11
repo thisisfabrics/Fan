@@ -6,6 +6,7 @@ class Catalyst(InteractiveWidget):
         super().__init__(r, (0, 0), lambda: True)
         self.compos_x, self.compos_y = int(), int()
         self.description = str()
+        self.price = 100
         self.calculate_size()
 
     def check_focus(self, pos):

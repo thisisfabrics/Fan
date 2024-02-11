@@ -9,12 +9,16 @@ class Button(InteractiveWidget):
         self.is_icon = is_icon
         self.is_enabled = is_enabled
         self.padding = 20 * self.r.constant("coefficient")
-        self.label = pygame.font.Font("../data/media/fonts/AmaticSC-Regular.ttf",
-                                      int(125 * self.r.constant("coefficient"))) \
-            .render(label, 1, pygame.Color("black"))
+        self.label = None
+        self.rebuild_label(label)
         self.chuncks = int()
         self.calculate_size()
         self.image = pygame.Surface((0, 0))
+
+    def rebuild_label(self, label):
+        self.label = pygame.font.Font("../data/media/fonts/AmaticSC-Regular.ttf",
+                                      int(125 * self.r.constant("coefficient"))) \
+            .render(label, 1, pygame.Color("black"))
 
     def calculate_size(self):
         if self.focus and self.is_enabled:

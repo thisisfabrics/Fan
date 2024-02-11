@@ -23,7 +23,6 @@ class Belle(Entity):
         self.became_ghost_at = None
         self.money = int()
         self.catalysts = Scrollbar(self.r, (1322, 1038), lambda: None, 1200, 890)
-        self.catalysts.append(HealthIncrease(self.r))
         self.apply_catalysts()
 
     def apply_catalysts(self):

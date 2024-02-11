@@ -289,6 +289,10 @@ class Continue(Screen):
             entity.energy = energy
             entity.last_delta_x, entity.last_delta_y = last_delta_x, last_delta_y
             self.rooms[room_row][room_column].entities_group.add(entity)
+        for _, type, purchased, _ in self.r.query("SELECT * FROM catalyst"):
+            if purchased:
+                self.find_belle()[0].catalysts.append(self.r.constant("id_to_catalyst_object")[type](self.r))
+            self.find_belle()[0].apply_catalysts()
         _, money, vacuumcleaner_power, cyclotron_power, fan_power = next(self.r.query("SELECT * FROM belle"))
         self.find_belle()[0].money = money
         if vacuumcleaner_power:
