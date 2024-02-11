@@ -15,6 +15,7 @@ from executables.entities.enemies.Dust import Dust
 from executables.rooms.Hall import Hall
 from executables.rooms.Room import Room
 from executables.rooms.obstacles.Fridge import Fridge
+from executables.ui.widgets.tablets.HealthIncrease import HealthIncrease
 
 
 class R:
@@ -61,9 +62,13 @@ class R:
                 Dispenser: 3,
                 Dust: 4
             },
-            "id_to_entity_object": dict()
+            "id_to_entity_object": dict(),
+            "catalyst_object_to_id": {
+                HealthIncrease: 1
+            },
+            "id_to_catalyst_object": dict()
         }
-        for variable in ("room", "obstacle_collectable", "entity"):
+        for variable in ("room", "obstacle_collectable", "entity", "catalyst"):
             for key, value in map(lambda el: el[::-1], self.constant_dictionary[f"{variable}_object_to_id"].items()):
                 self.constant_dictionary[f"id_to_{variable}_object"][key] = value
         self.color_dictionary = {

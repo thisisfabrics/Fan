@@ -118,9 +118,12 @@ class Continue(Screen):
         elif isinstance(portal, Lift):
             if not self.lift.count_of_enemies:
                 self.signal_to_change = "stage_passed"
+                return
         elif isinstance(portal, Shop):
+            self.rooms[belle_row][belle_column].add_entity(belle)
             self.push_to_database()
-            self.signal_to_change = "shop"
+            self.signal_to_change = "store"
+            return
         else:
             belle_column = belle_column - 1
             belle.x += room.image.get_rect().width - self.r.drawable("portal").get_rect().width * 2 - belle.rect.width
@@ -232,8 +235,6 @@ class Continue(Screen):
                              f"{self.r.constant("entity_object_to_id")[el.__class__]}, "
                              f"'{el.animation_name}', {el.animation_period}, {el.x}, {el.y}, {el.energy}, "
                              f"{el.last_delta_x}, {el.last_delta_y}, {i + 1})")
-        for elem in self.find_belle()[0].catalysts.items:
-            self.r.query(f"INSERT INTO catalyst(name) VALUES({elem})")
         try:
             vacuumcleaner_power = (next(filter(lambda e: isinstance(e, VacuumCleaner), self.find_belle()[0].weapons))
                                    .power)

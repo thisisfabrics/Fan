@@ -4,6 +4,7 @@ import pygame
 from executables.ui.Continue import Continue
 from executables.ui.Finish import Finish
 from executables.ui.Start import Start
+from executables.ui.Store import Store
 from modules.runtimeresources import R
 
 
@@ -40,6 +41,8 @@ class Game:
                 self.current_screen = Continue(self.r, self.frame, True)
             elif destination == "finish":
                 self.current_screen = Finish(self.r, self.frame)
+            elif destination == "store":
+                self.current_screen = Store(self.r, self.frame)
 
     def loop(self):
         while self.playtime:
