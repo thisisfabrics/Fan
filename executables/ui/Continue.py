@@ -40,7 +40,7 @@ class Continue(Screen):
             self.add_weapons()
         self.lift = Lift(self.r, self.rooms[0][0].image.get_rect()[-2:], self.floor, self.rooms[0][0].portals_group)
         self.shop = Shop(self.r, self.rooms[0][0].image.get_rect()[-2:], self.rooms[0][0].portals_group)
-        self.empty_database()
+        self.empty_database(use_the_database)
 
     def add_weapons(self, assortment=(VacuumCleanerDecoy, FanDecoy, CyclotronDecoy)):
         for decoy in assortment:
@@ -121,6 +121,7 @@ class Continue(Screen):
                 return
         elif isinstance(portal, Shop):
             self.rooms[belle_row][belle_column].add_entity(belle)
+            belle.undo_move_x()
             self.push_to_database()
             self.signal_to_change = "store"
             return
@@ -219,7 +220,7 @@ class Continue(Screen):
         self.place_buttons()
 
     def push_to_database(self):
-        self.empty_database()
+        self.empty_database(True)
         self.r.query(f"INSERT INTO floor(number) VALUES({self.floor})")
         for i, elem in enumerate(linerize(self.rooms)):
             self.r.query("INSERT INTO room(id, type, row, column) VALUES("
@@ -254,9 +255,11 @@ class Continue(Screen):
                      f"{self.find_belle()[0].money}, {vacuumcleaner_power}, {cyclotron_power}, {fan_power})")
         self.r.database.commit()
 
-    def empty_database(self):
+    def empty_database(self, use_the_database):
         for elem in ("floor", "belle", "entity", "obstacle_collectable", "room"):
             self.r.query(f"DELETE FROM {elem}")
+        if not use_the_database:
+            self.r.query("UPDATE catalyst SET purchased = 0")
         self.r.database.commit()
 
     def fetch_from_database(self):
@@ -289,7 +292,7 @@ class Continue(Screen):
             entity.energy = energy
             entity.last_delta_x, entity.last_delta_y = last_delta_x, last_delta_y
             self.rooms[room_row][room_column].entities_group.add(entity)
-        for _, type, purchased, _ in self.r.query("SELECT * FROM catalyst"):
+        for type, purchased, _ in self.r.query("SELECT * FROM catalyst"):
             if purchased:
                 self.find_belle()[0].catalysts.append(self.r.constant("id_to_catalyst_object")[type](self.r))
             self.find_belle()[0].apply_catalysts()
@@ -306,7 +309,7 @@ class Continue(Screen):
                      self.find_belle()[1].collectables_group)
 
     def finish_game(self):
-        self.empty_database()
+        self.empty_database(False)
         self.signal_to_change = "finish"
 
     def pause_game(self):

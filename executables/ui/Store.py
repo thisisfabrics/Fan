@@ -1,3 +1,4 @@
+import itertools
 import random
 
 import pygame
@@ -11,7 +12,7 @@ class Store(Screen):
     def __init__(self, r, frame):
         super().__init__(r, frame)
         self.money = self.r.query("SELECT money FROM belle").fetchall()[0][0]
-        self.displayed = self.r.query("SELECT type FROM catalyst WHERE displayed = 1").fetchall()
+        self.displayed = self.r.query("SELECT id FROM catalyst WHERE displayed = 1").fetchall()
         if not self.displayed:
             self.populate()
         self.displayed = [self.r.constant("id_to_catalyst_object")[elem[0]](self.r) for elem in self.displayed]
@@ -23,13 +24,26 @@ class Store(Screen):
         self.build_surfaces()
 
     def buy(self):
-        pass
+        for i, button in enumerate(self.buy_buttons):
+            if i >= len(self.displayed):
+                break
+            self.r.query("UPDATE catalyst SET purchased = 1 "
+                         f"WHERE id = {self.r.constant("catalyst_object_to_id")[self.displayed[i].__class__]}")
+            self.money -= self.displayed[i].price
+            self.r.query(f"UPDATE belle SET money = {self.money}")
+        self.r.database.commit()
 
     def populate(self):
-        self.displayed = self.r.query("SELECT type FROM catalyst WHERE purchased = 0").fetchall()
-        random.shuffle(self.displayed)
-        while len(self.displayed) > 3:
-            self.displayed.pop()
+        self.displayed = self.r.query("SELECT id FROM catalyst WHERE displayed = 1")
+        if not self.displayed:
+            self.displayed = self.r.query("SELECT id FROM catalyst WHERE purchased = 0 LIMIT 3").fetchall()
+            random.shuffle(self.displayed)
+            if delta := 3 - len(self.displayed):
+                self.displayed.extend(filter(lambda elem: elem not in self.displayed,
+                                             self.r.query(f"SELECT id FROM catalyst LIMIT {delta}")))
+            for elem in self.displayed:
+                self.r.query(f"UPDATE catalyst SET displayed = 1 WHERE id = {elem[0]}")
+            self.r.database.commit()
 
     def build_surfaces(self):
         for elem in self.displayed:
@@ -44,6 +58,11 @@ class Store(Screen):
                   (47, 400 + label.image.get_height() / self.r.constant("coefficient")),
                   80, 254).draw(surface)
             self.surfaces.append(surface)
+
+    def mouse_pressed(self, button, pos):
+        if button == 1:
+            for elem in itertools.chain(self.buttons, self.buy_buttons):
+                elem.click()
 
     def exit(self):
         self.signal_to_change = "continued"
@@ -60,10 +79,16 @@ class Store(Screen):
                 if i < len(self.displayed):
                     button.rebuild_label(self.r.string("not_enough_money"))
                     button.focus = False
+            elif button.is_enabled and (
+                    next(self.r.query("SELECT purchased FROM catalyst WHERE id = "
+                                      f"{self.r.constant("catalyst_object_to_id")[self.displayed[i].__class__]}"))[0]
+                    == 1 if len(self.displayed) > i else False):
+                button.is_enabled = False
+                button.rebuild_label(self.r.string("purchased"))
             button.draw(self.frame)
         for button in self.buttons:
             button.check_focus(pygame.mouse.get_pos())
-
+            button.draw(self.frame)
         Label(self.r, f"{self.r.string("amount_of_money")}: {self.money}", (40, 5), 150, None,
               pygame.Color("white")).draw(self.frame)
-
+        return self.signal_to_change
