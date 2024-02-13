@@ -260,6 +260,7 @@ class Continue(Screen):
             self.r.query(f"DELETE FROM {elem}")
         if not use_the_database:
             self.r.query("UPDATE catalyst SET purchased = 0")
+            self.r.query("UPDATE catalyst SET displayed = 0")
         self.r.database.commit()
 
     def fetch_from_database(self):

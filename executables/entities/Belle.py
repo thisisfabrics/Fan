@@ -5,6 +5,8 @@ import pygame
 from executables.entities.Entity import Entity
 from executables.ui.widgets.Scrollbar import Scrollbar
 from executables.ui.widgets.tablets.HealthIncrease import HealthIncrease
+from executables.ui.widgets.tablets.MoneyRain import MoneyRain
+from executables.ui.widgets.tablets.EnergyTransaction import EnergyTransaction
 
 
 class Belle(Entity):
@@ -21,13 +23,21 @@ class Belle(Entity):
         self.ghost_time = 2000000000
         self.mouse_updated = True
         self.became_ghost_at = None
-        self.money = int(1000)
+        self.money = int()
         self.catalysts = Scrollbar(self.r, (1322, 1038), lambda: None, 1200, 890)
+        self.money_multiplier = 1
         self.apply_catalysts()
+
+    def add_money(self, value):
+        self.money += value * self.money_multiplier
 
     def apply_catalysts(self):
         if HealthIncrease in self.catalysts.enumerate_classes():
             self.energy_threshold += self.r.constant("battery_equivalent")
+        if MoneyRain in self.catalysts.enumerate_classes():
+            self.money_multiplier += 1
+        if EnergyTransaction in self.catalysts.enumerate_classes():
+            self.energy_threshold //= 2
 
     def sort_weapon_by(self, criteria_class):
         if self.mouse_updated:

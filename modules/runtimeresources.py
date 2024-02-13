@@ -15,7 +15,10 @@ from executables.entities.enemies.Dust import Dust
 from executables.rooms.Hall import Hall
 from executables.rooms.Room import Room
 from executables.rooms.obstacles.Fridge import Fridge
+from executables.rooms.obstacles.Sofa import Sofa
+from executables.ui.widgets.tablets.EnergyTransaction import EnergyTransaction
 from executables.ui.widgets.tablets.HealthIncrease import HealthIncrease
+from executables.ui.widgets.tablets.MoneyRain import MoneyRain
 
 
 class R:
@@ -56,7 +59,8 @@ class R:
                 VacuumCleanerDecoy: 4,
                 FanDecoy: 5,
                 CyclotronDecoy: 6,
-                Battery: 7
+                Battery: 7,
+                Sofa: 8
             },
             "id_to_obstacle_collectable_object": dict(),
             "entity_object_to_id": {
@@ -67,7 +71,9 @@ class R:
             },
             "id_to_entity_object": dict(),
             "catalyst_object_to_id": {
-                HealthIncrease: 1
+                HealthIncrease: 1,
+                MoneyRain: 2,
+                EnergyTransaction: 3
             },
             "id_to_catalyst_object": dict()
         }

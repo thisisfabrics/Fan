@@ -11,12 +11,14 @@ from executables.collectables.VacuumCleanerDecoy import VacuumCleanerDecoy
 from executables.entities.Belle import Belle
 from executables.entities.enemies.Dispenser import Dispenser
 from executables.entities.enemies.Dust import Dust
+from executables.rooms.obstacles.Sofa import Sofa
 from executables.rooms.obstacles.portals.Bottom import Bottom
 from executables.rooms.obstacles.Fridge import Fridge
 from executables.entities.enemies.Catterfield import Catterfield
 from executables.rooms.obstacles.portals.Right import Right
 from executables.rooms.obstacles.portals.Top import Top
 from executables.rooms.obstacles.portals.Portal import Portal
+from executables.ui.widgets.tablets.EnergyTransaction import EnergyTransaction
 
 
 class Room:
@@ -62,7 +64,7 @@ class Room:
         approved_spawn_y_range_end = self.image.get_rect().height - belle_height - portal_width - belle_addition_size
         self.obstacles_group.empty()
         for i in range(random.randrange(1, self.max_count_of_obstacles)):
-            next_obstacle = random.choice((Fridge, ))(self.r)
+            next_obstacle = random.choice((Fridge, Sofa))(self.r)
             x, y = (random.randrange(approved_spawn_x_range_start,
                                      approved_spawn_x_range_end - next_obstacle.rect.width),
                     random.randrange(approved_spawn_y_range_start,
@@ -167,6 +169,8 @@ class Room:
         for bullet in itertools.chain(*map(lambda el: el.bullets_group.sprites(), weapons)):
             for entity in self.entities_group.sprites():
                 if pygame.sprite.collide_rect(bullet, entity) and entity.__class__ in bullet.hitable_entities:
+                    if EnergyTransaction in self.find_belle()[0].catalysts.enumerate_classes():
+                        bullet.damage_rate *= 1.5
                     entity.add_damaging_bullet(bullet)
             bullet.draw(surface)
 
@@ -193,7 +197,7 @@ class Room:
         belle = self.find_belle()
         for elem in pygame.sprite.spritecollide(belle, self.collectables_group, 0):
             if isinstance(elem, Coin):
-                belle.money += elem.collect()
+                belle.add_money(elem.collect())
             elif isinstance(elem, Powerup):
                 belle.weapons[0].increase_power(elem.collect())
             elif isinstance(elem, Battery):
