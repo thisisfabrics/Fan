@@ -15,9 +15,10 @@ class Store(Screen):
         if not self.displayed:
             self.populate()
         self.displayed = [self.r.constant("id_to_catalyst_object")[elem[0]](self.r) for elem in self.displayed]
-        self.buttons = (Button(self.r, self.r.string("buy"), (550, 1857), self.buy),
-                        Button(self.r, self.r.string("buy"), (1360, 1817), self.buy),
-                        Button(self.r, self.r.string("buy"), (2199, 1797), self.buy))
+        self.buy_buttons = (Button(self.r, self.r.string("buy"), (550, 1857), self.buy),
+                            Button(self.r, self.r.string("buy"), (1360, 1817), self.buy),
+                            Button(self.r, self.r.string("buy"), (2199, 1797), self.buy))
+        self.buttons = (Button(self.r, self.r.string("reset"), (3400, 20), self.exit, True),)
         self.surfaces = list()
         self.build_surfaces()
 
@@ -33,22 +34,26 @@ class Store(Screen):
     def build_surfaces(self):
         for elem in self.displayed:
             label = Label(self.r, elem.description, (47, 382), 70, 254)
-            surface = pygame.Surface((max(554 * self.r.constant("coefficient"), label.image.get_width() + label.x * 2), 966 * self.r.constant("coefficient")),
+            surface = pygame.Surface((max(554 * self.r.constant("coefficient"), label.image.get_width() + label.x * 2),
+                                      966 * self.r.constant("coefficient")),
                                      pygame.SRCALPHA, 32)
             surface.blit(elem.image, (0.5 * surface.get_width() - 0.5 * elem.image.get_width(),
                                       elem.image.get_height() // 2))
             surface.blit(label.image, (label.x, label.y))
             Label(self.r, f"{self.r.string("costs")}: {elem.price}",
-                  (47, pass),
-                  70, 254).draw(surface)
+                  (47, 400 + label.image.get_height() / self.r.constant("coefficient")),
+                  80, 254).draw(surface)
             self.surfaces.append(surface)
+
+    def exit(self):
+        self.signal_to_change = "continued"
 
     def update(self):
         self.frame.blit(self.r.drawable("store"), (0, 0))
         for i, elem in enumerate(self.surfaces):
             self.frame.blit(elem, (self.r.constant("store_offset_x") + i * self.r.constant("store_padding"),
                                    self.r.constant("store_offset_y")))
-        for i, button in enumerate(self.buttons):
+        for i, button in enumerate(self.buy_buttons):
             button.check_focus(pygame.mouse.get_pos())
             if button.is_enabled and (self.money < self.displayed[i].price if i < len(self.displayed) else True):
                 button.is_enabled = False
@@ -56,4 +61,9 @@ class Store(Screen):
                     button.rebuild_label(self.r.string("not_enough_money"))
                     button.focus = False
             button.draw(self.frame)
+        for button in self.buttons:
+            button.check_focus(pygame.mouse.get_pos())
+
+        Label(self.r, f"{self.r.string("amount_of_money")}: {self.money}", (40, 5), 150, None,
+              pygame.Color("white")).draw(self.frame)
 
