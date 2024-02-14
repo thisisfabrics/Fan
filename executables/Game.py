@@ -43,6 +43,8 @@ class Game:
                 self.current_screen = Finish(self.r, self.frame)
             elif destination == "store":
                 self.current_screen = Store(self.r, self.frame)
+            elif destination == "stage_passed":
+                self.current_screen = Completed(self.r, self.frame)
 
     def loop(self):
         while self.playtime:
