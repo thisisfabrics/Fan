@@ -11,6 +11,8 @@ from executables.ui.widgets.Label import Label
 class Store(Screen):
     def __init__(self, r, frame):
         super().__init__(r, frame)
+        self.images = [self.r.drawable("store_0"), self.r.drawable("store_1")]
+        self.add_time_event("animation", lambda: self.images.insert(0, self.images.pop()), 500)
         self.money = self.r.query("SELECT money FROM belle").fetchall()[0][0]
         self.displayed = self.r.query("SELECT id FROM catalyst WHERE displayed = 1").fetchall()
         if not self.displayed:
@@ -47,15 +49,15 @@ class Store(Screen):
 
     def build_surfaces(self):
         for elem in self.displayed:
-            label = Label(self.r, elem.description, (47, 382), 70, 320)
+            label = Label(self.r, elem.description, (47, 320), 70, 320)
             surface = pygame.Surface((max(554 * self.r.constant("coefficient"), label.image.get_width() + label.x * 2),
                                       966 * self.r.constant("coefficient")),
                                      pygame.SRCALPHA, 32)
             surface.blit(elem.image, (0.5 * surface.get_width() - 0.5 * elem.image.get_width(),
-                                      elem.image.get_height() // 2))
+                                      elem.image.get_height() // 3))
             surface.blit(label.image, (label.x, label.y))
             Label(self.r, f"{self.r.string("costs")}: {elem.price}",
-                  (47, 400 + label.image.get_height() / self.r.constant("coefficient")),
+                  (47, 340 + label.image.get_height() / self.r.constant("coefficient")),
                   80, 254).draw(surface)
             self.surfaces.append(surface)
 
@@ -68,7 +70,7 @@ class Store(Screen):
         self.signal_to_change = "continued"
 
     def update(self):
-        self.frame.blit(self.r.drawable("store"), (0, 0))
+        self.frame.blit(self.images[0], (0, 0))
         for i, elem in enumerate(self.surfaces):
             self.frame.blit(elem, (self.r.constant("store_offset_x") + i * self.r.constant("store_padding"),
                                    self.r.constant("store_offset_y")))
