@@ -117,7 +117,7 @@ class Continue(Screen):
             belle.y -= room.image.get_rect().height - self.r.drawable("portal").get_rect().width * 2 - belle.rect.height
         elif isinstance(portal, Lift):
             if not self.lift.count_of_enemies:
-                self.signal_to_change = "stage_passed"
+                self.signal_to_change = "completed"
                 return
         elif isinstance(portal, Shop):
             self.rooms[belle_row][belle_column].add_entity(belle)

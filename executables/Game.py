@@ -1,6 +1,7 @@
 import sys
 import pygame
 
+from executables.ui.Completed import Completed
 from executables.ui.Continue import Continue
 from executables.ui.Finish import Finish
 from executables.ui.Start import Start
@@ -26,7 +27,7 @@ class Game:
         self.frame = pygame.Surface((self.useful_width, self.useful_height))
         self.r = R((self.useful_width, self.useful_height), (self.real_width, self.real_height))
         self.fps = 60
-        self.current_screen = Start(self.r, self.frame)
+        self.current_screen = Completed(self.r, self.frame)
         self.clock = pygame.time.Clock()
         self.playtime = True
         self.loop()
@@ -43,7 +44,7 @@ class Game:
                 self.current_screen = Finish(self.r, self.frame)
             elif destination == "store":
                 self.current_screen = Store(self.r, self.frame)
-            elif destination == "stage_passed":
+            elif destination == "completed":
                 self.current_screen = Completed(self.r, self.frame)
 
     def loop(self):
