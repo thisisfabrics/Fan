@@ -15,7 +15,9 @@ fan,Blows the catterfields away
 vacuumcleaner,Vacuums blue dust
 pause,||
 buy,Buy
-not_enough_money,No money,
+not_enough_money,No money
 costs,Costs
-amount_of_money,The amount of your money,
+amount_of_money,The amount of your money
 purchased,Bought
+floor_is_cleared,The %th floor is cleared!
+to_the_floor,To the %th floor

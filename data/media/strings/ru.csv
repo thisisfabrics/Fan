@@ -19,3 +19,5 @@ not_enough_money,Нет денег
 costs,Стоит
 amount_of_money,Количество ваших денег
 purchased,Куплено
+floor_is_cleared,Этаж % освобожден!
+to_the_floor,На % этаж
