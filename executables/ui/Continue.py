@@ -286,7 +286,7 @@ class Continue(Screen):
         for type, animation_name, animation_period, x, y, energy, last_delta_x, last_delta_y, room_row, room_column in \
                 self.r.query("SELECT entity.type, entity.animation_name, entity.animation_period, entity.x, entity.y, "
                              "entity.energy, entity.last_delta_x, entity.last_delta_y, room.row, room.column "
-                             "FROM entity RIGHT JOIN room ON entity.room_id = room.id"):
+                             "FROM entity INNER JOIN room ON entity.room_id = room.id"):
             entity = self.r.constant("id_to_entity_object")[type](self.r, animation_name, animation_period)
             entity.x, entity.y = x, y
             entity.rect.x, entity.rect.y = x, y
