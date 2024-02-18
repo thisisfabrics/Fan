@@ -78,8 +78,8 @@ class R:
             "id_to_catalyst_object": dict()
         }
         for variable in ("room", "obstacle_collectable", "entity", "catalyst"):
-            for key, value in map(lambda el: el[::-1], self.constant_dictionary[f"{variable}_object_to_id"].items()):
-                self.constant_dictionary[f"id_to_{variable}_object"][key] = value
+            for key, value in self.constant_dictionary[f"{variable}_object_to_id"].items():
+                self.constant_dictionary[f"id_to_{variable}_object"][value] = key
         self.color_dictionary = {
             "autumn_yellow": pygame.Color(194, 102, 41),
             "air_bullet_filling": pygame.Color(160, 144, 137)

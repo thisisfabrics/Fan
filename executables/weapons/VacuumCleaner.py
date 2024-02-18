@@ -16,7 +16,7 @@ class VacuumCleaner(Weapon):
         self.description = self.r.string("vacuumcleaner")
 
     def release_bullet(self, mouse_position_compenstation):
-        for i in range(self.power):
+        for i in range(int(self.power)):
             self.bullet(self.r,
                         (self.rect.x + self.rect.width // 2 + self.bullet_offset_x * (1 if self.animation_is_flipped else -1),
                          self.rect.y + self.rect.height // 2),
