@@ -117,6 +117,9 @@ class Continue(Screen):
             belle.y -= room.image.get_rect().height - self.r.drawable("portal").get_rect().width * 2 - belle.rect.height
         elif isinstance(portal, Lift):
             if not self.lift.count_of_enemies:
+                self.rooms[belle_row][belle_column].add_entity(belle)
+                belle.undo_move_y()
+                self.push_to_database()
                 self.signal_to_change = "completed"
                 return
         elif isinstance(portal, Shop):
@@ -276,7 +279,7 @@ class Continue(Screen):
         for type, x, y, room_row, room_column in self.r.query("SELECT obstacle_collectable.type, "
                                                               "obstacle_collectable.x, obstacle_collectable.y, "
                                                               "room.row, room.column FROM obstacle_collectable "
-                                                              "RIGHT JOIN room "
+                                                              "INNER JOIN room "
                                                               "ON obstacle_collectable.room_id = room.id"):
             obstacle_collectable = self.r.constant("id_to_obstacle_collectable_object")[type](self.r, (x, y))
             if isinstance(obstacle_collectable, Obstacle):

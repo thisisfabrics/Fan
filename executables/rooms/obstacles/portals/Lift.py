@@ -16,19 +16,14 @@ class Lift(Portal):
                       .render(str(level), 1, pygame.Color("black")))
         self.label_pos = 417.496 * self.r.constant("coefficient"), 52 * self.r.constant("coefficient")
         self.count_of_enemies = int()
-        self.start_count_of_enemies = int()
-        self.do_once = True
 
     def set_count_of_enemies(self, count):
-        if self.do_once:
-            self.do_once = False
-            self.start_count_of_enemies = count
-        self.count_of_enemies = count
+        self.count_of_enemies = count * 0
 
     def draw(self, surface):
         surface.blit(self.image_closed if self.count_of_enemies else self.image_opened, self.rect[:2])
         surface.blit(self.label, (self.rect.x + self.label_pos[0], self.rect.y + self.label_pos[1]))
-        display_enemies_remain = (pygame.font.Font("../data/media/fonts/AmaticSC-Bold.ttf",
-                                                  int(200 * self.r.constant("coefficient")))
-                                  .render(f"{self.count_of_enemies}/{self.start_count_of_enemies}", 1, pygame.Color("black")))
+        display_enemies_remain = (pygame.font.Font("../data/media/fonts/AmaticSC-Regular.ttf",
+                                                   int(200 * self.r.constant("coefficient")))
+                                  .render(f"{self.r.string("remain")}: {self.count_of_enemies}", 1, pygame.Color("black")))
         surface.blit(display_enemies_remain, (self.rect.x + self.label_pos[0] * 2, self.rect.y + self.label_pos[1] * 2))
