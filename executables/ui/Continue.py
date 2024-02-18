@@ -33,14 +33,18 @@ class Continue(Screen):
             self.fetch_from_database()
         else:
             self.floor = 10
-            self.rooms = [[Room(self.r, (i, j)) if random.random() < .5 else Hall(self.r, (i, j)) for j in range(3)]
-                          for i in range(3)]
+            self.rooms = list()
+            self.build_rooms()
             self.rooms[0][0].add_entity(Belle(self.r, "belle_idle", 200))
             self.rooms[0][0].build()
             self.add_weapons()
         self.lift = Lift(self.r, self.rooms[0][0].image.get_rect()[-2:], self.floor, self.rooms[0][0].portals_group)
         self.shop = Shop(self.r, self.rooms[0][0].image.get_rect()[-2:], self.rooms[0][0].portals_group)
         self.empty_database(use_the_database)
+
+    def build_rooms(self):
+        self.rooms = [[Room(self.r, (i, j)) if random.random() < .5 else Hall(self.r, (i, j)) for j in range(3)]
+                      for i in range(3)]
 
     def add_weapons(self, assortment=(VacuumCleanerDecoy,)):
         for decoy in assortment:
@@ -268,6 +272,7 @@ class Continue(Screen):
 
     def fetch_from_database(self):
         self.floor = self.r.query("SELECT number FROM floor").fetchall()[0][0]
+        if self.floor == 10
         self.rooms = list()
         current_row = list()
         for type, row, column in self.r.query("SELECT type, row, column FROM room ORDER BY row, column"):

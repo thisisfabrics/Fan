@@ -16,10 +16,11 @@ class Completed(Screen):
         self.position = -self.r.constant("useful_height")
         self.add_time_event("moving", lambda: self.move(0), 35)
         self.step = 150 * self.r.constant("coefficient")
-        floor = self.r.query("SELECT number FROM floor ").fetchall()[0][0]  # if False else 10
-        self.label = Label(self.r, self.r.string("floor_is_cleared").replace('%', str(floor)), (40, 500), 300, 500, "white")
+        self.previous_floor = self.r.query("SELECT number FROM floor ").fetchall()[0][0]  # if False else 10
+        self.label = Label(self.r, self.r.string("floor_is_cleared").replace('%', str(self.previous_floor)),
+                           (40, 500), 300, 500, "white")
         self.buttons = (
-            Button(self.r, self.r.string("to_the_floor").replace('%', str(floor - 1)), (80, 1400),
+            Button(self.r, self.r.string("to_the_floor").replace('%', str(self.previous_floor - 1)), (80, 1400),
                    lambda: self.add_time_event("moving", lambda: self.move(self.r.constant("useful_height")), 35)),
             Button(self.r, self.r.string("save_and_quit"), (80, 1750), lambda: self.set_signal("start"))
         )
@@ -38,7 +39,12 @@ class Completed(Screen):
         else:
             self.remove_time_event("moving")
             if self.position >= self.r.constant("useful_height"):
+                self.prepare_next_level()
                 self.set_signal("continued")
+
+    def prepare_next_level(self):
+        self.r.query(f"UPDATE floor SET number = {self.previous_floor - 1}")
+        self.r.database.commit()
 
     def update(self):
         self.frame.fill("black")
