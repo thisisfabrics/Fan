@@ -8,7 +8,6 @@ class Button(InteractiveWidget):
         super().__init__(r, pos, action, is_enabled)
         self.is_icon = is_icon
         self.is_enabled = is_enabled
-        self.padding = 20 * self.r.constant("coefficient")
         self.label = None
         self.rebuild_label(label)
         self.chuncks = int()
@@ -27,9 +26,9 @@ class Button(InteractiveWidget):
             string_start = "button_unfocused"
         addition = sum(self.r.drawable(elem).get_width() for elem in
                        (f"{string_start}_left_cap", f"{string_start}_right_cap"))
-        self.chuncks = not self.is_icon + self.label.get_width() // ((wi := self.r.drawable(string_start).get_width()) +
-                                                                     addition - int(self.padding * 2))
-        self.xx = self.x + addition + self.chuncks * wi
+        self.chuncks = max(self.label.get_width() // self.r.drawable(string_start).get_width(),
+                           0 if self.is_icon else 1)
+        self.xx = self.x + addition + self.chuncks * self.r.drawable(string_start).get_width()
         self.yy = self.y + self.r.drawable(string_start).get_height()
 
     def build_surface(self):

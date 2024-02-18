@@ -27,7 +27,7 @@ class Game:
         self.frame = pygame.Surface((self.useful_width, self.useful_height))
         self.r = R((self.useful_width, self.useful_height), (self.real_width, self.real_height))
         self.fps = 60
-        self.current_screen = Completed(self.r, self.frame)
+        self.current_screen = Start(self.r, self.frame)
         self.clock = pygame.time.Clock()
         self.playtime = True
         self.loop()

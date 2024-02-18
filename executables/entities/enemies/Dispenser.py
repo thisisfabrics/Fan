@@ -47,6 +47,8 @@ class Dispenser(Enemy):
         
     def update(self, rooms_obstacles, rooms_entities, field_size, has_uncommon_navigation=False):
         if coords := super().update(rooms_obstacles, rooms_entities, field_size, True):
+            for bullet in self.released_bullets_group:
+                bullet.kill()
             return coords
         belle = next(filter(lambda elem: isinstance(elem, Belle), rooms_entities.sprites()))
         self.released_bullets_group.update()

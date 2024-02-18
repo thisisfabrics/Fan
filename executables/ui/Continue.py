@@ -42,12 +42,12 @@ class Continue(Screen):
         self.shop = Shop(self.r, self.rooms[0][0].image.get_rect()[-2:], self.rooms[0][0].portals_group)
         self.empty_database(use_the_database)
 
-    def add_weapons(self, assortment=(VacuumCleanerDecoy, FanDecoy, CyclotronDecoy)):
+    def add_weapons(self, assortment=(VacuumCleanerDecoy,)):
         for decoy in assortment:
             randroom = self.rooms[random.randrange(len(self.rooms))][random.randrange(len(self.rooms[0]))]
             decoy(self.r, randroom.free_pos(), 1, randroom.collectables_group)
-        # FanDecoy(self.r, self.rooms[0][0].free_pos(), 1, self.rooms[0][0].collectables_group)
-        # CyclotronDecoy(self.r, self.rooms[0][0].free_pos(), 1, self.rooms[0][0].collectables_group)
+        FanDecoy(self.r, self.rooms[0][0].free_pos(), 1, self.rooms[0][0].collectables_group)
+        CyclotronDecoy(self.r, self.rooms[0][0].free_pos(), 1, self.rooms[0][0].collectables_group)
 
     def find_belle(self):
         room = next(filter(lambda elem: Belle in map(lambda el: el.__class__, elem.entities_group.sprites()),
