@@ -1,3 +1,4 @@
+import datetime
 import random
 import pygame
 
@@ -32,6 +33,10 @@ class Continue(Screen):
         if use_the_database:
             self.fetch_from_database()
         else:
+            self.r.query("UPDATE statistics SET is_finished = 1")
+            self.r.query("INSERT INTO statistics(weapons, liquidated_enemies, activated_catalysts, floor, year, month, "
+                         f"day, is_finished) VALUES(0, 0, 0, 10, {datetime.datetime.now().strftime("%Y, %m, %d")}, 0)")
+            self.r.database.commit()
             self.floor = 10
             self.rooms = list()
             self.build_rooms()
@@ -272,32 +277,40 @@ class Continue(Screen):
 
     def fetch_from_database(self):
         self.floor = self.r.query("SELECT number FROM floor").fetchall()[0][0]
-        if self.floor == 10
-        self.rooms = list()
-        current_row = list()
-        for type, row, column in self.r.query("SELECT type, row, column FROM room ORDER BY row, column"):
-            if len(current_row) == 3:
-                self.rooms.append(current_row)
-                current_row = list()
-            current_row.append(self.r.constant("id_to_room_object")[type](self.r, (row, column), True))
-        self.rooms.append(current_row)
-        for type, x, y, room_row, room_column in self.r.query("SELECT obstacle_collectable.type, "
-                                                              "obstacle_collectable.x, obstacle_collectable.y, "
-                                                              "room.row, room.column FROM obstacle_collectable "
-                                                              "INNER JOIN room "
-                                                              "ON obstacle_collectable.room_id = room.id"):
-            obstacle_collectable = self.r.constant("id_to_obstacle_collectable_object")[type](self.r, (x, y))
-            if isinstance(obstacle_collectable, Obstacle):
-                self.rooms[room_row][room_column].obstacles_group.add(obstacle_collectable)
-            else:
-                self.rooms[room_row][room_column].collectables_group.add(obstacle_collectable)
+        if condition := self.floor != self.r.query("SELECT floor FROM statistics WHERE is_finished = 0").fetchall()[0][0]:
+            self.build_rooms()
+        else:
+            self.rooms = list()
+            current_row = list()
+            for type, row, column in self.r.query("SELECT type, row, column FROM room ORDER BY row, column"):
+                if len(current_row) == 3:
+                    self.rooms.append(current_row)
+                    current_row = list()
+                current_row.append(self.r.constant("id_to_room_object")[type](self.r, (row, column), True))
+            self.rooms.append(current_row)
+            for type, x, y, room_row, room_column in self.r.query("SELECT obstacle_collectable.type, "
+                                                                  "obstacle_collectable.x, obstacle_collectable.y, "
+                                                                  "room.row, room.column FROM obstacle_collectable "
+                                                                  "INNER JOIN room "
+                                                                  "ON obstacle_collectable.room_id = room.id"):
+                obstacle_collectable = self.r.constant("id_to_obstacle_collectable_object")[type](self.r, (x, y))
+                if isinstance(obstacle_collectable, Obstacle):
+                    self.rooms[room_row][room_column].obstacles_group.add(obstacle_collectable)
+                else:
+                    self.rooms[room_row][room_column].collectables_group.add(obstacle_collectable)
         for type, animation_name, animation_period, x, y, energy, last_delta_x, last_delta_y, room_row, room_column in \
                 self.r.query("SELECT entity.type, entity.animation_name, entity.animation_period, entity.x, entity.y, "
                              "entity.energy, entity.last_delta_x, entity.last_delta_y, room.row, room.column "
                              "FROM entity INNER JOIN room ON entity.room_id = room.id"):
+            if condition and self.r.constant("id_to_entity_object")[type] != Belle:
+                continue
             entity = self.r.constant("id_to_entity_object")[type](self.r, animation_name, animation_period)
             entity.x, entity.y = x, y
-            entity.rect.x, entity.rect.y = x, y
+            if condition:
+                width, height = self.rooms[0][0].image.get_size()
+                entity.x = width / 2 - entity.image.get_width() / 2
+                entity.y = self.r.drawable("portal").get_width() + 1
+            entity.rect.x, entity.rect.y = entity.x, entity.y
             entity.energy = energy
             entity.last_delta_x, entity.last_delta_y = last_delta_x, last_delta_y
             self.rooms[room_row][room_column].entities_group.add(entity)
@@ -316,8 +329,15 @@ class Continue(Screen):
         if fan_power:
             FanDecoy(self.r, self.find_belle()[0].rect[:2], fan_power,
                      self.find_belle()[1].collectables_group)
+        if condition:
+            self.r.query(f"UPDATE statistics SET floor = {self.floor} WHERE is_finished = 0")
+        self.r.query(f"UPDATE statistics SET weapons = {len(self.find_belle()[0].weapons)} "
+                     f"WHERE is_finished = 0")
+        self.r.database.commit()
 
     def finish_game(self):
+        self.r.query("UPDATE statistics SET is_finished = 1")
+        self.r.database.commit()
         self.empty_database(False)
         self.signal_to_change = "finish"
 

@@ -57,6 +57,8 @@ class Entity(pygame.sprite.Sprite, Animated):
         if self.energy <= 0:
             destruction_coords = self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2
             self.kill()
+            self.r.query("UPDATE statistics SET liquidated_enemies = liquidated_enemies + 1 WHERE is_finished = 0")
+            self.r.database.commit()
             return destruction_coords
         self.damage()
         self.remove_damaging_bullet()

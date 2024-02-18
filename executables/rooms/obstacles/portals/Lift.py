@@ -18,7 +18,7 @@ class Lift(Portal):
         self.count_of_enemies = int()
 
     def set_count_of_enemies(self, count):
-        self.count_of_enemies = count * 0  # DELETE
+        self.count_of_enemies = count  # DELETE
 
     def draw(self, surface):
         surface.blit(self.image_closed if self.count_of_enemies else self.image_opened, self.rect[:2])

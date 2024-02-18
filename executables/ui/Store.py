@@ -33,6 +33,7 @@ class Store(Screen):
                          f"WHERE id = {self.r.constant("catalyst_object_to_id")[self.displayed[i].__class__]}")
             self.money -= self.displayed[i].price
             self.r.query(f"UPDATE belle SET money = {self.money}")
+            self.r.query(f"UPDATE statistics SET activated_catalysts = activated_catalysts + 1 WHERE is_finished = 0")
         self.r.database.commit()
 
     def populate(self):

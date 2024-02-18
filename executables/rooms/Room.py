@@ -27,8 +27,8 @@ class Room:
         self.collection_coords = collection_coords
         self.image = self.r.drawable("tiles")
         self.obstacles_group = pygame.sprite.Group()
-        self.max_count_of_obstacles = 2  # 3
-        self.max_count_of_enemies = 2  # 4
+        self.max_count_of_obstacles = 3  # 3
+        self.max_count_of_enemies = 4  # 4
         self.entities_group = pygame.sprite.Group()
         self.portals_group = pygame.sprite.Group()
         self.collectables_group = pygame.sprite.Group()

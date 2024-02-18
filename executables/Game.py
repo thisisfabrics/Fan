@@ -11,7 +11,7 @@ from modules.runtimeresources import R
 
 class Game:
     def __init__(self):
-        self.window = pygame.display.set_mode((0, 0))  # , pygame.FULLSCREEN
+        self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)  # , pygame.FULLSCREEN
         self.aspect_ratio = 16 / 9
         self.useful_width, self.useful_height = (info := pygame.display.Info()).current_w, info.current_h
         self.real_width, self.real_height = self.useful_width, self.useful_height
