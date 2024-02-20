@@ -81,7 +81,7 @@ class R:
             for key, value in self.constant_dictionary[f"{variable}_object_to_id"].items():
                 self.constant_dictionary[f"id_to_{variable}_object"][value] = key
         self.color_dictionary = {
-            "autumn_yellow": pygame.Color(194, 102, 41),
+            "sad_gray": pygame.Color(10, 10, 10),
             "air_bullet_filling": pygame.Color(160, 144, 137)
         }
 

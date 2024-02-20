@@ -1,3 +1,5 @@
+import pygame
+
 from executables.ui.Screen import Screen
 from executables.ui.widgets.Label import Label
 
@@ -10,11 +12,14 @@ class Finish(Screen):
         self.image = self.r.drawable("finish")
         self.image.set_alpha(0)
         self.add_time_event("increase_alpha", self.increase_alpha, 100)
-        self.label_about_destructions, self.label_about_floors = self.r.query("SELECT liquidated_enemies, floor FROM "
-                                                                              "statistics WHERE is_finished = 0")
+        label_about_destructions, label_about_floors = next(
+            self.r.query("SELECT liquidated_enemies, floor FROM statistics WHERE is_finished = 0"))
         self.r.query("UPDATE statistics SET is_finished = 1")
         self.r.database.commit()
-        self.label_about_destructions = Label(self.r, )
+        Label(self.r, self.r.string("you_have_liquidated").replace('%', str(label_about_destructions - 1)),
+              (2405, 994), 200, self.image.get_width() * 0.48, "white").draw(self.image)
+        Label(self.r, self.r.string("you_have_reached").replace('%', str(label_about_floors)),
+              (2405, 1500), 200, self.image.get_width() * 0.48, "white").draw(self.image)
 
     def increase_alpha(self):
         self.alpha += 1
