@@ -24,4 +24,5 @@ to_the_floor,To the %th floor
 save_and_quit,Save and quit
 remain,Remain
 you_have_liquidated,You've liquidated % pcs.
-you_have_reached,and reached % floor!
+you_have_reached,and reached %th floor!
+exit,Exit

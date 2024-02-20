@@ -10,10 +10,10 @@ class Start(Screen):
         super().__init__(r, frame)
         self.state = int()
         self.state_multiplier = 1
-        self.yellowing = int()
-        self.yellowing_surface = pygame.Surface((self.frame.get_width(), self.frame.get_height()))
-        self.yellowing_surface.fill(self.r.color("sad_gray"))
-        self.yellowing_surface.set_alpha(self.yellowing)
+        self.alpha = int()
+        self.darking_surface = pygame.Surface((self.frame.get_width(), self.frame.get_height()))
+        self.darking_surface.fill(self.r.color("sad_gray"))
+        self.darking_surface.set_alpha(self.alpha)
         self.threshold = 120
         self.threshold_step = 10
         self.fan = [self.r.drawable("fan_state_0"), self.r.drawable("fan_state_1")]
@@ -46,11 +46,11 @@ class Start(Screen):
 
     def change_yellowing(self):
         if self.state * self.state_multiplier:
-            if self.yellowing < self.threshold:
-                self.yellowing += self.threshold_step
+            if self.alpha < self.threshold:
+                self.alpha += self.threshold_step
         else:
-            if self.yellowing > 0:
-                self.yellowing -= self.threshold_step
+            if self.alpha > 0:
+                self.alpha -= self.threshold_step
 
     def button_pressed(self, key):
         if key == pygame.K_DOWN:
@@ -72,11 +72,11 @@ class Start(Screen):
     def update(self):
         self.frame.blit(self.state_description[self.state][0], (0, 0))
         self.frame.blit(self.fan[0], (0, 0))
-        self.yellowing_surface.set_alpha(self.yellowing)
+        self.darking_surface.set_alpha(self.alpha)
         if self.state * self.state_multiplier:
-            self.frame.blit(self.yellowing_surface, (0, 0))
+            self.frame.blit(self.darking_surface, (0, 0))
             for button in self.state_description[self.state][-1]:
                 button.draw(self.frame)
         else:
-            self.frame.blit(self.yellowing_surface, (0, 0))
+            self.frame.blit(self.darking_surface, (0, 0))
         return self.signal_to_change

@@ -25,9 +25,6 @@ class Completed(Screen):
             Button(self.r, self.r.string("save_and_quit"), (80, 1750), lambda: self.set_signal("start"))
         )
 
-    def set_signal(self, signal):
-        self.signal_to_change = signal
-
     def mouse_pressed(self, button, pos):
         if button == 1:
             for elem in self.buttons:

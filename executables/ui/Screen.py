@@ -8,6 +8,9 @@ class Screen:
         self.time_events = dict()
         self.signal_to_change = None
 
+    def set_signal(self, signal):
+        self.signal_to_change = signal
+
     def add_time_event(self, name, action, period):
         self.time_events[pygame.USEREVENT + len(self.time_events)] = name, period, action
         pygame.time.set_timer(next(reversed(self.time_events.keys())), period)
