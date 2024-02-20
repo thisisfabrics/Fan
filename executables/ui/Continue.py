@@ -336,7 +336,6 @@ class Continue(Screen):
         self.r.database.commit()
 
     def finish_game(self):
-        self.r.query("UPDATE statistics SET is_finished = 1")
         self.r.database.commit()
         self.empty_database(False)
         self.signal_to_change = "finish"
