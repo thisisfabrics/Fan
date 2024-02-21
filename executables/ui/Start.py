@@ -4,6 +4,8 @@ import pygame
 from executables.ui.Screen import Screen
 from executables.ui.widgets.Button import Button
 from executables.ui.widgets.Label import Label
+from executables.ui.widgets.Scrollbar import Scrollbar
+from executables.ui.widgets.tablets.Achievement import Achievement
 
 
 class Start(Screen):
@@ -40,8 +42,10 @@ class Start(Screen):
                 Button(self.r, self.r.string("plus"), (2300, 500), lambda: self.change_fps(1), True),
                 Button(self.r, self.r.string("minus"), (2750, 500), lambda: self.change_fps(-1), True,
                        next(self.r.query("SELECT fps FROM settings"))[0] > 1),
-                Button(self.r, "en", (2300, 800), lambda: self.change_language("en"), True),
-                Button(self.r, "ru", (2750, 800), lambda: self.change_language("ru"), True),
+                Button(self.r, "en", (2300, 800), lambda: self.change_language("en"), True,
+                       next(self.r.query("SELECT language FROM settings"))[0] == "ru"),
+                Button(self.r, "ru", (2750, 800), lambda: self.change_language("ru"), True,
+                       next(self.r.query("SELECT language FROM settings"))[0] == "en"),
                 Button(self.r, self.r.string("plus"), (2300, 1100), lambda: self.change_loudness("effects", 1), True,
                        next(self.r.query("SELECT effects FROM settings"))[0] < 100),
                 Button(self.r, self.r.string("minus"), (2750, 1100), lambda: self.change_loudness("effects", -1), True,
@@ -69,9 +73,22 @@ class Start(Screen):
                        (1800, 1700), 250, None, "white")
              )),
             (self.r.drawable("start_background_achievements"), (
-                Button(self.r, "Ничего", (0, 0), lambda: True),
-            ), tuple())
+                Button(self.r, self.r.string("reset"), (20, 20), self.hide_menu, True),
+            ), (
+                Label(self.r, self.r.string("actual_statistics"), (2000, 88), 250, None, "white"),
+                Scrollbar(self.r, (220, 0), lambda: True)
+            ))
         ]
+        for icon, description, condition in zip(
+                [self.r.drawable("catalyst_energy_transaction")],
+                ["Ля ля ял яля ял яля ля ля ял я"],
+                [lambda: True]
+        ):
+            self.state_description[-1][-1][-1].append(Achievement(self.r, (0, 0), condition, icon, description))
+
+    def mouse_wheel(self, direction):
+        if self.state == 3:
+            self.state_description[-1][-1][-1].scroll(direction)
 
     def change_language(self, code):
         self.r.query(f"UPDATE settings SET language = '{code}'")
