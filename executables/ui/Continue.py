@@ -46,6 +46,14 @@ class Continue(Screen):
         self.lift = Lift(self.r, self.rooms[0][0].image.get_rect()[-2:], self.floor, self.rooms[0][0].portals_group)
         self.shop = Shop(self.r, self.rooms[0][0].image.get_rect()[-2:], self.rooms[0][0].portals_group)
         self.empty_database(use_the_database)
+        while self.count_enemies() > next(self.r.query("SELECT characters FROM settings"))[0]:
+            randroom = self.rooms[random.randrange(3)][random.randrange(3)]
+            try:
+                randenemy = randroom.entities_group.sprites().pop(random.randrange(len(randroom.entities_group.sprites())))
+                if not isinstance(randenemy, Belle):
+                    randroom.entities_group.remove(randenemy)
+            except ValueError:
+                continue
 
     def build_rooms(self):
         self.rooms = [[Room(self.r, (i, j)) if random.random() < .5 else Hall(self.r, (i, j)) for j in range(3)]
@@ -344,6 +352,10 @@ class Continue(Screen):
         self.push_to_database()
         self.signal_to_change = "start"
 
+    def count_enemies(self):
+        return len(
+            linerize([elem.entities_group.sprites() for elem in linerize(self.rooms)])) - 1
+
     def update(self):
         self.find_belle()[1].update_sprites()
         try:
@@ -352,6 +364,5 @@ class Continue(Screen):
             self.place_interface()
         except StopIteration:
             self.finish_game()
-        self.lift.set_count_of_enemies(len(
-            linerize([elem.entities_group.sprites() for elem in linerize(self.rooms)])) - 1)
+        self.lift.set_count_of_enemies(self.count_enemies())
         return self.signal_to_change

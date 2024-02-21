@@ -30,4 +30,6 @@ fps,Частота кадров
 plus,+
 minus,-
 language,Язык
-difficulty,Максимальное количество персонажей
+difficulty,Предел количества персонажей на уровне
+effects_loudness,Громк. эффектов
+music_volume,Громк. муз.

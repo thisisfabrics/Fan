@@ -38,13 +38,35 @@ class Start(Screen):
             (self.r.drawable("start_background_settings"), (
                 Button(self.r, self.r.string("reset"), (20, 20), self.hide_menu, True),
                 Button(self.r, self.r.string("plus"), (2300, 500), lambda: self.change_fps(1), True),
-                Button(self.r, self.r.string("minus"), (2750, 500), lambda: self.change_fps(-1), True),
+                Button(self.r, self.r.string("minus"), (2750, 500), lambda: self.change_fps(-1), True,
+                       next(self.r.query("SELECT fps FROM settings"))[0] > 1),
                 Button(self.r, "en", (2300, 800), lambda: self.change_language("en"), True),
-                Button(self.r, "ru", (2750, 800), lambda: self.change_language("ru"), True)
+                Button(self.r, "ru", (2750, 800), lambda: self.change_language("ru"), True),
+                Button(self.r, self.r.string("plus"), (2300, 1100), lambda: self.change_loudness("effects", 1), True,
+                       next(self.r.query("SELECT effects FROM settings"))[0] < 100),
+                Button(self.r, self.r.string("minus"), (2750, 1100), lambda: self.change_loudness("effects", -1), True,
+                       next(self.r.query("SELECT effects FROM settings"))[0] > 0),
+                Button(self.r, self.r.string("plus"), (2300, 1400), lambda: self.change_loudness("music", 1), True,
+                       next(self.r.query("SELECT music FROM settings"))[0] < 100),
+                Button(self.r, self.r.string("minus"), (2750, 1400), lambda: self.change_loudness("music", -1), True,
+                       next(self.r.query("SELECT music FROM settings"))[0] > 0),
+                Button(self.r, self.r.string("plus"), (2300, 1700), lambda: self.change_loudness("characters", 1), True,
+                       next(self.r.query("SELECT characters FROM settings"))[0] < 108),
+                Button(self.r, self.r.string("minus"), (2750, 1700), lambda: self.change_loudness("characters", -1), True,
+                       next(self.r.query("SELECT characters FROM settings"))[0] > 1),
             ), (
                  Label(self.r, self.r.string("fps"), (500, 500), 250, None, "white"),
                  Label(self.r, str(next(self.r.query("SELECT fps FROM settings"))[0]), (1800, 500), 250, None, "white"),
-                 Label(self.r, self.r.string("language"), (500, 800), 250, None, "white")
+                 Label(self.r, self.r.string("language"), (500, 800), 250, None, "white"),
+                 Label(self.r, self.r.string("effects_loudness"), (500, 1100), 250, None, "white"),
+                 Label(self.r, str(next(self.r.query("SELECT effects FROM settings"))[0]),
+                       (1800, 1100), 250, None, "white"),
+                 Label(self.r, self.r.string("music_volume"), (500, 1400), 250, None, "white"),
+                 Label(self.r, str(next(self.r.query("SELECT music FROM settings"))[0]),
+                       (1800, 1400), 250, None, "white"),
+                 Label(self.r, self.r.string("difficulty"), (500, 1700), 125, 800, "white"),
+                 Label(self.r, str(next(self.r.query("SELECT characters FROM settings"))[0]),
+                       (1800, 1700), 250, None, "white")
              )),
             (self.r.drawable("start_background_achievements"), (
                 Button(self.r, "Ничего", (0, 0), lambda: True),
@@ -59,14 +81,15 @@ class Start(Screen):
         self.describe_states()
 
     def change_fps(self, side):
-        self.r.query(f"UPDATE settings SET fps = fps + {1 * side}")
+        self.r.query(f"UPDATE settings SET fps = fps + {side}")
         self.r.database.commit()
         self.game_actions["update_fps"]()
-        self.state_description[2][2][1].set_text(str(next(self.r.query("SELECT fps FROM settings"))[0]))
-        if 2 > next(self.r.query("SELECT fps FROM settings"))[0]:
-            self.state_description[2][1][2].is_enabled = False
-        else:
-            self.state_description[2][1][2].is_enabled = True
+        self.describe_states()
+
+    def change_loudness(self, option, side):
+        self.r.query(f"UPDATE settings SET {option} = {option} + {side}")
+        self.r.database.commit()
+        self.describe_states()
 
     def hide_menu(self):
         self.state_multiplier = 0
@@ -93,10 +116,6 @@ class Start(Screen):
         self.state %= 4
         self.state_multiplier = 1
 
-    def mouse_moved(self, pos):
-        for button in self.state_description[self.state][1]:
-            button.check_focus(pos)
-
     def mouse_pressed(self, button, pos):
         if button == 1:
             for elem in itertools.chain(*map(lambda elem: elem[1], self.state_description)):
@@ -114,6 +133,7 @@ class Start(Screen):
         self.frame.blit(self.darking_surface, (0, 0))
         if self.state * self.state_multiplier:
             for button in self.state_description[self.state][1]:
+                button.check_focus(pygame.mouse.get_pos())
                 button.draw(self.frame)
             for label in self.state_description[self.state][2]:
                 label.draw(self.frame)
