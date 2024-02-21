@@ -23,26 +23,40 @@ class Start(Screen):
         self.fan = [self.r.drawable("fan_state_0"), self.r.drawable("fan_state_1")]
         self.add_time_event("change_fan", lambda: self.fan.insert(0, self.fan.pop()), 100)
         self.add_time_event("change_yellowing", self.change_yellowing, 50)
+        self.state_description = list()
+        self.describe_states()
+
+    def describe_states(self):
         self.state_description = [
             (self.r.drawable("start_background"), tuple(), tuple()),
             (self.r.drawable("start_background_play"), (
-                Button(self.r, r.string("new_game"), (1124, 640), self.new_game),
-                Button(self.r, r.string("continue"), (1124, 1050), self.continued_game,
+                Button(self.r, self.r.string("new_game"), (1124, 640), self.new_game),
+                Button(self.r, self.r.string("continue"), (1124, 1050), self.continued_game,
                        is_enabled=self.r.are_there_data()),
-                Button(self.r, r.string("reset"), (20, 20), self.hide_menu, True)
+                Button(self.r, self.r.string("reset"), (20, 20), self.hide_menu, True)
             ), tuple()),
             (self.r.drawable("start_background_settings"), (
                 Button(self.r, self.r.string("reset"), (20, 20), self.hide_menu, True),
                 Button(self.r, self.r.string("plus"), (2300, 500), lambda: self.change_fps(1), True),
                 Button(self.r, self.r.string("minus"), (2750, 500), lambda: self.change_fps(-1), True),
+                Button(self.r, "en", (2300, 800), lambda: self.change_language("en"), True),
+                Button(self.r, "ru", (2750, 800), lambda: self.change_language("ru"), True)
             ), (
-                Label(self.r, self.r.string("fps"), (500, 500), 250, None, "white"),
-                Label(self.r, str(next(self.r.query("SELECT fps FROM settings"))[0]), (1800, 500), 250, None, "white")
-            )),
+                 Label(self.r, self.r.string("fps"), (500, 500), 250, None, "white"),
+                 Label(self.r, str(next(self.r.query("SELECT fps FROM settings"))[0]), (1800, 500), 250, None, "white"),
+                 Label(self.r, self.r.string("language"), (500, 800), 250, None, "white")
+             )),
             (self.r.drawable("start_background_achievements"), (
                 Button(self.r, "Ничего", (0, 0), lambda: True),
             ), tuple())
         ]
+
+    def change_language(self, code):
+        self.r.query(f"UPDATE settings SET language = '{code}'")
+        self.r.database.commit()
+        self.r.reload_strings()
+        self.r.reload_drawables()
+        self.describe_states()
 
     def change_fps(self, side):
         self.r.query(f"UPDATE settings SET fps = fps + {1 * side}")

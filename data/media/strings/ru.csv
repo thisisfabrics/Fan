@@ -26,6 +26,8 @@ remain,Осталось
 you_have_liquidated,Вы ликвидировали % шт.
 you_have_reached,и спустились на % этаж!
 exit,Выйти
-fps,Кадров в секунду
+fps,Частота кадров
 plus,+
 minus,-
+language,Язык
+difficulty,Максимальное количество персонажей
