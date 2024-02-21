@@ -20,28 +20,16 @@ class Scrollbar(InteractiveWidget):
         self.xx, self.yy = self.x + self.width, self.y + self.height
 
     def append(self, widget):
-        # 106 between items
-        if self.items:
-            widget.x = len(self.items) % 4 * (self.items[0].image.get_width() + self.r.constant("scroll_bar_padding"))
-            widget.y = self.current_height() - self.items[0].image.get_height()
         widget.y += self.scrollstate
         self.items.append(widget)
 
     def scroll(self, direction):
-        if self.focus and self.current_height() > self.height:
-            delta = -direction * 50 * self.r.constant("coefficient")
+        delta = -direction * 50 * self.r.constant("coefficient")
+        if self.focus and 0 <= self.items[0].y - delta and self.height >= self.items[-1].yy - delta:
             self.scrollstate -= delta
-            if -self.current_height() + 2 * self.items[0].image.get_height() + self.r.constant("scroll_bar_padding") \
-                    <= self.scrollstate <= 0:
-                for elem in self.items:
-                    elem.y -= delta
-                    elem.calculate_size()
-            else:
-                self.scrollstate += delta
-
-    def current_height(self):
-        return len(self.items) // 4 * (self.items[0].image.get_height() + self.r.constant("scroll_bar_padding")) + \
-            self.items[0].image.get_height() if self.items else int()
+            for elem in self.items:
+                elem.y -= delta
+                elem.calculate_size()
 
     def build_surface(self):
         surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA, 32)

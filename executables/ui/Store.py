@@ -50,7 +50,7 @@ class Store(Screen):
 
     def build_surfaces(self):
         for elem in self.displayed:
-            label = Label(self.r, elem.description, (47, 320), 70, 320)
+            label = Label(self.r, elem.description, (47, 320), 70, 350)
             surface = pygame.Surface((max(554 * self.r.constant("coefficient"), label.image.get_width() + label.x * 2),
                                       966 * self.r.constant("coefficient")),
                                      pygame.SRCALPHA, 32)

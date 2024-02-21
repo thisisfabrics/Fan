@@ -76,19 +76,22 @@ class Start(Screen):
                 Button(self.r, self.r.string("reset"), (20, 20), self.hide_menu, True),
             ), (
                 Label(self.r, self.r.string("actual_statistics"), (2000, 88), 250, None, "white"),
-                Scrollbar(self.r, (220, 0), lambda: True)
+                Scrollbar(self.r, (440, 20), lambda: True, 1920)
             ))
         ]
-        for icon, description, condition in zip(
-                [self.r.drawable("catalyst_energy_transaction")],
-                ["Ля ля ял яля ял яля ля ля ял я"],
-                [lambda: True]
-        ):
+        for icon, description, condition in [
+            (self.r.drawable("achievement_catterfield"), self.r.string("achievement_catterfield"),
+             sum(1 for elem in self.r.query("SELECT * FROM statistics WHERE liquidated_enemies > 99"))),
+            (self.r.drawable())
+        ]:
             self.state_description[-1][-1][-1].append(Achievement(self.r, (0, 0), condition, icon, description))
 
     def mouse_wheel(self, direction):
         if self.state == 3:
             self.state_description[-1][-1][-1].scroll(direction)
+
+    def mouse_moved(self, pos):
+        self.state_description[-1][-1][-1].check_focus(pos)
 
     def change_language(self, code):
         self.r.query(f"UPDATE settings SET language = '{code}'")
