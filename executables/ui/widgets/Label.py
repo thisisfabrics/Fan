@@ -8,13 +8,18 @@ from executables.ui.widgets.Widget import Widget
 class Label(Widget):
     def __init__(self, r, label, pos, size, width=None, color=None):
         super().__init__(r, pos)
-        self.label = label
+        self.label = None
+        self.width = None
         self.color = color if color else pygame.Color("black")
-        self.width = width * self.r.constant("coefficient") if width else self.r.constant("useful_width")
         self.size = int(size * self.r.constant("coefficient"))
         self.font = pygame.font.Font("../data/media/fonts/AmaticSC-Regular.ttf",
                                      self.size)
         self.image = None
+        self.set_text(label, width)
+
+    def set_text(self, label, width=None):
+        self.label = label
+        self.width = width * self.r.constant("coefficient") if width else self.r.constant("useful_width")
         self.build_surface()
 
     def build_subsurface(self, wi, substring):

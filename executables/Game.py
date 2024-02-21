@@ -26,11 +26,15 @@ class Game:
         self.left_corner_y = 0.5 * info.current_h - 0.5 * self.useful_height
         self.frame = pygame.Surface((self.useful_width, self.useful_height))
         self.r = R((self.useful_width, self.useful_height), (self.real_width, self.real_height))
-        self.fps = 60
-        self.current_screen = Start(self.r, self.frame)
+        self.fps = int()
+        self.update_fps()
+        self.current_screen = Start(self.r, self.frame, self.update_fps)
         self.clock = pygame.time.Clock()
         self.playtime = True
         self.loop()
+
+    def update_fps(self):
+        self.fps = next(self.r.query("SELECT fps FROM settings"))[0]
 
     def navigate(self, destination):
         if destination:
