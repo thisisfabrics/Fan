@@ -4,6 +4,10 @@ class Widget:
         self.x, self.y = int(), int()
         self.set_pos(pos)
 
+    def calculate_size(self):
+        self.xx, self.yy = (self.x + self.image.get_width(),
+                            self.y + self.image.get_height())
+
     def set_pos(self, pos):
         self.x, self.y = map(lambda elem: elem * self.r.constant("coefficient"), pos)
 

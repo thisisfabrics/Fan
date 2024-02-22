@@ -74,11 +74,14 @@ class Start(Screen):
              )),
             (self.r.drawable("start_background_achievements"), (
                 Button(self.r, self.r.string("reset"), (20, 20), self.hide_menu, True),
+                Button(self.r, self.r.string("clear_statistics"), (3000, 1800), self.clear_statistics)
             ), (
                 Label(self.r, self.r.string("actual_statistics"), (2000, 88), 250, None, "white"),
-                Scrollbar(self.r, (440, 20), lambda: True, 1920)
+                Scrollbar(self.r, (1920, 388), lambda: True, 1920),
+                Scrollbar(self.r, (440, 0), lambda: True, 1480)
             ))
         ]
+        self.state_description[-1][-1][-1].scrollstate = 20 * self.r.constant("coefficient")
         for icon, description, condition in [
             (self.r.drawable("achievement_catterfield"), self.r.string("achievement_catterfield"),
              self.r.query("SELECT * FROM statistics WHERE liquidated_enemies > 99").fetchall()),
@@ -87,15 +90,38 @@ class Start(Screen):
             (self.r.drawable("achievement_floor"), self.r.string("achievement_floor"),
              self.r.query("SELECT * FROM statistics WHERE floor < 1").fetchall())
         ]:
-            self.state_description[-1][-1][-1].append(item := Achievement(self.r, (0, 0), condition, icon, description))
-            item.y = self.state_description[-1][-1][-1].items[-1].yy + self.r.constant("scrollbar_padding")
+            self.state_description[-1][-1][-1].append(Achievement(self.r, (0, 0), condition, icon, description), True)
+        for _, weapons, liquidated_enemies, activated_catalysts, floor, year, month, day, is_finished in \
+                self.r.query("SELECT * FROM statistics ORDER BY year, month, day DESC"):
+            self.state_description[-1][-1][-2].append(
+                Label(self.r, self.r.string("collected_dischargers").replace('%', str(weapons)),
+                      (0, 0), 100, None, "white"), True)
+            self.state_description[-1][-1][-2].append(
+                Label(self.r, self.r.string("liquidated_enemies").replace('%', str(liquidated_enemies)),
+                      (0, 0), 100, None, "white"), True)
+            self.state_description[-1][-1][-2].append(
+                Label(self.r, self.r.string("activated_catalysts").replace('%', str(activated_catalysts)),
+                      (0, 0), 100, None, "white"), True)
+            self.state_description[-1][-1][-2].append(
+                Label(self.r, self.r.string("date").replace('%', str(f"{day}.{month}.{year}")),
+                      (0, 0), 100, None, "white"), True)
+            self.state_description[-1][-1][-2].append(
+                Label(self.r, "____________",
+                      (0, 0), 100, None, "white"), True)
+
+    def clear_statistics(self):
+        self.r.query("DELETE FROM statistics WHERE is_finished = 1")
+        self.r.database.commit()
+        self.describe_states()
 
     def mouse_wheel(self, direction):
         if self.state == 3:
             self.state_description[-1][-1][-1].scroll(direction)
+            self.state_description[-1][-1][-2].scroll(direction)
 
     def mouse_moved(self, pos):
         self.state_description[-1][-1][-1].check_focus(pos)
+        self.state_description[-1][-1][-2].check_focus(pos)
 
     def change_language(self, code):
         self.r.query(f"UPDATE settings SET language = '{code}'")

@@ -33,7 +33,12 @@ language,Язык
 difficulty,Предел количества персонажей на уровне
 effects_loudness,Громк. эффектов
 music_volume,Громк. муз.
-actual_statistics,Последняя статистика
+actual_statistics,Общая статистика
 achievement_catterfield,Ликвидируйте 100 полепрядов в одной игре
 achievement_dischargers,Соберите все виды разряжателей
 achievement_floor,Спуститесь на этаж ноль
+collected_dischargers,Собрано разряжателей: %
+liquidated_enemies,Ликвидировано: %
+activated_catalysts,Активировано катализаторов: %
+date,Дата %
+clear_statistics,Очистить статистику

@@ -33,7 +33,12 @@ language,Language
 difficulty,Maximum amount of characters on a level
 effects_loudness,Effects loudness
 music_volume,Music volume
-actual_statistics,Actual statistics
+actual_statistics,General statistics
 achievement_catterfield,Liquidate 100 catterfields in one game
 achievement_dischargers,Collect all types of the dischargers
 achievement_floor,Reach floor zero
+collected_dischargers,Collected % dischargers
+liquidated_enemies,Liquidated % enemies
+activated_catalysts,Activated % catalysts
+date,Date %
+clear_statistics,Clear statistics

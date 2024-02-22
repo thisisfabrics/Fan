@@ -19,13 +19,17 @@ class Scrollbar(InteractiveWidget):
     def calculate_size(self):
         self.xx, self.yy = self.x + self.width, self.y + self.height
 
-    def append(self, widget):
+    def append(self, widget, with_internal_structure=False):
+        if with_internal_structure and self.items:
+            widget.y = self.items[-1].yy + self.r.constant("scrollbar_padding")
         widget.y += self.scrollstate
+        widget.calculate_size()
         self.items.append(widget)
 
     def scroll(self, direction):
-        delta = -direction * 50 * self.r.constant("coefficient")
-        if self.focus and 0 <= self.items[0].y - delta and self.height >= self.items[-1].yy - delta:
+        delta = -direction * 100 * self.r.constant("coefficient")
+        if self.focus and self.r.constant("scrollbar_padding") > self.items[0].y - delta and \
+                self.height - self.r.constant("scrollbar_padding") * 2 < self.items[-1].yy - delta:
             self.scrollstate -= delta
             for elem in self.items:
                 elem.y -= delta
