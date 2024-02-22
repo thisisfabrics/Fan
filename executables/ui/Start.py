@@ -81,10 +81,14 @@ class Start(Screen):
         ]
         for icon, description, condition in [
             (self.r.drawable("achievement_catterfield"), self.r.string("achievement_catterfield"),
-             sum(1 for elem in self.r.query("SELECT * FROM statistics WHERE liquidated_enemies > 99"))),
-            (self.r.drawable())
+             self.r.query("SELECT * FROM statistics WHERE liquidated_enemies > 99").fetchall()),
+            (self.r.drawable("achievement_dischargers"), self.r.string("achievement_dischargers"),
+             self.r.query("SELECT * FROM statistics WHERE weapons = 3").fetchall()),
+            (self.r.drawable("achievement_floor"), self.r.string("achievement_floor"),
+             self.r.query("SELECT * FROM statistics WHERE floor < 1").fetchall())
         ]:
-            self.state_description[-1][-1][-1].append(Achievement(self.r, (0, 0), condition, icon, description))
+            self.state_description[-1][-1][-1].append(item := Achievement(self.r, (0, 0), condition, icon, description))
+            item.y = self.state_description[-1][-1][-1].items[-1].yy + self.r.constant("scrollbar_padding")
 
     def mouse_wheel(self, direction):
         if self.state == 3:

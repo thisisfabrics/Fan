@@ -35,6 +35,7 @@ class R:
         self.string_dictionary = dict()
         self.reload_strings()
         self.constant_dictionary = {
+            "scrollbar_padding": 40 * self.coefficient,
             "store_offset_x": 712 * self.coefficient,
             "store_offset_y": 896 * self.coefficient,
             "store_padding": 784 * self.coefficient,
