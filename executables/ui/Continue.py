@@ -45,6 +45,7 @@ class Continue(Screen):
             self.add_weapons()
         self.lift = Lift(self.r, self.rooms[0][0].image.get_rect()[-2:], self.floor, self.rooms[0][0].portals_group)
         self.shop = Shop(self.r, self.rooms[0][0].image.get_rect()[-2:], self.rooms[0][0].portals_group)
+        self.empty_database(use_the_database)
         while self.count_enemies() > next(self.r.query("SELECT characters FROM settings"))[0]:
             randroom = self.rooms[random.randrange(3)][random.randrange(3)]
             try:
@@ -53,6 +54,7 @@ class Continue(Screen):
                     randroom.entities_group.remove(randenemy)
             except ValueError:
                 continue
+        self.push_to_database()
 
     def build_rooms(self):
         self.rooms = [[Room(self.r, (i, j)) if random.random() < .5 else Hall(self.r, (i, j)) for j in range(3)]
@@ -270,8 +272,10 @@ class Continue(Screen):
                                .power)
         except StopIteration:
             cyclotron_power = int()
-        self.r.query(f"INSERT INTO belle(money, vacuumcleaner_power, cyclotron_power, fan_power) VALUES("
-                     f"{self.find_belle()[0].money}, {vacuumcleaner_power}, {cyclotron_power}, {fan_power})")
+        self.r.query(f"INSERT INTO belle(money, vacuumcleaner_power, cyclotron_power, fan_power, money_multiplier, "
+                     "energy_threshold) VALUES("
+                     f"{self.find_belle()[0].money}, {vacuumcleaner_power}, {cyclotron_power}, {fan_power}, "
+                     f"{self.find_belle()[0].money_multiplier}, {self.find_belle()[0].energy_threshold})")
         self.r.database.commit()
 
     def empty_database(self, use_the_database):
@@ -321,7 +325,7 @@ class Continue(Screen):
             entity.energy = energy
             entity.last_delta_x, entity.last_delta_y = last_delta_x, last_delta_y
             self.rooms[room_row][room_column].entities_group.add(entity)
-        for type, purchased, _ in self.r.query("SELECT * FROM catalyst"):
+        for type, purchased, _, _ in self.r.query("SELECT * FROM catalyst"):
             if purchased:
                 widget = self.r.constant("id_to_catalyst_object")[type](self.r)
                 items = self.find_belle()[0].catalysts.items
@@ -329,12 +333,13 @@ class Continue(Screen):
                     widget.x = len(items) % 4 * (
                                 items[0].image.get_width() + self.r.constant("scroll_bar_padding"))
                     widget.y = len(items) // 4 * (items[0].image.get_height() +
-                                                  self.r.constant("scroll_bar_padding")) + \
-                        items[0].image.get_height() if items else int() - items[0].image.get_height()
+                                                  self.r.constant("scroll_bar_padding"))
                 self.find_belle()[0].catalysts.append(widget)
             self.find_belle()[0].apply_catalysts()
-        _, money, vacuumcleaner_power, cyclotron_power, fan_power = next(self.r.query("SELECT * FROM belle"))
+        _, money, vacuumcleaner_power, cyclotron_power, fan_power, mm, et = next(self.r.query("SELECT * FROM belle"))
         self.find_belle()[0].money = money
+        self.find_belle()[0].money_multiplier = mm
+        self.find_belle()[0].energy_threshold = et
         if vacuumcleaner_power:
             VacuumCleanerDecoy(self.r, self.find_belle()[0].rect[:2], vacuumcleaner_power,
                                self.find_belle()[1].collectables_group)

@@ -27,6 +27,8 @@ class Scrollbar(InteractiveWidget):
         self.items.append(widget)
 
     def scroll(self, direction):
+        if not self.items:
+            return
         delta = -direction * 100 * self.r.constant("coefficient")
         if self.focus and self.r.constant("scrollbar_padding") > self.items[0].y - delta and \
                 self.height - self.r.constant("scrollbar_padding") * 2 < self.items[-1].yy - delta:

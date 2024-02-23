@@ -32,11 +32,14 @@ class Belle(Entity):
         self.money += value * self.money_multiplier
 
     def apply_catalysts(self):
-        if HealthIncrease in self.catalysts.enumerate_classes():
+        if HealthIncrease in self.catalysts.enumerate_classes() and \
+                not next(self.r.query("SELECT applied FROM catalyst WHERE id = 1"))[0]:
             self.energy_threshold += self.r.constant("battery_equivalent")
-        if MoneyRain in self.catalysts.enumerate_classes():
+        if MoneyRain in self.catalysts.enumerate_classes() and \
+                not next(self.r.query("SELECT applied FROM catalyst WHERE id = 2"))[0]:
             self.money_multiplier += 1
-        if EnergyTransaction in self.catalysts.enumerate_classes():
+        if EnergyTransaction in self.catalysts.enumerate_classes() and \
+                not next(self.r.query("SELECT applied FROM catalyst WHERE id = 3"))[0]:
             self.energy_threshold //= 2
 
     def sort_weapon_by(self, criteria_class):

@@ -77,7 +77,7 @@ class Start(Screen):
                 Button(self.r, self.r.string("clear_statistics"), (2600, 1800), self.clear_statistics)
             ), (
                 Label(self.r, self.r.string("actual_statistics"), (2000, 88), 250, None, "white"),
-                Scrollbar(self.r, (1920, 388), lambda: True, 1920),
+                Scrollbar(self.r, (1920, 388), lambda: True, 1920, 1772),
                 Scrollbar(self.r, (440, 0), lambda: True, 1480)
             ))
         ]
@@ -108,6 +108,9 @@ class Start(Screen):
             self.state_description[-1][-1][-2].append(
                 Label(self.r, self.r.string("date").replace('%', str(f"{day}.{month}.{year}")),
                       (0, 0), 100, None, "white"), True)
+            self.state_description[-1][-1][-2].append(
+                Label(self.r, self.r.string("is_finished").replace('%', self.r.string("yes")
+                      if is_finished else self.r.string("no")), (0, 0), 100, None, "white"), True)
             self.state_description[-1][-1][-2].append(
                 Label(self.r, "____________",
                       (0, 0), 100, None, "white"), True)

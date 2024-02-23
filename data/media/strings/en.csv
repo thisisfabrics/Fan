@@ -43,3 +43,6 @@ activated_catalysts,Activated % catalysts
 date,Date %
 clear_statistics,Clear statistics
 reached_floor,Reached %th floor
+is_finished,This game is % over
+yes,
+no,not
