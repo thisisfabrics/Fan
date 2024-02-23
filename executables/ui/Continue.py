@@ -325,17 +325,16 @@ class Continue(Screen):
             entity.energy = energy
             entity.last_delta_x, entity.last_delta_y = last_delta_x, last_delta_y
             self.rooms[room_row][room_column].entities_group.add(entity)
-        for type, purchased, _, _ in self.r.query("SELECT * FROM catalyst"):
-            if purchased:
-                widget = self.r.constant("id_to_catalyst_object")[type](self.r)
-                items = self.find_belle()[0].catalysts.items
-                if items:
-                    widget.x = len(items) % 4 * (
-                                items[0].image.get_width() + self.r.constant("scroll_bar_padding"))
-                    widget.y = len(items) // 4 * (items[0].image.get_height() +
-                                                  self.r.constant("scroll_bar_padding"))
-                self.find_belle()[0].catalysts.append(widget)
-            self.find_belle()[0].apply_catalysts()
+        for (type,) in self.r.query("SELECT id FROM catalyst WHERE purchased = 1"):
+            widget = self.r.constant("id_to_catalyst_object")[type](self.r)
+            items = self.find_belle()[0].catalysts.items
+            if items:
+                widget.x = len(items) % 4 * (
+                            items[0].image.get_width() + self.r.constant("scroll_bar_padding"))
+                widget.y = len(items) // 4 * (items[0].image.get_height() +
+                                              self.r.constant("scroll_bar_padding"))
+            self.find_belle()[0].catalysts.append(widget)
+        self.find_belle()[0].apply_catalysts()
         _, money, vacuumcleaner_power, cyclotron_power, fan_power, mm, et = next(self.r.query("SELECT * FROM belle"))
         self.find_belle()[0].money = money
         self.find_belle()[0].money_multiplier = mm

@@ -35,12 +35,19 @@ class Belle(Entity):
         if HealthIncrease in self.catalysts.enumerate_classes() and \
                 not next(self.r.query("SELECT applied FROM catalyst WHERE id = 1"))[0]:
             self.energy_threshold += self.r.constant("battery_equivalent")
+            self.r.query("UPDATE catalyst SET applied = 1 WHERE id = 1")
+            self.r.database.commit()
         if MoneyRain in self.catalysts.enumerate_classes() and \
                 not next(self.r.query("SELECT applied FROM catalyst WHERE id = 2"))[0]:
             self.money_multiplier += 1
+            self.r.query("UPDATE catalyst SET applied = 1 WHERE id = 2")
+            self.r.database.commit()
         if EnergyTransaction in self.catalysts.enumerate_classes() and \
                 not next(self.r.query("SELECT applied FROM catalyst WHERE id = 3"))[0]:
             self.energy_threshold //= 2
+            self.r.query("UPDATE catalyst SET applied = 1 WHERE id = 3")
+            self.r.database.commit()
+
 
     def sort_weapon_by(self, criteria_class):
         if self.mouse_updated:
