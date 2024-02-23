@@ -21,10 +21,10 @@ class Weapon(pygame.sprite.Sprite, Animated):
         self.power = min(self.power + value, self.power_threshold)
 
     def release_bullet(self, mouse_position_compenstation):
-        for i in range(int(self.power)):
-            self.bullet(self.r, (self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2),
-                        ((mp := pygame.mouse.get_pos())[0] + mouse_position_compenstation[0],
-                         mp[1] + mouse_position_compenstation[1]), self.bullets_group)
+        r_bullet = self.bullet(self.r, (self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2),
+                               ((mp := pygame.mouse.get_pos())[0] + mouse_position_compenstation[0],
+                               mp[1] + mouse_position_compenstation[1]), self.bullets_group)
+        r_bullet.damage_rate *= self.power
 
     def apply_offset(self):
         self.rect.x += self.offset_flipped[0] if self.animation_is_flipped else self.offset_not_flipped[0]

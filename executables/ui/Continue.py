@@ -45,7 +45,6 @@ class Continue(Screen):
             self.add_weapons()
         self.lift = Lift(self.r, self.rooms[0][0].image.get_rect()[-2:], self.floor, self.rooms[0][0].portals_group)
         self.shop = Shop(self.r, self.rooms[0][0].image.get_rect()[-2:], self.rooms[0][0].portals_group)
-        self.empty_database(use_the_database)
         while self.count_enemies() > next(self.r.query("SELECT characters FROM settings"))[0]:
             randroom = self.rooms[random.randrange(3)][random.randrange(3)]
             try:
@@ -347,7 +346,8 @@ class Continue(Screen):
                      self.find_belle()[1].collectables_group)
         if condition:
             self.r.query(f"UPDATE statistics SET floor = {self.floor} WHERE is_finished = 0")
-        self.r.query(f"UPDATE statistics SET weapons = {vacuumcleaner_power + fan_power + cyclotron_power} "
+        self.r.query(f"UPDATE statistics SET weapons = "
+                     f"{(1 if vacuumcleaner_power else 0) + (1 if fan_power else 0) + (1 if cyclotron_power else 0)} "
                      f"WHERE is_finished = 0")
         self.r.database.commit()
 

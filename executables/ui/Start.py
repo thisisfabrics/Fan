@@ -57,7 +57,7 @@ class Start(Screen):
                 Button(self.r, self.r.string("plus"), (2300, 1700), lambda: self.change_loudness("characters", 1), True,
                        next(self.r.query("SELECT characters FROM settings"))[0] < 108),
                 Button(self.r, self.r.string("minus"), (2750, 1700), lambda: self.change_loudness("characters", -1), True,
-                       next(self.r.query("SELECT characters FROM settings"))[0] > 1),
+                       next(self.r.query("SELECT characters FROM settings"))[0] > 0),
             ), (
                  Label(self.r, self.r.string("fps"), (500, 500), 250, None, "white"),
                  Label(self.r, str(next(self.r.query("SELECT fps FROM settings"))[0]), (1800, 500), 250, None, "white"),
@@ -74,7 +74,7 @@ class Start(Screen):
              )),
             (self.r.drawable("start_background_achievements"), (
                 Button(self.r, self.r.string("reset"), (20, 20), self.hide_menu, True),
-                Button(self.r, self.r.string("clear_statistics"), (2700, 1800), self.clear_statistics)
+                Button(self.r, self.r.string("clear_statistics"), (2600, 1800), self.clear_statistics)
             ), (
                 Label(self.r, self.r.string("actual_statistics"), (2000, 88), 250, None, "white"),
                 Scrollbar(self.r, (1920, 388), lambda: True, 1920),
@@ -93,6 +93,9 @@ class Start(Screen):
             self.state_description[-1][-1][-1].append(Achievement(self.r, (0, 0), condition, icon, description), True)
         for _, weapons, liquidated_enemies, activated_catalysts, floor, year, month, day, is_finished in \
                 self.r.query("SELECT * FROM statistics ORDER BY year, month, day DESC"):
+            self.state_description[-1][-1][-2].append(
+                Label(self.r, self.r.string("reached_floor").replace('%', str(floor)),
+                      (0, 0), 100, None, "white"), True)
             self.state_description[-1][-1][-2].append(
                 Label(self.r, self.r.string("collected_dischargers").replace('%', str(weapons)),
                       (0, 0), 100, None, "white"), True)
@@ -165,6 +168,9 @@ class Start(Screen):
             self.state -= 1
         self.state %= 4
         self.state_multiplier = 1
+        for element in self.state_description:
+            for elem in element[1]:
+                elem.focus = False
 
     def mouse_pressed(self, button, pos):
         if button == 1:
