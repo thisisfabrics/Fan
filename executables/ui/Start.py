@@ -74,7 +74,7 @@ class Start(Screen):
              )),
             (self.r.drawable("start_background_achievements"), (
                 Button(self.r, self.r.string("reset"), (20, 20), self.hide_menu, True),
-                Button(self.r, self.r.string("clear_statistics"), (3000, 1800), self.clear_statistics)
+                Button(self.r, self.r.string("clear_statistics"), (2700, 1800), self.clear_statistics)
             ), (
                 Label(self.r, self.r.string("actual_statistics"), (2000, 88), 250, None, "white"),
                 Scrollbar(self.r, (1920, 388), lambda: True, 1920),

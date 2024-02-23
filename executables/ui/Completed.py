@@ -18,7 +18,7 @@ class Completed(Screen):
         self.step = 150 * self.r.constant("coefficient")
         self.previous_floor = self.r.query("SELECT number FROM floor ").fetchall()[0][0]  # if False else 10
         self.label = Label(self.r, self.r.string("floor_is_cleared").replace('%', str(self.previous_floor)),
-                           (40, 500), 300, 500, "white")
+                           (40, 500), 250, 500, "white")
         self.buttons = (
             Button(self.r, self.r.string("to_the_floor").replace('%', str(self.previous_floor - 1)), (80, 1400),
                    lambda: self.add_time_event("moving", lambda: self.move(self.r.constant("useful_height")), 35)),

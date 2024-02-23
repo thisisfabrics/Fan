@@ -347,7 +347,7 @@ class Continue(Screen):
                      self.find_belle()[1].collectables_group)
         if condition:
             self.r.query(f"UPDATE statistics SET floor = {self.floor} WHERE is_finished = 0")
-        self.r.query(f"UPDATE statistics SET weapons = {len(self.find_belle()[0].weapons)} "
+        self.r.query(f"UPDATE statistics SET weapons = {vacuumcleaner_power + fan_power + cyclotron_power} "
                      f"WHERE is_finished = 0")
         self.r.database.commit()
 
