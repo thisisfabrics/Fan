@@ -23,7 +23,7 @@ class Belle(Entity):
         self.ghost_time = 2000000000
         self.mouse_updated = True
         self.became_ghost_at = None
-        self.money = int()
+        self.money = int(100)
         self.catalysts = Scrollbar(self.r, (1322, 1038), lambda: None, 1200, 890)
         self.money_multiplier = 1
         self.apply_catalysts()
@@ -34,7 +34,7 @@ class Belle(Entity):
     def apply_catalysts(self):
         if HealthIncrease in self.catalysts.enumerate_classes() and \
                 not next(self.r.query("SELECT applied FROM catalyst WHERE id = 1"))[0]:
-            self.energy_threshold += self.r.constant("battery_equivalent")
+            self.energy_threshold += 2 * self.r.constant("battery_equivalent")
             self.r.query("UPDATE catalyst SET applied = 1 WHERE id = 1")
             self.r.database.commit()
         if MoneyRain in self.catalysts.enumerate_classes() and \
@@ -47,7 +47,6 @@ class Belle(Entity):
             self.energy_threshold //= 2
             self.r.query("UPDATE catalyst SET applied = 1 WHERE id = 3")
             self.r.database.commit()
-
 
     def sort_weapon_by(self, criteria_class):
         if self.mouse_updated:

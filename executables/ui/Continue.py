@@ -284,6 +284,7 @@ class Continue(Screen):
         if not use_the_database:
             self.r.query("UPDATE catalyst SET purchased = 0")
             self.r.query("UPDATE catalyst SET displayed = 0")
+            self.r.query("UPDATE catalyst SET applied = 0")
         self.r.database.commit()
 
     def fetch_from_database(self):
@@ -334,11 +335,11 @@ class Continue(Screen):
                 widget.y = len(items) // 4 * (items[0].image.get_height() +
                                               self.r.constant("scroll_bar_padding"))
             self.find_belle()[0].catalysts.append(widget)
-        self.find_belle()[0].apply_catalysts()
         _, money, vacuumcleaner_power, cyclotron_power, fan_power, mm, et = next(self.r.query("SELECT * FROM belle"))
         self.find_belle()[0].money = money
         self.find_belle()[0].money_multiplier = mm
         self.find_belle()[0].energy_threshold = et
+        self.find_belle()[0].apply_catalysts()
         if vacuumcleaner_power:
             VacuumCleanerDecoy(self.r, self.find_belle()[0].rect[:2], vacuumcleaner_power,
                                self.find_belle()[1].collectables_group)
