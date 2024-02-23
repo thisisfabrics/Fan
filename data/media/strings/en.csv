@@ -46,3 +46,4 @@ reached_floor,Reached %th floor
 is_finished,This game is % over
 yes,
 no,not
+ok,Agree

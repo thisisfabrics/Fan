@@ -1,6 +1,7 @@
 import sys
 import pygame
 
+from executables.ui.Agreement import Agreement
 from executables.ui.Completed import Completed
 from executables.ui.Continue import Continue
 from executables.ui.Finish import Finish
@@ -30,7 +31,7 @@ class Game:
         self.r = R((self.useful_width, self.useful_height), (self.real_width, self.real_height))
         self.fps = int()
         self.update_fps()
-        self.current_screen = Start(self.r, self.frame, self.update_fps)
+        self.current_screen = Agreement(self.r, self.frame)
         self.clock = pygame.time.Clock()
         self.playtime = True
         self.loop()
