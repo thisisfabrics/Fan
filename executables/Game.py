@@ -4,6 +4,7 @@ import pygame
 from executables.ui.Completed import Completed
 from executables.ui.Continue import Continue
 from executables.ui.Finish import Finish
+from executables.ui.Splash import Splash
 from executables.ui.Start import Start
 from executables.ui.Store import Store
 from modules.runtimeresources import R
@@ -25,6 +26,7 @@ class Game:
         self.left_corner_x = 0.5 * info.current_w - 0.5 * self.useful_width
         self.left_corner_y = 0.5 * info.current_h - 0.5 * self.useful_height
         self.frame = pygame.Surface((self.useful_width, self.useful_height))
+        Splash(self.frame, self.window)
         self.r = R((self.useful_width, self.useful_height), (self.real_width, self.real_height))
         self.fps = int()
         self.update_fps()
