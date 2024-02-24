@@ -1,5 +1,3 @@
-import pygame
-
 from executables.ui.Screen import Screen
 from executables.ui.widgets.Button import Button
 
@@ -8,16 +6,7 @@ class Story(Screen):
     def __init__(self, r, frame):
         super().__init__(r, frame)
         self.image = self.r.drawable("com")
-        self.darking_surface = pygame.Surface((0, 0))
-        self.darking_surface.set_alpha(0)
-        self.add_time_event("darking", self.darking, 20)
-        self.button = Button(self.r, self.r.string("continue"), (1600, 1854), self.new_game)
-
-    def darking(self):
-        if self.darking_surface.get_alpha() != 255:
-            self.darking_surface.set_alpha(self.darking_surface.get_alpha() + 1)
-        else:
-            self.remove_time_event("darking")
+        self.button = Button(self.r, self.r.string("continue"), (1200, 1500), self.new_game)
 
     def new_game(self):
         self.signal_to_change = "continue"

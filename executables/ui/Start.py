@@ -16,10 +16,9 @@ class Start(Screen):
         }
         self.state = int()
         self.state_multiplier = 1
-        self.alpha = int()
-        self.darking_surface = pygame.Surface((self.frame.get_width(), self.frame.get_height()))
-        self.darking_surface.fill(self.r.color("sad_gray"))
-        self.darking_surface.set_alpha(self.alpha)
+        self.graying_surface = pygame.Surface(self.frame.get_size())
+        self.graying_surface.fill(self.r.color("sad_gray"))
+        self.graying_surface.set_alpha(0)
         self.threshold = 120
         self.threshold_step = 10
         self.fan = [self.r.drawable("fan_state_0"), self.r.drawable("fan_state_1")]
@@ -158,11 +157,11 @@ class Start(Screen):
 
     def change_yellowing(self):
         if self.state * self.state_multiplier:
-            if self.alpha < self.threshold:
-                self.alpha += self.threshold_step
+            if self.graying_surface.get_alpha() < self.threshold:
+                self.graying_surface.set_alpha(self.graying_surface.get_alpha() + self.threshold_step)
         else:
-            if self.alpha > 0:
-                self.alpha -= self.threshold_step
+            if self.graying_surface.get_alpha() > 0:
+                self.graying_surface.set_alpha(self.graying_surface.get_alpha() - self.threshold_step)
 
     def button_pressed(self, key):
         if key == pygame.K_DOWN:
@@ -188,12 +187,12 @@ class Start(Screen):
     def update(self):
         self.frame.blit(self.state_description[self.state][0], (0, 0))
         self.frame.blit(self.fan[0], (0, 0))
-        self.darking_surface.set_alpha(self.alpha)
-        self.frame.blit(self.darking_surface, (0, 0))
+        self.frame.blit(self.graying_surface, (0, 0))
         if self.state * self.state_multiplier:
             for button in self.state_description[self.state][1]:
                 button.check_focus(pygame.mouse.get_pos())
                 button.draw(self.frame)
             for label in self.state_description[self.state][2]:
                 label.draw(self.frame)
+        self.frame.blit(self.darking_surface, (0, 0))
         return self.signal_to_change

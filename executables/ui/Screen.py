@@ -5,8 +5,17 @@ class Screen:
     def __init__(self, r, frame):
         self.r = r
         self.frame = frame
+        self.darking_surface = pygame.Surface(self.frame.get_size())
+        self.darking_surface.set_alpha(255)
         self.time_events = dict()
+        self.add_time_event("darking", self.darking, 20)
         self.signal_to_change = None
+
+    def darking(self):
+        if self.darking_surface.get_alpha() != 0:
+            self.darking_surface.set_alpha(self.darking_surface.get_alpha() - 1)
+        else:
+            self.remove_time_event("darking")
 
     def set_signal(self, signal):
         self.signal_to_change = signal
