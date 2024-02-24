@@ -363,7 +363,7 @@ class Continue(Screen):
 
     def pause_game(self):
         self.push_to_database()
-        self.signal_to_change = "start"
+        self.signal_to_change = "started"
 
     def count_enemies(self):
         return len(
@@ -378,4 +378,6 @@ class Continue(Screen):
         except StopIteration:
             self.finish_game()
         self.lift.set_count_of_enemies(self.count_enemies())
+        if self.floor == 10:
+            self.frame.blit(self.darking_surface, (0, 0))
         return self.signal_to_change

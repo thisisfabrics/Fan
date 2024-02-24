@@ -44,6 +44,8 @@ class Game:
         if destination:
             if destination == "start":
                 self.current_screen = Start(self.r, self.frame, self.update_fps)
+            elif destination == "started":
+                self.current_screen = Start(self.r, self.frame, self.update_fps, False)
             elif destination == "continue":
                 self.current_screen = Continue(self.r, self.frame)
             elif destination == "continued":

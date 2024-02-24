@@ -9,8 +9,8 @@ from executables.ui.widgets.tablets.Achievement import Achievement
 
 
 class Start(Screen):
-    def __init__(self, r, frame, update_fps_action):
-        super().__init__(r, frame)
+    def __init__(self, r, frame, update_fps_action, with_darking=True):
+        super().__init__(r, frame, with_darking)
         self.game_actions = {
             "update_fps": update_fps_action
         }

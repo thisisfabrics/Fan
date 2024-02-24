@@ -2,13 +2,16 @@ import pygame
 
 
 class Screen:
-    def __init__(self, r, frame):
+    def __init__(self, r, frame, with_darking=True):
         self.r = r
         self.frame = frame
+        self.time_events = {pygame.USEREVENT: ("blank", 1987, lambda: True)}
         self.darking_surface = pygame.Surface(self.frame.get_size())
-        self.darking_surface.set_alpha(255)
-        self.time_events = dict()
-        self.add_time_event("darking", self.darking, 20)
+        if with_darking:
+            self.darking_surface.set_alpha(255)
+            self.add_time_event("darking", self.darking, 10)
+        else:
+            self.darking_surface.set_alpha(0)
         self.signal_to_change = None
 
     def darking(self):
@@ -21,7 +24,7 @@ class Screen:
         self.signal_to_change = signal
 
     def add_time_event(self, name, action, period):
-        self.time_events[pygame.USEREVENT + len(self.time_events)] = name, period, action
+        self.time_events[next(reversed(self.time_events.keys())) + 1] = name, period, action
         pygame.time.set_timer(next(reversed(self.time_events.keys())), period)
 
     def remove_time_event(self, name):
