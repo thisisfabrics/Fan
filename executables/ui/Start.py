@@ -151,7 +151,7 @@ class Start(Screen):
         self.state_multiplier = 0
 
     def new_game(self):
-        self.signal_to_change = "continue"
+        self.signal_to_change = "story"
 
     def continued_game(self):
         self.signal_to_change = "continued"

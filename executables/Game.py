@@ -8,6 +8,7 @@ from executables.ui.Finish import Finish
 from executables.ui.Splash import Splash
 from executables.ui.Start import Start
 from executables.ui.Store import Store
+from executables.ui.Story import Story
 from modules.runtimeresources import R
 
 
@@ -53,6 +54,8 @@ class Game:
                 self.current_screen = Store(self.r, self.frame)
             elif destination == "completed":
                 self.current_screen = Completed(self.r, self.frame)
+            elif destination == "story":
+                self.current_screen = Story(self.r, self.frame)
 
     def loop(self):
         while self.playtime:
