@@ -44,18 +44,24 @@ class Game:
         if destination:
             if destination == "start":
                 self.current_screen = Start(self.r, self.frame, self.update_fps)
+                self.r.set_ventilation_state(False, 2000)
             elif destination == "started":
                 self.current_screen = Start(self.r, self.frame, self.update_fps, False)
+                self.r.set_ventilation_state(False)
             elif destination == "continue":
                 self.current_screen = Continue(self.r, self.frame)
+                self.r.set_ventilation_state(True)
             elif destination == "continued":
                 self.current_screen = Continue(self.r, self.frame, True)
+                self.r.set_ventilation_state(True)
             elif destination == "finish":
                 self.current_screen = Finish(self.r, self.frame)
+                self.r.set_ventilation_state(False)
             elif destination == "store":
                 self.current_screen = Store(self.r, self.frame)
             elif destination == "completed":
                 self.current_screen = Completed(self.r, self.frame)
+                self.r.set_ventilation_state(False)
             elif destination == "story":
                 self.current_screen = Story(self.r, self.frame)
 
