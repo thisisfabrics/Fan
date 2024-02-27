@@ -126,6 +126,7 @@ class R:
     def set_ventilation_state(self, is_opened, fade_time=int()):
         progression = pygame.mixer.music.get_pos()
         pygame.mixer.music.unload()
-        pygame.mixer.music.load(f"../data/media/sounds/{"OpenedVentilation" if is_opened else "ClosedVentilation"}.wav")
-        pygame.mixer.music.play(loops=-1, fade_ms=fade_time)
-        pygame.mixer.music.set_pos(progression)
+        pygame.mixer.music.load(f"../data/media/sounds/{"OpenedVentilation" if is_opened else "ClosedVentilation"}.mp3")
+        pygame.mixer.music.play(-1, progression, fade_ms=fade_time)
+        #print(progression)
+        #pygame.mixer.music.set_pos(progression)
