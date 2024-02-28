@@ -14,6 +14,7 @@ class AlphaParticle(Bullet):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = self.start_pos
         self.x, self.y = self.start_pos
+        self.r.sound("Particle")
 
     def update(self):
         super().update()

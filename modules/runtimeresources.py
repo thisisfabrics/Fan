@@ -38,6 +38,8 @@ class R:
         self.reload_drawables()
         self.string_dictionary = dict()
         self.reload_strings()
+        self.sound_dictionary = dict()
+        self.reload_sounds()
         self.constant_dictionary = {
             "scrollbar_padding": 40 * self.coefficient,
             "store_offset_x": 712 * self.coefficient,
@@ -101,6 +103,14 @@ class R:
         for key, value in map(lambda elem: elem.strip().split(',', 1),
                               open(f"../data/media/strings/{self.language}.csv", 'r', encoding="utf-8")):
             self.string_dictionary[key] = value
+
+    def reload_sounds(self):
+        for elem in os.listdir(directory := f"../data/media/sounds"):
+            self.sound_dictionary[elem.split('.')[0]] = pygame.mixer.Sound(f"{directory}/{elem}")
+
+    def sound(self, name):
+        self.sound_dictionary[name].stop()
+        self.sound_dictionary[name].play()
 
     def reload_drawables(self):
         self.observe_language()

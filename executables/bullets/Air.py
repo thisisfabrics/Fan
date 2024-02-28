@@ -22,6 +22,7 @@ class Air(Bullet):
         self.wavefront = list()
         self.wavefront_history = list()
         self.killing = False
+        self.r.sound("Fan")
 
     def calculate_points(self):
         self.wavefront = [(self.start_pos[0] + math.cos(elem) * self.speed * self.lifetime(),

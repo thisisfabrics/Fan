@@ -19,6 +19,7 @@ class Stream(Bullet):
         self.speed = 0.5 * self.r.constant("coefficient")
         self.rect = self.image.get_rect()
         self.max_lifetime = 400
+        self.r.sound("Vacuum")
 
     def update(self):
         if self.lifetime() > self.max_lifetime:

@@ -169,8 +169,6 @@ class Room:
         for bullet in itertools.chain(*map(lambda el: el.bullets_group.sprites(), weapons)):
             for entity in self.entities_group.sprites():
                 if pygame.sprite.collide_rect(bullet, entity) and entity.__class__ in bullet.hitable_entities:
-                    if EnergyTransaction in self.find_belle().catalysts.enumerate_classes():
-                        bullet.damage_rate *= 1.5
                     entity.add_damaging_bullet(bullet)
             bullet.draw(surface)
 

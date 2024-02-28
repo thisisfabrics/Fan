@@ -35,6 +35,7 @@ class Store(Screen):
             self.r.query(f"UPDATE belle SET money = {self.money}")
             self.r.query(f"UPDATE statistics SET activated_catalysts = activated_catalysts + 1 WHERE is_finished = 0")
         self.r.database.commit()
+        self.r.sound("Buy")
 
     def populate(self):
         self.displayed = self.r.query("SELECT id FROM catalyst WHERE displayed = 1").fetchall()

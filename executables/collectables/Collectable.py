@@ -10,5 +10,6 @@ class Collectable(pygame.sprite.Sprite):
         self.rect.x, self.rect.y = pos
 
     def collect(self):
+        self.r.sound("Powerup")
         self.kill()
         return self.value
