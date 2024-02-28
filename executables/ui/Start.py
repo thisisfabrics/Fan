@@ -9,10 +9,11 @@ from executables.ui.widgets.tablets.Achievement import Achievement
 
 
 class Start(Screen):
-    def __init__(self, r, frame, update_fps_action, with_darking=True):
+    def __init__(self, r, frame, update_fps_action, update_loudness_action, with_darking=True):
         super().__init__(r, frame, with_darking)
         self.game_actions = {
-            "update_fps": update_fps_action
+            "update_fps": update_fps_action,
+            "update_loudness": update_loudness_action
         }
         self.state = int()
         self.state_multiplier = 1
@@ -26,8 +27,9 @@ class Start(Screen):
         self.add_time_event("change_yellowing", self.change_yellowing, 50)
         self.state_description = list()
         self.describe_states()
+        self.achievements_are_not_updated = False
 
-    def describe_states(self):
+    def describe_states(self, full_mode=True):
         self.state_description = [
             (self.r.drawable("start_background"), tuple(), tuple()),
             (self.r.drawable("start_background_play"), (
@@ -80,6 +82,9 @@ class Start(Screen):
                 Scrollbar(self.r, (440, 0), lambda: True, 1480)
             ))
         ]
+        if not full_mode:
+            self.achievements_are_not_updated = True
+            return
         self.state_description[-1][-1][-1].scrollstate = 20 * self.r.constant("coefficient")
         for icon, description, condition in [
             (self.r.drawable("achievement_catterfield"), self.r.string("achievement_catterfield"),
@@ -139,12 +144,14 @@ class Start(Screen):
         self.r.query(f"UPDATE settings SET fps = fps + {side}")
         self.r.database.commit()
         self.game_actions["update_fps"]()
-        self.describe_states()
+        self.describe_states(False)
 
     def change_loudness(self, option, side):
         self.r.query(f"UPDATE settings SET {option} = {option} + {side}")
         self.r.database.commit()
-        self.describe_states()
+        if option in "music effects":
+            self.game_actions["update_loudness"](option)
+        self.describe_states(False)
 
     def hide_menu(self):
         self.state_multiplier = 0
@@ -173,6 +180,8 @@ class Start(Screen):
         for element in self.state_description:
             for elem in element[1]:
                 elem.focus = False
+        if self.achievements_are_not_updated and self.state == 3:
+            self.describe_states()
 
     def mouse_pressed(self, button, pos):
         if button == 1:

@@ -40,28 +40,35 @@ class Game:
     def update_fps(self):
         self.fps = next(self.r.query("SELECT fps FROM settings"))[0]
 
+    def update_loudness(self, option="music"):
+        loudness = next(self.r.query(f"SELECT {option} FROM settings"))[0] / 100
+        if option == "music":
+            pygame.mixer.music.set_volume(loudness)
+        else:
+            pass
+
     def navigate(self, destination):
         if destination:
             if destination == "start":
-                self.current_screen = Start(self.r, self.frame, self.update_fps)
-                self.r.set_ventilation_state(False, 2000)
+                self.current_screen = Start(self.r, self.frame, self.update_fps, self.update_loudness)
+                self.r.set_ventilation_state(False, self.update_loudness, 2000)
             elif destination == "started":
-                self.current_screen = Start(self.r, self.frame, self.update_fps, False)
-                self.r.set_ventilation_state(False)
+                self.current_screen = Start(self.r, self.frame, self.update_fps, self.update_loudness, False)
+                self.r.set_ventilation_state(False, self.update_loudness)
             elif destination == "continue":
                 self.current_screen = Continue(self.r, self.frame)
-                self.r.set_ventilation_state(True)
+                self.r.set_ventilation_state(True, self.update_loudness)
             elif destination == "continued":
                 self.current_screen = Continue(self.r, self.frame, True)
-                self.r.set_ventilation_state(True)
+                self.r.set_ventilation_state(True, self.update_loudness)
             elif destination == "finish":
                 self.current_screen = Finish(self.r, self.frame)
-                self.r.set_ventilation_state(False)
+                self.r.set_ventilation_state(False, self.update_loudness)
             elif destination == "store":
                 self.current_screen = Store(self.r, self.frame)
             elif destination == "completed":
                 self.current_screen = Completed(self.r, self.frame)
-                self.r.set_ventilation_state(False)
+                self.r.set_ventilation_state(False, self.update_loudness)
             elif destination == "story":
                 self.current_screen = Story(self.r, self.frame)
 

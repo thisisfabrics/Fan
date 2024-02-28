@@ -1,5 +1,7 @@
 import os
 import sqlite3
+import time
+
 import pygame
 
 from executables.collectables.Battery import Battery
@@ -28,6 +30,8 @@ class R:
         self.useful_size = useful_size
         self.real_size = real_size
         self.coefficient = useful_size[0] / 3840
+        self.mixer_playstart = time.time()
+        self.mixer_playtime = lambda: (time.time() - self.mixer_playstart) % 121
         self.language = str()
         self.observe_language()
         self.drawable_dictionary = dict()
@@ -123,10 +127,9 @@ class R:
     def color(self, name):
         return self.color_dictionary[name]
 
-    def set_ventilation_state(self, is_opened, fade_time=int()):
-        progression = pygame.mixer.music.get_pos()
+    def set_ventilation_state(self, is_opened, loudness_control_function, fade_time=int()):
         pygame.mixer.music.unload()
         pygame.mixer.music.load(f"../data/media/sounds/{"OpenedVentilation" if is_opened else "ClosedVentilation"}.mp3")
-        pygame.mixer.music.play(-1, progression, fade_ms=fade_time)
-        #print(progression)
-        #pygame.mixer.music.set_pos(progression)
+        loudness_control_function()
+        pygame.mixer.music.play(-1, fade_ms=fade_time)
+        pygame.mixer.music.set_pos(self.mixer_playtime())
