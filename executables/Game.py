@@ -30,6 +30,8 @@ class Game:
         self.frame = pygame.Surface((self.useful_width, self.useful_height))
         Splash(self.frame, self.window)
         self.r = R((self.useful_width, self.useful_height), (self.real_width, self.real_height))
+        self.update_loudness("music")
+        self.update_loudness("effects")
         self.fps = int()
         self.update_fps()
         self.current_screen = Agreement(self.r, self.frame)
@@ -45,7 +47,8 @@ class Game:
         if option == "music":
             pygame.mixer.music.set_volume(loudness)
         else:
-            pass
+            for elem in self.r.sound_dictionary.values():
+                elem.set_volume(loudness)
 
     def navigate(self, destination):
         if destination:
@@ -78,7 +81,7 @@ class Game:
                 if event.type == pygame.MOUSEWHEEL:
                     self.current_screen.mouse_wheel(event.y)
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
+                    if event.key == pygame.K_ESCAPE and isinstance(self.current_screen, Start):
                         self.playtime = False
                     else:
                         self.current_screen.button_pressed(event.key)

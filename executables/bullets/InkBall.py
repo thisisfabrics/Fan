@@ -16,7 +16,7 @@ class InkBall(Bullet):
             start_pos[1] - 450 * self.r.constant("coefficient") * math.sin(self.angle)
         self.rect.x, self.rect.y = self.start_pos
         self.x, self.y = self.start_pos
-        self.r.sound("Dispenser")
+        self.r.sound("Particle")
 
     def update(self):
         super().update()
