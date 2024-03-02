@@ -20,10 +20,10 @@ class Weapon(pygame.sprite.Sprite, Animated):
     def increase_power(self, value):
         self.power = min(self.power + value, self.power_threshold)
 
-    def release_bullet(self, mouse_position_compenstation, transaction=False):
+    def release_bullet(self, mouse_position_compensation, transaction=False):
         r_bullet = self.bullet(self.r, (self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2),
-                               ((mp := pygame.mouse.get_pos())[0] + mouse_position_compenstation[0],
-                               mp[1] + mouse_position_compenstation[1]), self.bullets_group)
+                               ((mp := pygame.mouse.get_pos())[0] + mouse_position_compensation[0],
+                               mp[1] + mouse_position_compensation[1]), self.bullets_group)
         r_bullet.damage_rate *= self.power
         if transaction:
             r_bullet.damage_rate *= 1.5

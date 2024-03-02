@@ -23,7 +23,7 @@ class Belle(Entity):
         self.ghost_time = 2000000000
         self.mouse_updated = True
         self.became_ghost_at = None
-        self.money = int(100)
+        self.money = int()
         self.catalysts = Scrollbar(self.r, (1322, 1038), lambda: None, 1200, 890)
         self.money_multiplier = 1
         self.apply_catalysts()
