@@ -1,6 +1,7 @@
 import pygame
 
 from executables.ui.widgets.InteractiveWidget import InteractiveWidget
+from modules.collectiontools import uri_from_path
 
 
 class Button(InteractiveWidget):
@@ -15,7 +16,7 @@ class Button(InteractiveWidget):
         self.image = pygame.Surface((0, 0))
 
     def rebuild_label(self, label):
-        self.label = pygame.font.Font("../data/media/fonts/AmaticSC-Regular.ttf",
+        self.label = pygame.font.Font(uri_from_path("../data/media/fonts/AmaticSC-Regular.ttf"),
                                       int(125 * self.r.constant("coefficient"))) \
             .render(label, 1, pygame.Color("black"))
 

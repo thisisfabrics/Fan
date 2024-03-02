@@ -1,6 +1,7 @@
 import pygame.mouse
 
 from executables.ui.widgets.InteractiveWidget import InteractiveWidget
+from modules.collectiontools import uri_from_path
 
 
 class WeaponIcon(InteractiveWidget):
@@ -9,7 +10,7 @@ class WeaponIcon(InteractiveWidget):
         self.description = description
         self.image = self.r.drawable(name.lower())
         self.calculate_size()
-        label = (pygame.font.Font("../data/media/fonts/AmaticSC-Bold.ttf", int(80 * self.r.constant("coefficient")))
+        label = (pygame.font.Font(uri_from_path("../data/media/fonts/AmaticSC-Bold.ttf"), int(80 * self.r.constant("coefficient")))
                  .render(f"{self.r.string("level")}"
                          f"{self.r.string("max") if powers[0] == powers[1] else ""}"
                          f"{self.r.string("min") if powers[0] == 1 else ""}: {int(powers[0])}", 1, pygame.Color("black")))

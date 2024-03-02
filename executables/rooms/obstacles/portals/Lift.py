@@ -1,6 +1,7 @@
 import pygame
 
 from executables.rooms.obstacles.portals.Portal import Portal
+from modules.collectiontools import uri_from_path
 
 
 class Lift(Portal):
@@ -12,7 +13,7 @@ class Lift(Portal):
         self.image_opened = pygame.transform.rotate(self.image_opened, 270)
         self.rect = self.image_closed.get_rect()
         self.rect.x = room_size[0] // 2 - self.rect.width // 2
-        self.label = (pygame.font.Font("../data/media/fonts/AmaticSC-Bold.ttf", int(72 * self.r.constant("coefficient")))
+        self.label = (pygame.font.Font(uri_from_path("../data/media/fonts/AmaticSC-Bold.ttf"), int(72 * self.r.constant("coefficient")))
                       .render(str(level), 1, pygame.Color("black")))
         self.label_pos = 417.496 * self.r.constant("coefficient"), 52 * self.r.constant("coefficient")
         self.count_of_enemies = int()
@@ -23,7 +24,7 @@ class Lift(Portal):
     def draw(self, surface):
         surface.blit(self.image_closed if self.count_of_enemies else self.image_opened, self.rect[:2])
         surface.blit(self.label, (self.rect.x + self.label_pos[0], self.rect.y + self.label_pos[1]))
-        display_enemies_remain = (pygame.font.Font("../data/media/fonts/AmaticSC-Regular.ttf",
+        display_enemies_remain = (pygame.font.Font(uri_from_path("../data/media/fonts/AmaticSC-Regular.ttf"),
                                                    int(200 * self.r.constant("coefficient")))
                                   .render(f"{self.r.string("remain")}: {self.count_of_enemies}", 1, pygame.Color("black")))
         surface.blit(display_enemies_remain, (self.rect.x + self.label_pos[0] * 2, self.rect.y + self.label_pos[1] * 2))

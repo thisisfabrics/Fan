@@ -3,6 +3,7 @@ import functools
 import pygame.font
 
 from executables.ui.widgets.Widget import Widget
+from modules.collectiontools import uri_from_path
 
 
 class Label(Widget):
@@ -12,7 +13,7 @@ class Label(Widget):
         self.width = None
         self.color = color if color else pygame.Color("black")
         self.size = int(size * self.r.constant("coefficient"))
-        self.font = pygame.font.Font("../data/media/fonts/AmaticSC-Regular.ttf",
+        self.font = pygame.font.Font(uri_from_path("../data/media/fonts/AmaticSC-Regular.ttf"),
                                      self.size)
         self.image = None
         self.set_text(label, width)

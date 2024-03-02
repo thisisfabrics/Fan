@@ -18,6 +18,7 @@ def linerize(collection):
 def uri_from_path(path):
     try:
         root = sys._MEIPASS
+        path = path.replace("../", '')
     except Exception:
         root = os.path.abspath('.')
     return os.path.join(root, path)

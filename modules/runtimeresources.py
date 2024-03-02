@@ -21,11 +21,12 @@ from executables.rooms.obstacles.Sofa import Sofa
 from executables.ui.widgets.tablets.EnergyTransaction import EnergyTransaction
 from executables.ui.widgets.tablets.HealthIncrease import HealthIncrease
 from executables.ui.widgets.tablets.MoneyRain import MoneyRain
+from modules.collectiontools import uri_from_path
 
 
 class R:
     def __init__(self, useful_size, real_size):
-        self.database = sqlite3.connect("../data/script.sqlite")
+        self.database = sqlite3.connect(uri_from_path("../data/script.sqlite"))
         self.query = self.database.cursor().execute
         self.useful_size = useful_size
         self.real_size = real_size
@@ -101,11 +102,11 @@ class R:
     def reload_strings(self):
         self.observe_language()
         for key, value in map(lambda elem: elem.strip().split(',', 1),
-                              open(f"../data/media/strings/{self.language}.csv", 'r', encoding="utf-8")):
+                              open(uri_from_path(f"../data/media/strings/{self.language}.csv"), 'r', encoding="utf-8")):
             self.string_dictionary[key] = value
 
     def reload_sounds(self):
-        for elem in os.listdir(directory := f"../data/media/sounds"):
+        for elem in os.listdir(directory := uri_from_path("../data/media/sounds")):
             self.sound_dictionary[elem.split('.')[0]] = pygame.mixer.Sound(f"{directory}/{elem}")
 
     def sound(self, name):
@@ -114,11 +115,11 @@ class R:
 
     def reload_drawables(self):
         self.observe_language()
-        for elem in os.listdir(directory := f"../data/media/images/{self.language}"):
+        for elem in os.listdir(directory := uri_from_path(f"../data/media/images/{self.language}")):
             self.drawable_dictionary[elem.split('.')[0]] = pygame.transform.smoothscale(
                 (im := pygame.image.load(f"{directory}/{elem}")),
                 (im.get_width() * self.coefficient, im.get_height() * self.coefficient))
-        for elem in os.listdir(directory := "../data/media/images"):
+        for elem in os.listdir(directory := uri_from_path("../data/media/images")):
             if '.' not in elem:
                 continue
             self.drawable_dictionary[elem.split('.')[0]] = pygame.transform.smoothscale(
@@ -139,7 +140,7 @@ class R:
 
     def set_ventilation_state(self, is_opened, loudness_control_function, fade_time=int()):
         pygame.mixer.music.unload()
-        pygame.mixer.music.load(f"../data/media/sounds/{"OpenedVentilation" if is_opened else "ClosedVentilation"}.mp3")
+        pygame.mixer.music.load(uri_from_path(f"../data/media/sounds/{"OpenedVentilation" if is_opened else "ClosedVentilation"}.mp3"))
         loudness_control_function()
         pygame.mixer.music.play(-1, fade_ms=fade_time)
         pygame.mixer.music.set_pos(self.mixer_playtime())
