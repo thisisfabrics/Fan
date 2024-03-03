@@ -1,4 +1,5 @@
 import os
+import shutil
 import sqlite3
 import time
 
@@ -26,7 +27,13 @@ from modules.collectiontools import uri_from_path
 
 class R:
     def __init__(self, useful_size, real_size):
-        self.database = sqlite3.connect(uri_from_path("../data/script.sqlite"))
+        if not os.path.exists(p := os.getenv("LOCALAPPDATA") + "/Fan/script.sqlite"):
+            try:
+                os.mkdir(os.getenv("LOCALAPPDATA") + "/Fan")
+            except FileExistsError:
+                pass
+            shutil.copy(uri_from_path("../data/script.sqlite"), p)
+        self.database = sqlite3.connect(p)
         self.query = self.database.cursor().execute
         self.useful_size = useful_size
         self.real_size = real_size
