@@ -122,14 +122,10 @@ class R:
 
     def reload_drawables(self):
         self.observe_language()
-        for elem in os.listdir(directory := uri_from_path(f"../data/media/images/{self.language}")):
-            self.drawable_dictionary[elem.split('.')[0]] = pygame.transform.smoothscale(
-                (im := pygame.image.load(f"{directory}/{elem}")),
-                (im.get_width() * self.coefficient, im.get_height() * self.coefficient))
         for elem in os.listdir(directory := uri_from_path("../data/media/images")):
-            if '.' not in elem:
+            if self.language.upper() not in elem:
                 continue
-            self.drawable_dictionary[elem.split('.')[0]] = pygame.transform.smoothscale(
+            self.drawable_dictionary['_'.join(elem.split('_')[:-1])] = pygame.transform.smoothscale(
                 (im := pygame.image.load(f"{directory}/{elem}")),
                 (im.get_width() * self.coefficient, im.get_height() * self.coefficient))
 
