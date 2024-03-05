@@ -60,12 +60,10 @@ class Continue(Screen):
         self.rooms = [[Room(self.r, (i, j)) if random.random() < .5 else Hall(self.r, (i, j)) for j in range(3)]
                       for i in range(3)]
 
-    def add_weapons(self, assortment=(VacuumCleanerDecoy,)):
+    def add_weapons(self, assortment=(VacuumCleanerDecoy, FanDecoy, CyclotronDecoy)):
         for decoy in assortment:
             randroom = self.rooms[random.randrange(len(self.rooms))][random.randrange(len(self.rooms[0]))]
             decoy(self.r, randroom.free_pos(), 1, randroom.collectables_group)
-        FanDecoy(self.r, self.rooms[0][0].free_pos(), 1, self.rooms[0][0].collectables_group)
-        CyclotronDecoy(self.r, self.rooms[0][0].free_pos(), 1, self.rooms[0][0].collectables_group)
 
     def find_belle(self):
         room = next(filter(lambda elem: Belle in map(lambda el: el.__class__, elem.entities_group.sprites()),
