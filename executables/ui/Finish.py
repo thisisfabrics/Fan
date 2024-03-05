@@ -8,7 +8,9 @@ from executables.ui.widgets.Label import Label
 class Finish(Screen):
     def __init__(self, r, frame):
         super().__init__(r, frame)
-        self.image = self.r.drawable("finish")
+        surface = pygame.Surface(self.r.drawable("finish").get_size())
+        surface.blit(self.r.drawable("finish"), (0, 0))
+        self.image = surface
         label_about_destructions, label_about_floors = next(
             self.r.query("SELECT liquidated_enemies, floor FROM statistics WHERE is_finished = 0"))
         self.r.query("UPDATE statistics SET is_finished = 1")

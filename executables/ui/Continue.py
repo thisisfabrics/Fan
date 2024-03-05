@@ -349,9 +349,6 @@ class Continue(Screen):
                      self.find_belle()[1].collectables_group)
         if condition:
             self.r.query(f"UPDATE statistics SET floor = {self.floor} WHERE is_finished = 0")
-        self.r.query(f"UPDATE statistics SET weapons = "
-                     f"{(1 if vacuumcleaner_power else 0) + (1 if fan_power else 0) + (1 if cyclotron_power else 0)} "
-                     f"WHERE is_finished = 0")
         self.r.database.commit()
 
     def finish_game(self):

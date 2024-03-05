@@ -200,12 +200,9 @@ class Room:
                 belle.weapons[0].increase_power(elem.collect())
             elif isinstance(elem, Battery):
                 belle.energy = max(0, min(belle.energy + elem.collect(), belle.energy_threshold))
-            elif isinstance(elem, FanDecoy):
+            else:
                 belle.weapons += elem.collect()
-            elif isinstance(elem, VacuumCleanerDecoy):
-                belle.weapons += elem.collect()
-            elif isinstance(elem, CyclotronDecoy):
-                belle.weapons += elem.collect()
+                self.r.query(f"UPDATE statistics SET weapons = {len(belle.weapons)} WHERE is_finished = 0")
         self.collectables_group.draw(surface)
 
     def draw(self):
