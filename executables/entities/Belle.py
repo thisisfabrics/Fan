@@ -74,13 +74,14 @@ class Belle(Entity):
         self.mouse_position_y += self.mouse_position_compensation_y
 
     def set_mouse_position_compensation(self, x, y):
-        self.mouse_position_compensation_x, self.mouse_position_compensation_y = x, y
+        self.mouse_position_compensation_x, self.mouse_position_compensation_y = (x - self.r.constant("real_offset_x"),
+                                                                                  y - self.r.constant("real_offset_y"))
 
     def use_weapon(self):
         if not self.weapons:
             return
-        self.weapons[0].release_bullet((self.mouse_position_compensation_x - self.r.constant("real_offset_x"),
-                                        self.mouse_position_compensation_y - self.r.constant("real_offset_y")),
+        self.weapons[0].release_bullet((self.mouse_position_compensation_x,
+                                        self.mouse_position_compensation_y),
                                        EnergyTransaction in self.catalysts.enumerate_classes())
         self.weapons[0].set_animation(f"{self.weapons[0].__class__.__name__.lower()}_attack", 100)
 
