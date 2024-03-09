@@ -24,7 +24,7 @@ class Game:
                 self.useful_height = self.useful_width / self.aspect_ratio
         else:
             if self.useful_width / self.useful_height != self.aspect_ratio:
-                self.useful_width = self.useful_height / self.aspect_ratio
+                self.useful_width = self.useful_height * self.aspect_ratio
         self.left_corner_x = 0.5 * info.current_w - 0.5 * self.useful_width
         self.left_corner_y = 0.5 * info.current_h - 0.5 * self.useful_height
         self.frame = pygame.Surface((self.useful_width, self.useful_height))
