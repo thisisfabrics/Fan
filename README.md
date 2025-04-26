@@ -18,6 +18,7 @@ semi-top view, fixed camera
 - Python
 - PyGame
 - Pyinstaller
+- SQLite
 - Inkscape `for graphics`
 - Unreal Engine MetaSounds `for music generation`
 
