@@ -22,7 +22,7 @@ semi-top view, fixed camera
 - Unreal Engine MetaSounds `for music generation`
 
 ## Platforms
-Windows `An executable file`
+Windows `an executable file`
 
 
 ### Ideas
